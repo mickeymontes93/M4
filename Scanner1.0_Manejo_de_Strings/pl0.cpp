@@ -13,7 +13,7 @@ FILE *fp; //apuntador a archivo conteniendo el programa fuente
 
 //main: inicia el compilador...solo scanner
 int main (int argc,char *argv[]) { 
-
+printf("\nENTROOO AL MAIN");
  //verificar si hay archivo fuente
  if (argc!=2)
 	printf("\nNo se ha proporcionado el nombre del programa fuente (uso: scanner progfuente)");
