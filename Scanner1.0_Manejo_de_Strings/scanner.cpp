@@ -144,11 +144,12 @@ else
     //¿es identificador o palabra reservada?.buscar en la tabla de palabras reservadas
 	//una búsqueda lineal que tendrá que ser sustituída por otro tipo de búsqueda más efectiva. 
 	//...en esa nueva búsqueda desaparecerá el "break"
-    for (j=0;j<MAXPAL;++j) 
-        if (strcmp(lexid,lexpal[j])==0) {
-	       ok=1;
-	       break;
-        }
+    ok = busqueda_binaria_palabras_reservadas(lexid);
+    // for (j=0;j<MAXPAL;++j) 
+    //     if (strcmp(lexid,lexpal[j])==0) {
+	   //     ok=1;
+	   //     break;
+    //     }
 
 	
     if (ok==1) 
@@ -348,6 +349,33 @@ int getline(char s[],int lim)
 
  s[i]='\0';
  return (i);
+}
+
+int busqueda_binaria_palabras_reservadas(char *palabra)
+{
+	int ini = 0;
+	int fin = MAXPAL;
+	
+	int medio;
+	int comparacion;
+	
+	while(ini <= fin){
+		medio = (ini + fin)/2;
+			
+		comparacion = strcmp(palabra, lexpal[medio]);
+		switch(comparacion)
+		{
+			case -1: 
+				fin = medio - 1;
+				break;
+			case 1: 
+				ini = medio + 1;
+				break;
+			case 0: 
+				return 1;
+		}
+	}
+	return 0;
 }
 
 
