@@ -13,7 +13,7 @@ FILE *fp; //apuntador a archivo conteniendo el programa fuente
 
 //main: inicia el compilador...solo scanner
 int main (int argc,char *argv[]) { 
-printf("\nENTROOO AL MAIN");
+//printf("\nENTROOO AL MAIN");
  //verificar si hay archivo fuente
  if (argc!=2)
 	printf("\nNo se ha proporcionado el nombre del programa fuente (uso: scanner progfuente)");
@@ -22,7 +22,7 @@ printf("\nENTROOO AL MAIN");
 	if (fp==NULL) 
 	   printf("\nNo se encontro el programa fuente indicado");
 	else {
-	     printf("\n\nCompilador de pl0 version 3.0/Solo scanner --- agosto de 2012 --- A2\n");
+	     printf("\nCompilador de M4 --- Ciclo 02-2016\n\n");
 	     //inicializacion de tokens de símbolos especiales (en auxiliares.cpp)
 	     inicializar_espec() ; 
 

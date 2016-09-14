@@ -137,7 +137,7 @@ else
  if (isalpha(ch)) {
     lexid[0]=ch;
     i=1;
-    while ( isalpha( (ch=obtch()) ) ||  isdigit(ch) || ch=='.'   ) 
+    while ( isalpha( (ch=obtch()) ) ||  isdigit(ch) || ch=='.' || ch == '_'  ) 
       if (i<MAXID) lexid[i++]=ch;
     lexid[i]='\0';
   
@@ -307,7 +307,7 @@ int obtch()
 
  if (fin_de_archivo==1) {
 	fclose(fp);//cerrar el programa fuente
-    printf("\nAnalisis lexicografico finalizado.");
+    printf("\n\nFin del analisis lexicografico.\n");
     exit(1); //salir...
  }
   

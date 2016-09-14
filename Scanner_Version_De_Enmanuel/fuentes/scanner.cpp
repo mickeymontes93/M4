@@ -32,7 +32,7 @@ void obtoken()
  if (isalpha(ch)) {
     lexid[0]=ch;
     i=1;
-    while ( isalpha( (ch=obtch()) ) ||  isdigit(ch)   ) 
+    while ( isalpha( (ch=obtch()) ) ||  isdigit(ch) ) 
       if (i<MAXID) lexid[i++]=ch;
     lexid[i]='\0';
   
