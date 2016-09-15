@@ -145,17 +145,17 @@ else
     //¿es identificador o palabra reservada?.buscar en la tabla de palabras reservadas
 	//una búsqueda lineal que tendrá que ser sustituída por otro tipo de búsqueda más efectiva. 
 	//...en esa nueva búsqueda desaparecerá el "break"
-    //ok = busqueda_binaria_palabras_reservadas(lexid);
-    for (j=0;j<MAXPAL;++j) 
-       if (strcmp(lexid,lexpal[j])==0) {
-	    ok=1;
-	    break;
-    }
+    ok = busqueda_binaria_palabras_reservadas(lexid);
+//    for (j=0;j<MAXPAL;++j) 
+//       if (strcmp(lexid,lexpal[j])==0) {
+//	    ok=1;
+//	    break;
+//    }
 
 	
-    if (ok==1) 
+    if (ok!=-1) 
     
-       token=tokpal[j]; //es palabra reservada
+       token=tokpal[ok]; //es palabra reservada
     else
        token=tok_id; //es identificador
  	
@@ -373,10 +373,10 @@ int busqueda_binaria_palabras_reservadas(char *palabra)
 				ini = medio + 1;
 				break;
 			case 0: 
-				return 1;
+				return medio;
 		}
 	}
-	return 0;
+	return -1;
 }
 
 
