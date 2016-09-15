@@ -17,6 +17,7 @@ char lex[MAXID+1];        //último lexeme leído ( +1 para colocar "\0")
 long int valor ;          //valor numérico de una lexeme correspondiene a un número
 
 int obtch(),getline(char s[],int lim); //funciones internas a scanner.cpp
+int busqueda_binaria_palabras_reservadas(char *palabra);
 char charTemp[2];
 int k = 0;
 
