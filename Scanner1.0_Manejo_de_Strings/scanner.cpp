@@ -63,7 +63,7 @@ void obtoken()
 			}
 		}while(ch != 34);
 		ch = obtch();
-		lexid[i-1]='\0';
+		lexid[i]='\0';
 		printf("\n%s",lexid);
 		token = tok_cadena;
 
@@ -99,9 +99,11 @@ void obtoken()
 				lexid[i] = ch;
 				i++;
 			}
+			if(strlen(strTemp) == 17)
+				break;
 		}while(ch != 39);
 		ch = obtch();
-		lexid[i-1]='\0';
+		lexid[i]='\0';
 		printf("\n%s",lexid);
 		token = tok_cadena;
 
