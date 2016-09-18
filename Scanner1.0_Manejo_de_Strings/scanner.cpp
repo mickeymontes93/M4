@@ -140,20 +140,20 @@ else
     lexid[i]='\0';
   
     //---------------BUSQUEDA BINARIA -----------------------
-   // ok= busqueda_binaria_palabras_reservadas((int) MAXPAL/2,lexid);
- 	for (j=0;j<MAXPAL;++j) 
+    ok= busqueda_binaria_palabras_reservadas((int) MAXPAL/2,lexid);
+ 	/*for (j=0;j<MAXPAL;++j) 
 		if (strcmp(lexid,lexpal[j])==0) {
 			ok=1;
 			break;
-		}
+		}*/
 
 	//Este descomentar para busqueda binaria
-    /*if (ok!= -1)   
-       token=tokpal[ok]; //es palabra reservada*/
+    if (ok!= -1)   
+       token=tokpal[ok]; //es palabra reservada
 
 
-	if (ok == 1)
-		token= tokpal[j];
+	/*if (ok == 1)
+		token= tokpal[j];*/
     else // Es identificador
        token=tok_id; 
  	
