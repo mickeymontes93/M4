@@ -17,7 +17,7 @@ char lex[MAXID+1];        //último lexeme leído ( +1 para colocar "\0")
 long int valor ;          //valor numérico de una lexeme correspondiene a un número
 
 int obtch(),getline(char s[],int lim); //funciones internas a scanner.cpp
-int busqueda_binaria_palabras_reservadas(char *palabra);
+
 char charTemp[2];
 int k = 0;
 
@@ -32,16 +32,12 @@ void obtoken()
  char lexid[MAXID+1]; //+1 para colocar el marcador "\0"
  int i,j;
  int ok=0;
-
  //quitar blancos, caracter de cambio de línea y tabuladores
- while (ch==' ' || ch=='\n' || ch=='\t') ch=obtch() ;
-	
-	//extern char palabras
-	//extern char palabrasVar
+ while (ch==' ' || ch=='\n' || ch=='\t' || (int) ch < 0) ch=obtch() ;
 	
 
 	//Si comienza con comillas dobles (34 en ascii), es String hasta donde terminen las comillas
-	if(ch==34){
+	if((int) ch==34){
 		lexid[0] = ch;
 		i = 1;
 		do{
@@ -79,7 +75,7 @@ void obtoken()
 		strcpy(strTemp,"");
 	}
 	//Si comienza con comillas simples (39 en ascii), es String hasta donde terminen las comillas
-	else if(ch==39){
+	else if((int) ch==39){
 		lexid[0] = ch;
 		i = 1;
 		do{
@@ -117,7 +113,7 @@ void obtoken()
 		strcpy(strTemp,"");
 	}
 	//Si comienza con # (35 en ascii), es un comentario.
-	else if(ch==35){
+	else if((int) ch==35){
 		lexid[0] = ch;
 		i = 1;
 		do{
@@ -135,29 +131,31 @@ void obtoken()
 	
 else
  //si la lexeme comienza con una letra, es identificador o palabra reservada
- if (isalpha(ch)) {
+ if (isalpha(ch) ) {
     lexid[0]=ch;
     i=1;
-    while ( isalpha( (ch=obtch()) ) ||  isdigit(ch) || ch=='.' || ch == '_'  ) 
+    int j;
+    while ( isalpha( (ch=obtch()) ) ||  isdigit(ch) || ch=='.' || ch == '_') 
       if (i<MAXID) lexid[i++]=ch;
     lexid[i]='\0';
   
-    //¿es identificador o palabra reservada?.buscar en la tabla de palabras reservadas
-	//una búsqueda lineal que tendrá que ser sustituída por otro tipo de búsqueda más efectiva. 
-	//...en esa nueva búsqueda desaparecerá el "break"
-    ok = busqueda_binaria_palabras_reservadas(lexid);
-//    for (j=0;j<MAXPAL;++j) 
-//       if (strcmp(lexid,lexpal[j])==0) {
-//	    ok=1;
-//	    break;
-//    }
+    //---------------BUSQUEDA BINARIA -----------------------
+   // ok= busqueda_binaria_palabras_reservadas((int) MAXPAL/2,lexid);
+ 	for (j=0;j<MAXPAL;++j) 
+		if (strcmp(lexid,lexpal[j])==0) {
+			ok=1;
+			break;
+		}
 
-	
-    if (ok!=-1) 
-    
-       token=tokpal[ok]; //es palabra reservada
-    else
-       token=tok_id; //es identificador
+	//Este descomentar para busqueda binaria
+    /*if (ok!= -1)   
+       token=tokpal[ok]; //es palabra reservada*/
+
+
+	if (ok == 1)
+		token= tokpal[j];
+    else // Es identificador
+       token=tok_id; 
  	
  	printf("\n%s",lexid);
  	
@@ -328,8 +326,8 @@ int obtch()
  if ( (linea[offset]=='\0') || (fin_de_archivo==1) )   
     return(' '); 
  else  
-   // return(toupper(linea[offset])); //de esto depende si el lenguaje es sensitivo de mayúsculas o no.
-   return(linea[offset]);
+   return(tolower(linea[offset])); //de esto depende si el lenguaje es sensitivo de mayúsculas o no.
+   //return(linea[offset]);
 
 }
 
@@ -352,31 +350,37 @@ int getline(char s[],int lim)
  return (i);
 }
 
-int busqueda_binaria_palabras_reservadas(char *palabra)
-{
-	int ini = 0;
-	int fin = MAXPAL;
-	
-	int medio;
-	int comparacion;
-	
-	while(ini <= fin){
-		medio = (ini + fin)/2;
-			
+int busqueda_binaria_palabras_reservadas(int medio, char *palabra){
+	int comparacion,medio_anterior=0;
+	int salir=0;
+	do{
 		comparacion = strcmp(palabra, lexpal[medio]);
-		switch(comparacion)
-		{
-			case -1: 
-				fin = medio - 1;
-				break;
-			case 1: 
-				ini = medio + 1;
-				break;
-			case 0: 
-				return medio;
+		/*printf("\n\n\n-----------------------------------");
+		printf("\n PALABRA ACTUAL A BUSCAR : %s",palabra);
+		printf("\n MEDIO ANTERIOR: %d",medio_anterior );
+		printf("\nMEDIO ACTUAL: %d",medio);
+		printf("\nPALABRA RESERVADA lexpal[%d]: %s\n",medio, lexpal[medio]);
+		printf("\nRESULTADO DE LA COMPARACION: %d",comparacion);*/
+		
+		if(comparacion < 0){
+			medio=medio-1;
+			medio_anterior++;
 		}
-	}
+		if(comparacion > 0){
+			medio=medio+1;
+			medio_anterior++;
+			//break;
+		}
+		if(comparacion == 0){
+			//printf("\nentroooo\n");
+			salir=medio;
+			return medio;
+					//medio= MAXPAL+1;
+		}			
+			
+		
+		//return medio;
+		//printf("\n-----------------------------------\n\n");
+	}while(medio >= 0 && medio <= MAXPAL && medio_anterior <= MAXPAL);
 	return -1;
 }
-
-

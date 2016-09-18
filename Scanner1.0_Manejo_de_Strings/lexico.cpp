@@ -1,17 +1,15 @@
 #include "lexico.h"
 
 //se define e inicializa la tabla de lexemes correspondientes a las palabras reservadas
-//char *lexpal[MAXPAL]={"BEGIN","CALL","CONST","DO","END","IF","ODD","PROCEDURE","THEN","VAR","WHILE"};
 char *lexpal[MAXPAL]={ 	"arccos","arcsin","arctan","arr.bool","arr.char","arr.float","arr.int","arr.str","break","cadena","case","concat","console.read",
 						"console.write","cos","default","do","else","equal","false","file.fclose","file.fgets","for","func.bool","func.char","func.float",
-						"func.int","func.str","func.void","if","length","log","MAIN","pow","replace","round","sin","split","sqrt","substring","switch","tan",
+						"func.int","func.str","func.void","if","length","log","main","pow","replace","round","sin","split","sqrt","substring","switch","tan",
 						"trim","true","var.bool","var.char","var.file","var.float","var.fopen","var.fscanf","var.int","var.str","while"};
 
 //el token
 enum simbolo token;
 
 //se define e inicializa la tabla de tokens de palabras reservadas
-//enum simbolo tokpal [MAXPAL]={begintok,calltok,consttok,dotok,endtok,iftok,oddtok,proctok,thentok,vartok,whiletok};
 
 enum simbolo tokpal [MAXPAL]={	tok_arccos,tok_arcsin,tok_arctan,tok_arrBooleano,tok_arrCaracter,tok_arrFlotante,tok_arrEntero,tok_arrCadena,
 								tok_break,tok_cadena,tok_case,tok_concat,tok_read,tok_write,tok_cos,tok_default,tok_do,tok_else,tok_equal,

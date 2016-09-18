@@ -1,4 +1,4 @@
-main{
+﻿main{
     var.str d := "Soy una string";
     var.int a; 
     var.int b;
