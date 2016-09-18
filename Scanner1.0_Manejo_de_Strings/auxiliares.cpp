@@ -1,13 +1,21 @@
 //funciones auxiliares del compilador
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
+#include <assert.h>
 #include "pl0.h"
 #include "auxiliares.h"
 #include "lexico.h"
 
+int MAXLINEA =	1000;  //tamaño máximo de una línea del programa fuente      
+int MAXDIGIT =  5;  //máximo número de dígitos en los enteros             
+int MAXID    = 	15;  //máxima longitud de los identificadores
+char *linea;     //buffer de líneas 
+char *lex;        //último lexeme leído ( +1 para colocar "\0")
+int cantElementosSplit;
+
 //error: por el momento todo error es fatal          
- int error(int no)
-{ 
+ int error(int no){ 
  printf ("\n^ Error %d: Este numero es demasiado grande",no);
  fclose(fp);//cerrar el programa fuente
  exit(1); //estoy en modo de pánico...cualquier error es fatal
@@ -79,6 +87,118 @@ void imprime_token()
  						"tok_sqrt","tok_substring","tok_pow","tok_length","tok_concat","tok_replace","tok_equal","tok_sin","tok_cos","tok_tan","tok_arcsin",
  						"tok_arccos","tok_arctan","tok_log","tok_true","tok_false"};
  
- printf("\t => %10s",token_string[token]);
+ printf("\t -> %10s",token_string[token]);
   
+}
+
+
+void parametrizarScanner(){
+	char* archivo = leerArchivo("param.txt");
+	if (archivo != NULL){
+		char** lineas = str_split(archivo, '\n');
+		int cantLineas = cantElementosSplit;
+		for (int i = 0; i<cantLineas; i++){
+			char** parametro = str_split(*(lineas + i), ';');
+			int cant = cantElementosSplit;
+			if(cant == 2){
+				if(strcmp(*parametro,"MAXLINEA")==0){
+					MAXLINEA = atoi(*(parametro+1));
+				}else{
+					if(strcmp(*parametro,"MAXDIGIT")==0){
+						MAXDIGIT = atoi(*(parametro+1));
+					}else{
+						if(strcmp(*parametro,"MAXID")==0){
+							MAXID = atoi(*(parametro+1));
+						}
+					}
+				}
+			}
+		}
+	}else{
+		FILE *file = fopen("param.txt", "w");
+		fprintf(file,"MAXLINEA;%d\n",MAXLINEA);
+		fprintf(file,"MAXDIGIT;%d\n",MAXDIGIT);
+		fprintf(file,"MAXID;%d",MAXID);
+		fclose(file);
+	}
+	
+	printf("MAXLINEA: %d\n",MAXLINEA);
+	printf("MAXDIGIT: %d\n",MAXDIGIT);
+	printf("MAXID: %d\n",MAXID);
+	
+	linea = (char*) malloc(MAXLINEA * (sizeof(char)));
+	lex = (char*) malloc((MAXID + 1) * (sizeof(char)));
+}
+
+
+char* leerArchivo(char *filename){
+  char *file_contents;
+  char car;
+  long input_file_size,i=0,cont=0;
+  FILE *input_file = fopen(filename, "r");
+  
+  if( input_file == NULL )  {
+      //perror("Archivo no encontrado.\n");
+      return NULL;
+  }
+  
+  fseek(input_file, 0, SEEK_END);
+  input_file_size = ftell(input_file);
+  rewind(input_file);
+  file_contents =  (char*) malloc((input_file_size + 1) * (sizeof(char)));
+
+  while( ( car = fgetc(input_file) ) != EOF ){
+    if(car!='\r'){
+      file_contents[i]=car;
+      i++;
+    }
+  }
+
+  fclose(input_file);
+  file_contents[i] = '\0';
+  return file_contents;
+}
+
+
+char** str_split(char* a_str, const char a_delim){
+    char** result    = 0;
+    size_t count     = 0;
+    char* tmp        = a_str;
+    char* last_comma = 0;
+    char delim[2];
+    delim[0] = a_delim;
+    delim[1] = 0;
+
+    /* Count how many elements will be extracted. */
+    while (*tmp){
+        if (a_delim == *tmp){
+            count++;
+            last_comma = tmp;
+        }
+        tmp++;
+    }
+
+    /* Add space for trailing token. */
+    count += last_comma < (a_str + strlen(a_str) - 1);
+    cantElementosSplit=count;
+    /* Add space for terminating null string so caller
+       knows where the list of returned strings ends. */
+    count++;
+
+    result = (char**) malloc(sizeof(char*) * count);
+
+    if (result){
+        size_t idx  = 0;
+        char* token = strtok(a_str, delim);
+
+        while (token){
+            assert(idx < count);
+            *(result + idx++) = strdup(token);
+            token = strtok(NULL, delim);
+        }
+        assert(idx == count - 1);
+        *(result + idx) = 0;
+    }
+
+    return result;
 }

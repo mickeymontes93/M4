@@ -8,12 +8,11 @@
 #include "lexico.h"
 #include "auxiliares.h"
 
-char linea[MAXLINEA];     //buffer de líneas 
+
 int ll;                   //contador de caracteres
 int offset;               //corrimiento en la lectura de los caracteres del programa fuente
 int fin_de_archivo;       //bandera de fin de archivo (obtch)   
 int ch;                   //último caracter leído
-char lex[MAXID+1];        //último lexeme leído ( +1 para colocar "\0")
 long int valor ;          //valor numérico de una lexeme correspondiene a un número
 
 int obtch(),getline(char s[],int lim); //funciones internas a scanner.cpp

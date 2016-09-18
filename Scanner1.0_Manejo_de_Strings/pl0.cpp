@@ -18,6 +18,7 @@ int main (int argc,char *argv[]) {
  if (argc!=2)
 	printf("\nNo se ha proporcionado el nombre del programa fuente (uso: scanner progfuente)");
  else { 
+	parametrizarScanner();
 	fp=fopen(argv[1],"r"); //abrir el fuente solo para lectura
 	if (fp==NULL) 
 	   printf("\nNo se encontro el programa fuente indicado");
