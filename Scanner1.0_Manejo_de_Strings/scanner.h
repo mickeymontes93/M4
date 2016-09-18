@@ -10,4 +10,4 @@ extern long int valor;       //valor numérico de una lexeme correspondiene a un 
 
 void obtoken();
 int busqueda_binaria_palabras_reservadas(int medio, char *palabra);
-int busqueda_binaria_palabras_reservadas_2(char *palabra);
+//int busqueda_binaria_palabras_reservadas_2(char *palabra);
