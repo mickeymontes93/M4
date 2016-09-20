@@ -115,19 +115,11 @@ void obtoken()
 	}
 	//Si comienza con # (35 en ascii), es un comentario.
 	else if((int) ch==35){
-		lexid[0] = ch;
-		i = 1;
 		do{
 			ch = obtch();
-			i++;
 		}while(ch != '\n');
 		ch = obtch();
-		lexid[i-1]='\0';
-		int l = 0;
-		do{
-			printf("\b");
-			l++;
-		}while(l<i+7);
+		token = COMENTARIO;
 	}
 	
 else

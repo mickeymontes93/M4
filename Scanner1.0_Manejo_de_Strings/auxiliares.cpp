@@ -85,9 +85,10 @@ void imprime_token()
  						"tok_funcchar","tok_funcstr","tok_bool","tok_funcvoid","tok_arrEntero","tok_arrFlotante","tok_arrCaracter","tok_arrCadena",
  						"tok_arrBooleano","tok_main","tok_file","tok_fileopen","tok_fscanf","tok_fgets","tok_fclose","tok_split","tok_trim","tok_round",
  						"tok_sqrt","tok_substring","tok_pow","tok_length","tok_concat","tok_replace","tok_equal","tok_sin","tok_cos","tok_tan","tok_arcsin",
- 						"tok_arccos","tok_arctan","tok_log","tok_true","tok_false"};
+ 						"tok_arccos","tok_arctan","tok_log","tok_true","tok_false", ""};
  
- printf("\t -> %10s",token_string[token]);
+	if(token != COMENTARIO) 
+		printf("\t -> %10s",token_string[token]);
   
 }
 

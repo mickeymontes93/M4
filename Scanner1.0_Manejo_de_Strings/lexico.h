@@ -13,7 +13,7 @@ enum simbolo {tok_null,tok_id,tok_numero,tok_flotante,tok_caracter,tok_cadena,to
               tok_varstr,tok_varbool,tok_if,tok_else,tok_switch,tok_case,tok_default,tok_break,tok_while,tok_do,tok_for,tok_write,tok_read,tok_funcint,
               tok_funcfloat,tok_funcchar,tok_funcstr,tok_bool,tok_funcvoid,tok_arrEntero,tok_arrFlotante,tok_arrCaracter,tok_arrCadena,tok_arrBooleano,tok_main,
               tok_file,tok_fileopen,tok_fscanf,tok_fgets,tok_fclose,tok_split,tok_trim,tok_round,tok_sqrt,tok_substring,tok_pow,tok_length,tok_concat,
-              tok_replace,tok_equal,tok_sin,tok_cos,tok_tan,tok_arcsin,tok_arccos,tok_arctan,tok_log,tok_true,tok_false};
+              tok_replace,tok_equal,tok_sin,tok_cos,tok_tan,tok_arcsin,tok_arccos,tok_arctan,tok_log,tok_true,tok_false, COMENTARIO};
 
 extern enum simbolo token;
 
