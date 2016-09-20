@@ -28,7 +28,7 @@ b	 ->     tok_id
 c	 ->     tok_id
 +=	 -> tok_sumasign
 1.56	 -> tok_flotante
-;	 -> tok_finlinea	 -> tok_finlinea
+;	 -> tok_finlinea
 if	 ->     tok_if
 (	 -> tok_parena
 c	 ->     tok_id
@@ -69,7 +69,7 @@ console.write	 ->  tok_write
 )	 -> tok_parenc
 ;	 -> tok_finlinea
 }	 -> tok_llavec
-}	 -> tok_llavec	 -> tok_llavec
+}	 -> tok_llavec
 console.write	 ->  tok_write
 (	 -> tok_parena
 "prueba "	 -> tok_cadena

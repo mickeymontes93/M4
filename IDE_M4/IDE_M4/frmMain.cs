@@ -154,7 +154,7 @@ namespace IDE_M4 {
 
             Process proc = new Process {
                 StartInfo = new ProcessStartInfo {
-                    FileName = "scanner.exe",
+                    FileName = "scanner\\objeto\\scanner.exe",
                     Arguments = "\"" + editor.FileName + "\"",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
