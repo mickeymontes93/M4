@@ -1,0 +1,80 @@
+MAXLINEA: 1000
+MAXDIGIT: 5
+MAXID: 200
+
+Compilador de M4 --- Ciclo 02-2016
+
+
+main	 ->   tok_main
+{	 -> tok_llavea
+var.str	 -> tok_varstr
+d	 ->     tok_id
+:=	 -> tok_asignar
+"soy una string"	 -> tok_cadena
+;	 -> tok_finlinea
+var.int	 -> tok_varint
+a	 ->     tok_id
+;	 -> tok_finlinea
+var.int	 -> tok_varint
+b	 ->     tok_id
+;	 -> tok_finlinea
+var.int	 -> tok_varint
+c	 ->     tok_id
+:=	 -> tok_asignar
+a	 ->     tok_id
+ 	 ->    tok_sum
+b	 ->     tok_id
+;	 -> tok_finlinea
+c	 ->     tok_id
++=	 -> tok_sumasign
+1.56	 -> tok_flotante
+;	 -> tok_finlinea	 -> tok_finlinea
+if	 ->     tok_if
+(	 -> tok_parena
+c	 ->     tok_id
+==	 ->  tok_igual
+4	 -> tok_numero
+&&	 ->    tok_and
+a	 ->     tok_id
+<=	 -> tok_menorigual
+2	 -> tok_numero
+||	 ->     tok_or
+b	 ->     tok_id
+>=	 -> tok_mayorigual
+0	 -> tok_numero
+)	 -> tok_parenc
+{	 -> tok_llavea
+var.bool	 -> tok_varbool
+banderita	 ->     tok_id
+:=	 -> tok_asignar
+true	 ->   tok_true
+;	 -> tok_finlinea
+while	 ->  tok_while
+(	 -> tok_parena
+banderita	 ->     tok_id
+)	 -> tok_parenc
+{	 -> tok_llavea
+console.write	 ->  tok_write
+(	 -> tok_parena
+"hola %s %d %f mundo"	 -> tok_cadena
+)	 -> tok_parenc
+;	 -> tok_finlinea
+banderita	 ->     tok_id
+:=	 -> tok_asignar
+false	 ->  tok_false
+;	 -> tok_finlinea
+console.write	 ->  tok_write
+(	 -> tok_parena
+'adios %d mundo'	 -> tok_cadena
+)	 -> tok_parenc
+;	 -> tok_finlinea
+}	 -> tok_llavec
+}	 -> tok_llavec	 -> tok_llavec
+console.write	 ->  tok_write
+(	 -> tok_parena
+"prueba "	 -> tok_cadena
+)	 -> tok_parenc
+;	 -> tok_finlinea
+}	 -> tok_llavec
+
+Fin del analisis lexicografico.

@@ -31,6 +31,7 @@ namespace IDE_M4 {
             TabPage tab = new TabPage(fileName);
             CustomM4Editor editor = new CustomM4Editor(filePath);
             editor.Dock = DockStyle.Fill;
+            editor.ContextMenuStrip = cmMain;
 
             tabControl1.TabPages.Add(tab);
             tab.Controls.Add(editor);
@@ -38,7 +39,10 @@ namespace IDE_M4 {
         }
 
         private void undoToolStripMenuItem_Click(object sender, EventArgs e) {
-
+            try {
+                CustomM4Editor editor = (CustomM4Editor)tabControl1.SelectedTab.Controls[0];
+                editor.deshacer();
+            } catch (Exception ex) { }
         }
 
         private void openFile(object sender, EventArgs e) {
@@ -46,12 +50,16 @@ namespace IDE_M4 {
             openFileDialog1.Filter = "Codigo fuente (*.m4)|*.m4";
             if (openFileDialog1.ShowDialog(this) == DialogResult.OK) {
                 createNewTabFromFile(openFileDialog1.FileName);
+                changeFormText();
             }
-            changeFormText();
         }
 
         private void saveToolStripButton_Click(object sender, EventArgs e) {
-
+            try {
+                CustomM4Editor editor = (CustomM4Editor)tabControl1.SelectedTab.Controls[0];
+                editor.guardar();
+                MessageBox.Show("Archivo guardado exitosamente", "Guardar", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            } catch (Exception ex) { }
         }
 
         private void toolBarToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -72,36 +80,62 @@ namespace IDE_M4 {
         }
 
         private void redoToolStripMenuItem_Click(object sender, EventArgs e) {
-            CustomM4Editor editor = (CustomM4Editor)tabControl1.SelectedTab.Controls[0];
-            editor.rehacer();
+            try {
+                CustomM4Editor editor = (CustomM4Editor)tabControl1.SelectedTab.Controls[0];
+                editor.rehacer();
+            } catch (Exception ex) { }
+
         }
 
         private void cutToolStripMenuItem_Click(object sender, EventArgs e) {
-            CustomM4Editor editor = (CustomM4Editor)tabControl1.SelectedTab.Controls[0];
-            editor.cortar();
+            try {
+                CustomM4Editor editor = (CustomM4Editor)tabControl1.SelectedTab.Controls[0];
+                editor.cortar();
+            } catch (Exception ex) { }
+
         }
 
         private void copyToolStripMenuItem_Click(object sender, EventArgs e) {
-            CustomM4Editor editor = (CustomM4Editor)tabControl1.SelectedTab.Controls[0];
-            editor.copiar();
+            try {
+                CustomM4Editor editor = (CustomM4Editor)tabControl1.SelectedTab.Controls[0];
+                editor.copiar();
+            } catch (Exception ex) { }
+
         }
 
         private void pasteToolStripMenuItem_Click(object sender, EventArgs e) {
-            CustomM4Editor editor = (CustomM4Editor)tabControl1.SelectedTab.Controls[0];
-            editor.pegar();
+            try {
+                CustomM4Editor editor = (CustomM4Editor)tabControl1.SelectedTab.Controls[0];
+                editor.pegar();
+            } catch (Exception ex) { }
+
         }
 
         private void selectAllToolStripMenuItem_Click(object sender, EventArgs e) {
-            CustomM4Editor editor = (CustomM4Editor)tabControl1.SelectedTab.Controls[0];
-            editor.seleccionarTodo();
-        }
+            try {
+                CustomM4Editor editor = (CustomM4Editor)tabControl1.SelectedTab.Controls[0];
+                editor.seleccionarTodo();
+            } catch (Exception ex) { }
 
-        private void saveToolStripMenuItem_Click(object sender, EventArgs e) {
-            CustomM4Editor editor = (CustomM4Editor)tabControl1.SelectedTab.Controls[0];
-            editor.guardar();
         }
 
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e) {
+            try {
+                CustomM4Editor editor = (CustomM4Editor)tabControl1.SelectedTab.Controls[0];
+
+                SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+                saveFileDialog1.Filter = "M4 file|*.m4";
+                saveFileDialog1.Title = "Save an M4 File";
+                saveFileDialog1.ShowDialog();
+
+                // If the file name is not an empty string open it for saving.
+                if (saveFileDialog1.FileName != "") {
+                    // Saves the Image via a FileStream created by the OpenFile method.
+                    editor.FileName = saveFileDialog1.FileName;
+                    editor.guardar();
+                    MessageBox.Show("Archivo guardado exitosamente", "Guardar", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            } catch (Exception ex) { }
 
         }
 
@@ -117,11 +151,11 @@ namespace IDE_M4 {
         private void btnRun_Click(object sender, EventArgs e) {
             this.txtConsole.Clear();
             CustomM4Editor editor = (CustomM4Editor)tabControl1.SelectedTab.Controls[0];
-           
+
             Process proc = new Process {
                 StartInfo = new ProcessStartInfo {
                     FileName = "scanner.exe",
-                    Arguments = "\"" +  editor.FileName + "\"" ,
+                    Arguments = "\"" + editor.FileName + "\"",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     CreateNoWindow = true
@@ -134,6 +168,15 @@ namespace IDE_M4 {
                 this.txtConsole.Text += line + Environment.NewLine;
                 // do something with line
             }
+        }
+
+        private void contentsToolStripMenuItem_Click(object sender, EventArgs e) {
+            System.Diagnostics.Process.Start("ayuda.pdf");
+        }
+
+        private void parametrizarScannerToolStripMenuItem_Click(object sender, EventArgs e) {
+            frmParametrizacionScanner form = new frmParametrizacionScanner();
+            form.ShowDialog(this);
         }
     }
 }

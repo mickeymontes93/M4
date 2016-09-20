@@ -63,9 +63,29 @@ namespace IDE_M4.Properties {
         /// <summary>
         ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap redo_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("redo_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap run {
             get {
                 object obj = ResourceManager.GetObject("run", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap undo_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("undo_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

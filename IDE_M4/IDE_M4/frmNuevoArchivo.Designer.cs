@@ -51,7 +51,8 @@
             // btnCrear
             // 
             this.btnCrear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCrear.Location = new System.Drawing.Point(306, 19);
+            this.btnCrear.Enabled = false;
+            this.btnCrear.Location = new System.Drawing.Point(413, 18);
             this.btnCrear.Name = "btnCrear";
             this.btnCrear.Size = new System.Drawing.Size(104, 27);
             this.btnCrear.TabIndex = 1;
@@ -62,7 +63,7 @@
             // btnCancelar
             // 
             this.btnCancelar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCancelar.Location = new System.Drawing.Point(416, 19);
+            this.btnCancelar.Location = new System.Drawing.Point(303, 18);
             this.btnCancelar.Name = "btnCancelar";
             this.btnCancelar.Size = new System.Drawing.Size(104, 27);
             this.btnCancelar.TabIndex = 0;

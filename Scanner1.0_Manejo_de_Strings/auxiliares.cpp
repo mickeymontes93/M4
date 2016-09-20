@@ -9,7 +9,7 @@
 
 int MAXLINEA =	1000;  //tamaño máximo de una línea del programa fuente      
 int MAXDIGIT =  5;  //máximo número de dígitos en los enteros             
-int MAXID    = 	15;  //máxima longitud de los identificadores
+int MAXID    = 	200;  //máxima longitud de los identificadores
 char *linea;     //buffer de líneas 
 char *lex;        //último lexeme leído ( +1 para colocar "\0")
 int cantElementosSplit;
