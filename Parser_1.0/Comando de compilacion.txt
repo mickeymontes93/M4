@@ -1,0 +1,2 @@
+gcc auxiliares.h lexico.h parametros.h pl0.h scanner.h auxiliares.cpp lexico.cpp scanner.cpp pl0.cpp -o obj.o
+
