@@ -16,8 +16,8 @@ int cantElementosSplit;
 
 //error: por el momento todo error es fatal
 int error(int no) {
-  printf ("\n^ Error %d: Este numero es demasiado grande", no);
   fclose(fp);//cerrar el programa fuente
+  printf ("\n^ error %d: %s\n",no,mensaje_de_error[no]);
   exit(1); //estoy en modo de pánico...cualquier error es fatal
 }
 
