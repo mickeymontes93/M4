@@ -1,4 +1,4 @@
-//un parser descendente determinístico para pl0
+//un parser descendente determinï¿½stico para pl0
 #include <stdlib.h>
 #include "parser.h"
 #include "tds.h"
@@ -10,10 +10,12 @@
 int CHECK_VARIABLE();
 
 //funciones internas al parser
-void FUNCION_INSTRUCCION(), CONJUNVAR(), DECLARACIÓN(), OPERACION_NUM(), TERMINO(), ASIGNACIÓN(), FUN_SUBSTRING(), FUN_CONCAT();
+
+void FUNCION_INSTRUCCION(), CONJUNVAR(), DECLARACIï¿½N(), OPERACION_NUM(), TERMINO(), ASIGNACIï¿½N(), FUN_SUBSTRING(), FUN_CONCAT();
 void FUN_REPLACE(), INS_DO(), INS_CONSOLEWRITE(), INS_CONSOLEREAD(), INS_SWITCH(), CASE(), ABRIR_ARCHIVO(), INS_IF(), INS_WHILE();
-void INS_FOR(), INSTRUCCION(), PAREN_CONDICIÓN(), LLAVE_INSTRUCCION(), DATA_NUM(), DATA_CAD(), ARREGLO(), IDENTIFICADOR();
-void EXPRESION_NUM(), EXPRESIÓN_CAD(), EXPRESION_BOOL(), CONDICION(), COMPAGENERAL(), COMPANUM(), CAD_VAR(), FUNCION(), VARIABLE();
+void INS_FOR(), INSTRUCCION(), PAREN_CONDICIï¿½N(), LLAVE_INSTRUCCION(), DATA_NUM(), DATA_CAD(), ARREGLO(), IDENTIFICADOR();
+int IDENTIFICADOR();
+void EXPRESION_NUM(), EXPRESIï¿½N_CAD(), EXPRESION_BOOL(), CONDICION(), COMPAGENERAL(), COMPANUM(), CAD_VAR(), FUNCION(), VARIABLE();
 void TIPO_FILE(), BLOQUE();
 
 int CHECK_VARIABLE()
@@ -49,7 +51,7 @@ void FUNCION_INSTRUCCION()
 		if(token == tok_llavea)
 		{
 			obtok();
-			DECLARACIÓN();
+			DECLARACIï¿½N();
 			INSTRUCCION();
 			if(token == tok_return)
 			{
@@ -127,7 +129,7 @@ void CONJUNVAR()
 	}
 }
 
-void DECLARACIÓN() 
+void DECLARACIï¿½N() 
 {
 	int isVariable = CHECK_VARIABLE();
 	while(isVariable == 1)
@@ -173,7 +175,7 @@ void TERMINO()
 	}while(token == tok_multi || toke == tok_divi)
 
 }
-void ASIGNACIÓN()
+void ASIGNACIï¿½N()
 {
 	if(token == tok_id)
 	{
@@ -524,7 +526,7 @@ void CASE()
 	while(token == tok_case)
 	{
 		obtoken();
-		PAREN_CONDICIÓN();
+		PAREN_CONDICIï¿½N();
 		if(token == tok_llavea)
 		{
 			obtoken();
@@ -611,19 +613,543 @@ void CASE()
 	}
 }
 
-void ABRIR_ARCHIVO() {  }
-void INS_IF() {  }
-void INS_WHILE() {  }
-void INS_FOR() {  }
-void INSTRUCCION() {  }
-void PAREN_CONDICIÓN() {  }
-void LLAVE_INSTRUCCION() {  }
-void DATA_NUM() {  }
-void DATA_CAD() {  }
-void ARREGLO() {  }
-void IDENTIFICADOR() {  }
+
+//******** PARTE FER ********//
+
+
+void ABRIR_ARCHIVO() 
+{  
+	if(token == tok_fileopen)
+	{
+		obtoken();
+		if(token == tok_parena)
+		{
+			obtoken();			
+			DATA_CAD();
+			if(token == tok_coma)
+			{
+				obtoken();
+				TIPO_FILE();
+				if(token == tok_parenc)
+				{
+					//Se completo exitosamente esta parte.					
+					obtoken();					
+				}
+				else
+				{
+					//err: Se esperaba el cierre de un parï¿½ntesis.
+					error(1);
+				}				
+			}
+			else
+			{
+				// err: se esperaba una coma.
+				error(1);
+			}
+		}
+		else
+		{
+			// err: se esperaba un parentesis de apertura.
+			error(1);
+		}
+	}
+	else
+	{
+		// err: se esperaba la instrucciï¿½n para abrir un archivo var.fopen
+		error(1);
+	}
+		
+}
+
+void DATA_CAD() 
+{  
+	if(IDENTIFICADOR()){
+		//Se cumplio este camino.		
+		obtoken();
+	}
+	else if(token == tok_cadena || token ==tok_caracter)
+	{
+			//Se completo exitosamente esta parte.					
+			obtoken();
+	}
+	else
+	{
+		// err: se esperaba una cadena, un caracter o un identificador.
+		error(1);
+	}
+	
+}
+
+//Tuve que cambiarla a int por el caso de DATA_CAD(), donde necesitaba que identificador me regresara algo para determinar si se fue por ese camino o no, en este caso un entero.
+int IDENTIFICADOR() 
+{  
+	if(token == tok_id)
+	{
+		obtoken();
+		if(token == tok_llavea)
+		{
+			obtoken();
+			EXPRESION_NUM();
+			if(token == tok_llavec)
+			{
+				//Se completo exitosamente esta parte.
+				obtoken();
+				return 1;
+			}
+			else
+			{
+				//err: se esperaba una llave de cierre.
+				error(1);
+			}
+		}
+		else
+		{
+			//err: Se esperaba una llave de apertura.
+		}
+	}
+	else
+	{
+		//err: se esperaba un identificador.
+		return 0;
+	}
+			
+}
+
+void DATA_NUM() 
+{  
+	if(IDENTIFICADOR()){
+		//Se cumplio este camino.		
+		obtoken();
+	}
+	else if(token == tok_numero || token == tok_flotante)
+	{
+			//Se completo exitosamente esta parte.					
+			obtoken();
+	}
+	else
+	{
+		// err: se esperaba una nï¿½mero entero, nï¿½mero flotante o un identificador.
+		error(1);
+	}
+}
+void INS_IF() 
+{  
+	if(token == tok_if)
+	{
+		obtoken();
+		PAREN_CONDICION();
+		LLAVE_INSTRUCCION();
+	}
+	else
+	{
+		//err: Se esperaba un if.
+		error(1);
+	}
+}
+void INS_WHILE() 
+{  
+	if(token == tok_while)
+	{
+		obtoken();
+		PAREN_CONDICION();
+		LLAVE_INSTRUCCION();
+	}
+	else
+	{
+		//err: Se esperaba un while.
+		error(1);
+	}
+}
+void INS_FOR() 
+{  
+	if(token == tok_for)
+	{
+		obtoken();
+		if(token == tok_parena)
+		{
+			obtoken();
+			ASIGNACION();
+			if(token == tok_finlinea)
+			{
+				obtoken();
+				CONDICION();
+				if(token == tok_finlinea)
+				{
+					obtoken();
+					OPERACION_NUM();
+					if(token == parenc)
+					{
+						obtoken();
+						LLAVE_INSTRUCCION();
+						//Se completo
+					}
+					else
+					{
+						//err: Se esperaba un parentesis de cierre
+						error(1);
+					}
+				}
+				else
+				{
+					//err: Se esperaba un ;
+					error(1);
+				}
+			}
+			else
+			{
+				//err: Se esperaba un ;
+				error(1);
+			}
+		}	
+		else
+		{
+			//err: Se esperaba un parentesis de apertura
+			error(1);
+		}
+	}
+	else
+	{
+		//err: Se esperaba la palabra reservada "For".
+		error(1);
+	}
+}
+
+
+void INSTRUCCION() 
+{  
+	//TODO: Evaluar instrucciones ASIGNACIï¿½N(), INS_IF(), INS_WHILE(), INS_FOR(), INS_SWITCH(), INS_DO(), INS_CONSOLEWRITE(), INS_CONSOLEREAD(), ABRIR_ARCHIVO(), tok_id
+	
+
+	if(token == tok_id)
+	{
+		ASIGNACION();
+		if(token == tok_finlinea)
+		{
+			//Se completo			
+			obtoken();
+		}
+		else
+		{
+			//err: Se esperaba un ;
+			error(1);
+		}
+	}
+	else if(token == tok_if)
+	{
+		INS_IF();
+		if(token == tok_finlinea)
+		{
+			//Se completo			
+			obtoken();
+		}
+		else
+		{
+			//err: Se esperaba un ;
+			error(1);
+		}
+	}
+	else if(token == tok_while)
+	{
+		INS_WHILE();
+		if(token == tok_finlinea)
+		{
+			//Se completo			
+			obtoken();
+		}
+		else
+		{
+			//err: Se esperaba un ;
+			error(1);
+		}
+	}
+	else if(token == tok_for)
+	{
+		INS_FOR();
+		if(token == tok_finlinea)
+		{
+			//Se completo			
+			obtoken();
+		}
+		else
+		{
+			//err: Se esperaba un ;
+			error(1);
+		}
+	}
+	else if(token == tok_write)
+	{
+		INS_CONSOLEWRITE();
+		if(token == tok_finlinea)
+		{
+			//Se completo			
+			obtoken();
+		}
+		else
+		{
+			//err: Se esperaba un ;
+			error(1);
+		}
+	}
+	else if(token == tok_read)
+	{
+		INS_CONSOLEREAD();
+		if(token == tok_finlinea)
+		{
+			//Se completo			
+			obtoken();
+		}
+		else
+		{
+			//err: Se esperaba un ;
+			error(1);
+		}
+	}
+	else if(token == tok_switch)
+	{
+		INS_SWITCH();
+		if(token == tok_finlinea)
+		{
+			//Se completo			
+			obtoken();
+		}
+		else
+		{
+			//err: Se esperaba un ;
+			error(1);
+		}
+	}
+	else if(token == tok_do)
+	{
+		INS_DO();
+		if(token == tok_finlinea)
+		{
+			//Se completo			
+			obtoken();
+		}
+		else
+		{
+			//err: Se esperaba un ;
+			error(1);
+		}
+	}
+	else if(token == tok_fileopen)
+	{
+		ABRIR_ARCHIVO();
+		if(token == tok_finlinea)
+		{
+			//Se completo			
+			obtoken();
+		}
+		else
+		{
+			//err: Se esperaba un ;
+			error(1);
+		}
+	}
+	else
+	{
+		//err: Se esperaba un Identificador, if, while, for, write, read, switch, do o fileopen.
+		error(1);
+	}
+			
+	
+}
+void PAREN_CONDICION() 
+{  
+	if(token == tok_parena)
+	{
+		obtoken();
+		CONDICION();
+		if(token == tok_parenc)
+		{	
+			//EXITOOOO
+			obtoken();
+		}
+		else
+		{
+			//err: Se esperaba un parï¿½ntesis de cierre.
+			exit(1);
+		}
+	}
+	else
+	{
+		//err: Se esperaba un parï¿½ntesis de apertura.
+		exit(1);
+	}	
+}
+void LLAVE_INSTRUCCION() 
+{  
+	if(token == tok_llavea)
+	{
+		obtoken();
+		INSTRUCCION();
+		if(token == tok_llavec)
+		{	
+			//EXITOOOO
+			obtoken();
+		}
+		else
+		{
+			//err: Se esperaba un parï¿½ntesis de cierre.
+			exit(1);
+		}
+	}
+	else
+	{
+		//err: Se esperaba un parï¿½ntesis de apertura.
+		exit(1);
+	}
+}
+void ARREGLO() 
+{  
+	if(token == tok_llavea)
+	{
+		obtoken();
+		if(token == tok_flotante || token == tok_numero || token = tok_cadena || token = tok_boolean || token == tok_caracter){
+			if (token == tok_flotante)
+			{
+				obtoken();
+				do	
+				{
+					if(token == tok_coma)
+					{
+						obtoken();
+						if(token == tok_flotante)
+						{
+							obtoken();
+						}
+						else
+						{
+							//Err: Se esperaba un flotante.
+							exit(1);
+						}
+					}
+					else
+					{
+						//err: Se esperaba una coma.
+						exit(1);
+					}
+				}while(token != tok_finlinea);
+			}
+
+			if (token == tok_numero)
+			{
+				obtoken();
+				do	
+				{
+					if(token == tok_coma)
+					{
+						obtoken();
+						if(token == tok_numero)
+						{
+							obtoken();
+						}
+						else
+						{
+							//Err: Se esperaba un entero.
+							exit(1);
+						}
+					}
+					else
+					{
+						//err: Se esperaba una coma.
+						exit(1);
+					}
+				}while(token != tok_finlinea);
+			}
+
+			if (token == tok_cadena)
+			{
+				obtoken();
+				do	
+				{
+					if(token == tok_coma)
+					{
+						obtoken();
+						if(token == tok_cadena)
+						{
+							obtoken();
+						}
+						else
+						{
+							//Err: Se esperaba una cadena.
+							exit(1);
+						}
+					}
+					else
+					{
+						//err: Se esperaba una coma.
+						exit(1);
+					}
+				}while(token != tok_finlinea);
+			}
+
+			if (token == tok_boolean)
+			{
+				obtoken();
+				do	
+				{
+					if(token == tok_coma)
+					{
+						obtoken();
+						if(token == tok_boolean)
+						{
+							obtoken();
+						}
+						else
+						{
+							//Err: Se esperaba un booleano.
+							exit(1);
+						}
+					}
+					else
+					{
+						//err: Se esperaba una coma.
+						exit(1);
+					}
+				}while(token != tok_finlinea);
+			}
+
+			if (token == tok_caracter)
+			{
+				obtoken();
+				do	
+				{
+					if(token == tok_coma)
+					{
+						obtoken();
+						if(token == tok_caracter)
+						{
+							obtoken();
+						}
+						else
+						{
+							//Err: Se esperaba un caracter.
+							exit(1);
+						}
+					}
+					else
+					{
+						//err: Se esperaba una coma.
+						exit(1);
+					}
+				}while(token != tok_finlinea);
+			}
+		}
+		else
+		{
+			//err: Se esperaba un flotante, entero, cadena, booleano o caracter.
+			exit(1);
+		}
+	}
+	else
+	{
+		//err: Se esperaba una llave de apertura
+		exit(1);
+	}
+}
 void EXPRESION_NUM() {  }
-void EXPRESIÓN_CAD() {  }
+void EXPRESIï¿½N_CAD() {  }
 void EXPRESION_BOOL() {  }
 void CONDICION() {  }
 void COMPAGENERAL() {  }
