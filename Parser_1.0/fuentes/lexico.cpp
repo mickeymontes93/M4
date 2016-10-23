@@ -1,10 +1,10 @@
 #include "lexico.h"
 
 //se define e inicializa la tabla de lexemes correspondientes a las palabras reservadas
-char *lexpal[MAXPAL] = { 	"arccos", "arcsin", "arctan", "arr.bool", "arr.char", "arr.float", "arr.int", "arr.str", "break", "cadena", "case", "concat", "console.read",
+char *lexpal[MAXPAL] = {    "arccos", "arcsin", "arctan", "arr.bool", "arr.char", "arr.float", "arr.int", "arr.str", "break", "cadena", "case", "concat", "console.read",
                             "console.write", "cos", "default", "do", "else", "equal", "false", "file.fclose", "file.fgets", "for", "func.bool", "func.char", "func.float",
                             "func.int", "func.str", "func.void", "if", "length", "log", "main", "pow", "replace", "return", "round", "sin", "split", "sqrt", "substring", "switch", "tan",
-                            "trim", "true", "var.bool", "var.char", "var.file", "var.float", "var.fopen", "var.fscanf", "var.int", "var.str", "while", "COMENTARIO"
+                            "trim", "true", "var.bool", "var.char", "var.file", "var.float", "file.fopen", "file.fscanf", "var.int", "var.str", "while", "COMENTARIO"
                        };
 
 //el token

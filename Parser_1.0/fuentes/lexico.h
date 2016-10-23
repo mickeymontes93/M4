@@ -3,9 +3,6 @@
 //lexemes de las palabras reservadas
 extern char *lexpal[MAXPAL];
 
-//lista de tokens de pl0
-//enum simbolo {nulo,ident,numero,mas,menos,por,barra,oddtok,igl,nig,mnr,mei,myr,mai,parena,parenc,coma,puntoycoma,
-//	          punto,asignacion,begintok,endtok,iftok,thentok,whiletok,dotok,calltok,consttok,vartok,proctok}; //definido aquí en el encabezado
 
 enum simbolo {tok_null, tok_id, tok_numero, tok_flotante, tok_caracter, tok_cadena, tok_boolean, tok_amp, tok_llavea, tok_llavec, tok_parena,
               tok_parenc, tok_corcha, tok_corchc, tok_finlinea, tok_punto, tok_coma, tok_sum, tok_resta, tok_multi, tok_divi, tok_asignar, tok_sumasign,
