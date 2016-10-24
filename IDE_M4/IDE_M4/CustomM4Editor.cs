@@ -117,5 +117,13 @@ namespace IDE_M4 {
             e.ChangedRange.SetStyle(RedStyle, StringRegex);
             e.ChangedRange.SetStyle(GreenStyle, CommentRegex);
         }
+
+        public void create_hint(string errorMessage, int lineNumber)
+        {
+            Range range = new Range(fctb, lineNumber);
+            fctb.Hints.Clear();
+            Hint hint = new Hint(range, errorMessage, true, true);
+            fctb.Hints.Add(hint);
+        }
     }
 }
