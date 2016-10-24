@@ -7,7 +7,11 @@
 #include "scanner.h"
 
 //funciones auxiliares del parser
-int IS_VARIABLE();
+int IS_VARIABLE(),IS_DATA_NUM(),IS_IDENTIFICADOR(),IS_OPERACION_NUM(),
+	IS_FUN_SUBSTRING(),IS_FUN_CONCAT(),IS_FUN_REPLACE(),IS_DATA_CAD(),
+	IS_EXPRESION_BOOL(),IS_EXPRESION_ARR(),IS_EXPRESION_CAD(),IS_EXPRESION_NUM(),
+	IS_COMPANUM(),IS_COMPAGENERAL(),IS_DECLARACION(),IS_FUNCION(),
+	IS_FUNCION_INSTRUCCION(),IS_ARREGLO();
 
 int IS_VARIABLE() {
 	if ( token == tok_arrEntero ||
@@ -98,6 +102,13 @@ int IS_EXPRESION_BOOL(){
 		return 0;
 }
 
+int IS_EXPRESION_ARR(){
+	if (token == tok_split || IS_ARREGLO()) 
+		return 1;
+	 else
+		return 0;
+}
+
 int IS_EXPRESION_CAD(){
 	if(IS_FUN_CONCAT() || IS_FUN_SUBSTRING() ||
 		IS_FUN_REPLACE() || IS_DATA_CAD() || token == tok_id
@@ -119,7 +130,6 @@ int IS_EXPRESION_NUM(){
 	else
 		return 0;
 }
-
 
 int IS_COMPANUM(){
 	if(token == tok_menor || token == tok_menorigual ||
@@ -154,6 +164,13 @@ int IS_FUNCION(){
 
 int IS_FUNCION_INSTRUCCION(){
 	if(IS_FUNCION())
+		return 1;
+	else
+		return 0;
+}
+
+int IS_ARREGLO(){
+	if(token == tok_llavea)
 		return 1;
 	else
 		return 0;

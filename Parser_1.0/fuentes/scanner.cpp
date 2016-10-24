@@ -65,7 +65,10 @@ void obtoken()
 		ch = obtch();
 		lexid[i] = '\0';
 		printf("\n%s", lexid);
-		token = tok_cadena;
+		if (i == 3)
+			token = tok_caracter;
+		else
+			token = tok_cadena;
 
 		strTemp[strlen(strTemp) - 1] = '\0';
 		strcpy(palabrasVar[k], strTemp);
@@ -105,7 +108,10 @@ void obtoken()
 		ch = obtch();
 		lexid[i] = '\0';
 		printf("\n%s", lexid);
-		token = tok_cadena;
+		if (i == 3)
+			token = tok_caracter;
+		else
+			token = tok_cadena;
 
 		strTemp[strlen(strTemp) - 1] = '\0';
 		strcpy(palabrasVar[k], strTemp);
