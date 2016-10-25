@@ -6,19 +6,6 @@
 #include "lexico.h"
 #include "scanner.h"
 
-//funciones auxiliares del parser
-int CHECK_VARIABLE();
-
-//funciones internas al parser
-
-void FUNCION_INSTRUCCION(), CONJUNVAR(), DECLARACION(), OPERACION_NUM(), TERMINO(), ASIGNACION(), FUN_SUBSTRING(), FUN_CONCAT();
-void FUN_REPLACE(), INS_DO(), INS_CONSOLEWRITE(), INS_CONSOLEREAD(), INS_SWITCH(), CASE(), ABRIR_ARCHIVO(), INS_IF(), INS_WHILE();
-void INS_FOR(), INSTRUCCION(), PAREN_CONDICION(), LLAVE_INSTRUCCION(), DATA_NUM(), DATA_CAD(), ARREGLO(), IDENTIFICADOR();
-int IDENTIFICADOR(), EXPRESION_ARR();
-void EXPRESION_NUM(), EXPRESION_CAD(), EXPRESION_BOOL(), CONDICION(), COMPAGENERAL(), COMPANUM(), CAD_VAR(), FUNCION(), VARIABLE();
-void TIPO_FILE(), BLOQUE();
-
-
 
 void ABRIR_ARCHIVO() {
 	if (token == tok_fileopen) {
@@ -182,7 +169,7 @@ void ASIGNACION() {
 
 void BLOQUE() {
 	if (IS_DECLARACION()) {
-		DECLARACION()
+		DECLARACION();
 	}
 	while (IS_FUNCION()) {
 		FUNCION();
@@ -315,7 +302,7 @@ void CONDICION() {
 		}
 	} else if (IS_EXPRESION_CAD()) {
 		COMPAGENERAL();
-		EXPRESIÓN_CAD();
+		EXPRESION_CAD();
 
 		if (token == tok_or || token == tok_and) {
 			obtoken();
@@ -406,10 +393,10 @@ void EXPRESION_ARR() {
 		obtoken();
 		if (token == tok_parena) {
 			obtoken();
-			EXPRESIÓN_CAD();
+			EXPRESION_CAD();
 			if (token == tok_coma) {
 				obtoken();
-				EXPRESIÓN_CAD();
+				EXPRESION_CAD();
 				if (token == tok_parenc) {
 					obtoken();
 				} else {
@@ -441,10 +428,10 @@ void EXPRESION_BOOL() {
 			obtoken();
 			if (token == tok_parena) {
 				obtoken();
-				EXPRESIÓN_CAD();
+				EXPRESION_CAD();
 				if (token == tok_coma) {
 					obtoken();
-					EXPRESIÓN_CAD();
+					EXPRESION_CAD();
 					if (token == tok_parenc) {
 						obtoken();
 					} else {
@@ -602,7 +589,7 @@ void EXPRESION_NUM() {
 				} else {
 					if (token == tok_parena) {
 						obtoken();
-						EXPRESIÓN_CAD();
+						EXPRESION_CAD();
 						if (token == tok_parenc) {
 							obtoken();
 						} else {
@@ -842,10 +829,10 @@ void INS_CONSOLEREAD() {
 void INS_CONSOLEWRITE() {
 	if (token == tok_write) {
 		obtoken();
-		if (toke == tok_parena) {
+		if (token == tok_parena) {
 			obtoken();
 			EXPRESION_CAD();
-			if (toke == tok_coma) {
+			if (token == tok_coma) {
 				obtoken();
 				if (token == tok_id) {
 					obtoken();
@@ -888,7 +875,7 @@ void INS_DO() {
 		LLAVE_INSTRUCCION();
 		if (token == tok_while) {
 			obtoken();
-			PAREN_INSTRUCCION();
+			PAREN_CONDICION();
 		} else {
 			// Se esperaba una instruccion while
 			error(44);
@@ -911,7 +898,7 @@ void INS_FOR() {
 				if (token == tok_finlinea) {
 					obtoken();
 					OPERACION_NUM();
-					if (token == parenc) {
+					if (token == tok_parenc) {
 						obtoken();
 						LLAVE_INSTRUCCION();
 						//Se completo
@@ -1109,7 +1096,7 @@ void PROGRAMA() {
 
 void TERMINO() {
 	EXPRESION_NUM();
-	while (token == tok_multi || toke == tok_divi) {
+	while (token == tok_multi || token == tok_divi) {
 		obtoken();
 		EXPRESION_NUM();
 	}

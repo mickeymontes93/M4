@@ -4,6 +4,7 @@
 #include "tds.h"
 #include "auxiliares.h"
 #include "scanner.h"
+#include "parametros.h"
 
 int it = 0; //Indice para realizar busqueda de posicion       
 

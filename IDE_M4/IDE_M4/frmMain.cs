@@ -160,12 +160,22 @@ namespace IDE_M4 {
                     RedirectStandardOutput = true,
                     CreateNoWindow = true
                 }
+
             };
 
             proc.Start();
             while (!proc.StandardOutput.EndOfStream) {
                 string line = proc.StandardOutput.ReadLine();
-                this.txtConsole.Text += line + Environment.NewLine;
+                var decompose = line.Split('~');
+                if (decompose.Count() >= 2)
+                {
+                    var lineNUmber = Convert.ToInt32(decompose[1]);
+                    editor.create_hint(decompose[0], lineNUmber);
+                }
+                else
+                {
+                    this.txtConsole.Text += line + Environment.NewLine;
+                }
                 // do something with line
             }
         }

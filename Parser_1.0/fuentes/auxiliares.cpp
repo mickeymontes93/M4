@@ -6,6 +6,7 @@
 #include "pl0.h"
 #include "auxiliares.h"
 #include "lexico.h"
+#include "mensajes_de_error.h"
 
 int MAXLINEA =  1000;  //tamaño máximo de una línea del programa fuente
 int MAXDIGIT =  5;  //máximo número de dígitos en los enteros
@@ -19,6 +20,15 @@ int error(int no) {
   fclose(fp);//cerrar el programa fuente
   printf ("\n^ error %d: %s\n",no,mensaje_de_error[no]);
   exit(1); //estoy en modo de pánico...cualquier error es fatal
+}
+
+//estadísticas: por el momento solo se invocará cuándo el fuente no tenga errores
+//sufrirá modificaciones cuándo se presente el compilador completo
+int estadisticas()
+{
+ printf("\n\n***   Estadisticas globales   ***\n");
+ printf("***  No se detectaron errores ***");
+ return(0);
 }
 
 //inicializar_espec

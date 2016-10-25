@@ -6,12 +6,6 @@
 #include "lexico.h"
 #include "scanner.h"
 
-//funciones auxiliares del parser
-int IS_VARIABLE(),IS_DATA_NUM(),IS_IDENTIFICADOR(),IS_OPERACION_NUM(),
-	IS_FUN_SUBSTRING(),IS_FUN_CONCAT(),IS_FUN_REPLACE(),IS_DATA_CAD(),
-	IS_EXPRESION_BOOL(),IS_EXPRESION_ARR(),IS_EXPRESION_CAD(),IS_EXPRESION_NUM(),
-	IS_COMPANUM(),IS_COMPAGENERAL(),IS_DECLARACION(),IS_FUNCION(),
-	IS_FUNCION_INSTRUCCION(),IS_ARREGLO();
 
 int IS_VARIABLE() {
 	if ( token == tok_arrEntero ||
@@ -124,7 +118,7 @@ int IS_EXPRESION_NUM(){
 	        token == tok_arccos || token == tok_tan ||
 	        token == tok_arctan || token == tok_sqrt || 
 	        token == tok_length || token == tok_pow || token == tok_log ||
-	        IS_DATA_NUM() || IS_OPERACION_NUM() || oken == tok_parena ||
+	        IS_DATA_NUM() || IS_OPERACION_NUM() || token == tok_parena ||
 	        token == tok_id)
 		return 1;
 	else
