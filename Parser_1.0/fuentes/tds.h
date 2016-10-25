@@ -6,7 +6,7 @@
 //tipos de objetos de pl0
 enum objeto {TIPO_VARIABLE,TIPO_ARREGLO,TIPO_FUNCION}; //definidos aquí en el encabezado
 
-typedef struct {
+typedef struct struct_reg{
  int cab;
  char *nombre;
  enum objeto tipo;

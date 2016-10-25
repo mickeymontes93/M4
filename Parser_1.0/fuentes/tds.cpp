@@ -8,6 +8,8 @@
 
 int it = 0; //Indice para realizar busqueda de posicion       
 
+registro* agregar_registro(registro*, enum objeto, int);
+
 void poner(enum objeto k)
 {
 it++;
@@ -49,7 +51,7 @@ registro* agregar_registro(registro* reg, enum objeto k, int it) {
 
 int posicion(){
 	int i=0;
-	registro Auxiliar;
+	registro* Auxiliar;
 	Auxiliar = tabla;
 	while(Auxiliar!= NULL)
 	{
