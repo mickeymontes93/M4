@@ -14,6 +14,7 @@ int offset;               //corrimiento en la lectura de los caracteres del prog
 int fin_de_archivo;       //bandera de fin de archivo (obtch)
 int ch;                   //último caracter leído
 long int valor ;          //valor numérico de una lexeme correspondiene a un número
+int ln = 0;				  //contador de lineas;
 
 int obtch(), getline(char s[], int lim); //funciones internas a scanner.cpp
 
@@ -344,6 +345,7 @@ int getline(char s[], int lim)
 	}
 
 	s[i] = '\0';
+	ln++;
 	return (i);
 }
 

@@ -7,6 +7,7 @@
 #include "auxiliares.h"
 #include "lexico.h"
 #include "mensajes_de_error.h"
+#include "scanner.h"
 
 int MAXLINEA =  1000;  //tamaño máximo de una línea del programa fuente
 int MAXDIGIT =  5;  //máximo número de dígitos en los enteros
@@ -18,7 +19,7 @@ int cantElementosSplit;
 //error: por el momento todo error es fatal
 int error(int no) {
   fclose(fp);//cerrar el programa fuente
-  printf ("\n^ error %d: %s\n",no,mensaje_de_error[no]);
+  printf ("\n^ error %d: %s\n~%d",no,mensaje_de_error[no],ln);
   exit(1); //estoy en modo de pánico...cualquier error es fatal
 }
 
