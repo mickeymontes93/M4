@@ -6,14 +6,19 @@
 //tipos de objetos de pl0
 enum objeto {VARIABLE,ARREGLO,FUNCION}; //definidos aquí en el encabezado
 
-typedef struct {
+typedef struct struct_reg{
+ int cab;
  char nombre[MAXID+1];
  enum objeto tipo;
+
+ struct struct_reg* sig;
 } registro;
 
+
 //tabla de símbolos
-extern registro tabla[MAXIT+1]; //MAXIT en parametros (+1 porque tabla[0] esta reservada)
+extern registro tabla;
 extern int it;                  //índice para recorrer la tabla 
 
 void poner(enum objeto k);
 int posicion();
+
