@@ -6,54 +6,57 @@
 #include "scanner.h"
 #include "parametros.h"
 
-int it = 0; //Indice para realizar busqueda de posicion       
+int it = 0; //Indice para realizar busqueda de posicion
+int posicion();
+registro* crear_registro(enum objeto k, int it);
+registro* agregar_registro(registro* reg, enum objeto k, int it);
+void borrar_registro(registro* regViejo);
 
 registro* agregar_registro(registro*, enum objeto, int);
 
-void poner(enum objeto k)
-{
-it++;
-tabla = agregar_registro(tabla,k,it);
+void poner(enum objeto k) {
+	it++;
+	tabla = agregar_registro(tabla, k, it);
 }
 
 //Funciones para manejar la TDS
 //Se crea la lista de registros, esto inicializa la posición "0"
 registro* crear_registro(enum objeto k, int it) {
-        registro* newReg = malloc(sizeof(registro));
-        if (NULL != newReg){
+	registro* newReg = (registro*) malloc(sizeof(registro));
+	if (NULL != newReg) {
 		newReg->cab = it;
-                newReg->tipo = k;
+		newReg->tipo = k;
 		newReg->nombre = lex;
-                newReg->sig = NULL;
-        }
-        return newReg;
+		newReg->sig = NULL;
+	}
+	return newReg;
 }
 
 void borrar_registro(registro* regViejo) {
-        if (NULL != regViejo->sig) {
-                borrar_registro(regViejo->sig);
-        }
-        free(regViejo);
+	if (NULL != regViejo->sig) {
+		borrar_registro(regViejo->sig);
+	}
+	free(regViejo);
 }
-	
+
 //Con agregar registro se van agregando los elementos de la TDS
 registro* agregar_registro(registro* reg, enum objeto k, int it) {
-        registro* newReg = crear_registro(k, it);
-        if (NULL != newReg) {
-                newReg->sig = reg;
-        }
-        return newReg;
+	registro* newReg = crear_registro(k, it);
+	if (NULL != newReg) {
+		newReg->sig = reg;
+	}
+	return newReg;
 }
 
 //poner un objeto: CONSTANTE, VARIABLE o PROCEDIMIENTO en la tds
 
 //posicion: encontrar en la tds al identificador para ver si ya fue declarado y si su uso es semánticamente legal
 
-int posicion(){
-	int i=0;
+int posicion() {
+	int i = 0;
 	registro* Auxiliar;
 	Auxiliar = tabla;
-	while(Auxiliar!= NULL)
+	while (Auxiliar != NULL)
 	{
 		if (Auxiliar->nombre == lex)
 		{
@@ -62,10 +65,10 @@ int posicion(){
 		Auxiliar = Auxiliar->sig;
 		i++;
 	}
-	if (Auxiliar == NULL){
-		i=0;
+	if (Auxiliar == NULL) {
+		i = 0;
 	}
-	return(i);
+	return (i);
 }
 
 
