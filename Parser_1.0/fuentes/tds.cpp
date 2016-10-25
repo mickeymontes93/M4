@@ -4,6 +4,7 @@
 #include "tds.h"
 #include "auxiliares.h"
 #include "scanner.h"
+#include "parametros.h"
 
 registro tabla[MAXIT+1];  //tabla de símbolos (+1 porque tabla[0] esta reservada)
 int it;                   //índice para recorrer la tabla

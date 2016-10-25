@@ -4,15 +4,15 @@
 //sufrirá modificaciones cuándo se presente el compilador completo
 
 //tipos de objetos de pl0
-enum objeto {VARIABLE,ARREGLO,FUNCION}; //definidos aquí en el encabezado
+enum objeto {TIPO_VARIABLE,TIPO_ARREGLO,TIPO_FUNCION}; //definidos aquí en el encabezado
 
 typedef struct {
- char nombre[MAXID+1];
+ char *nombre;
  enum objeto tipo;
 } registro;
 
 //tabla de símbolos
-extern registro tabla[MAXIT+1]; //MAXIT en parametros (+1 porque tabla[0] esta reservada)
+extern registro *tabla; //MAXIT en parametros (+1 porque tabla[0] esta reservada)
 extern int it;                  //índice para recorrer la tabla 
 
 void poner(enum objeto k);
