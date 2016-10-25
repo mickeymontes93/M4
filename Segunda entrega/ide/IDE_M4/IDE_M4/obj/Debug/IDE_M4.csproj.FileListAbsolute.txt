@@ -1,0 +1,14 @@
+C:\Users\jeronimo\Documents\Visual Studio 2013\Projects\IDE_M4\IDE_M4\bin\Debug\IDE_M4.exe.config
+C:\Users\jeronimo\Documents\gitProjects\M4\IDE_M4\IDE_M4\bin\Debug\IDE_M4.exe.config
+C:\Users\jeronimo\Documents\gitProjects\M4\IDE_M4\IDE_M4\bin\Debug\IDE_M4.exe
+C:\Users\jeronimo\Documents\gitProjects\M4\IDE_M4\IDE_M4\bin\Debug\IDE_M4.pdb
+C:\Users\jeronimo\Documents\gitProjects\M4\IDE_M4\IDE_M4\bin\Debug\FastColoredTextBox.dll
+C:\Users\jeronimo\Documents\gitProjects\M4\IDE_M4\IDE_M4\bin\Debug\FastColoredTextBox.xml
+C:\Users\jeronimo\Documents\gitProjects\M4\IDE_M4\IDE_M4\obj\Debug\IDE_M4.CustomM4Editor.resources
+C:\Users\jeronimo\Documents\gitProjects\M4\IDE_M4\IDE_M4\obj\Debug\IDE_M4.frmMain.resources
+C:\Users\jeronimo\Documents\gitProjects\M4\IDE_M4\IDE_M4\obj\Debug\IDE_M4.frmNuevoArchivo.resources
+C:\Users\jeronimo\Documents\gitProjects\M4\IDE_M4\IDE_M4\obj\Debug\IDE_M4.frmParametrizacionScanner.resources
+C:\Users\jeronimo\Documents\gitProjects\M4\IDE_M4\IDE_M4\obj\Debug\IDE_M4.Properties.Resources.resources
+C:\Users\jeronimo\Documents\gitProjects\M4\IDE_M4\IDE_M4\obj\Debug\IDE_M4.csproj.GenerateResource.Cache
+C:\Users\jeronimo\Documents\gitProjects\M4\IDE_M4\IDE_M4\obj\Debug\IDE_M4.exe
+C:\Users\jeronimo\Documents\gitProjects\M4\IDE_M4\IDE_M4\obj\Debug\IDE_M4.pdb
