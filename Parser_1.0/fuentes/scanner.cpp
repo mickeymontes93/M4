@@ -64,7 +64,7 @@ void obtoken()
 		} while (ch != 34);
 		ch = obtch();
 		lexid[i] = '\0';
-		printf("\n%s", lexid);
+		//printf("\n%s", lexid);
 		if (i == 3)
 			token = tok_caracter;
 		else
@@ -107,7 +107,7 @@ void obtoken()
 		} while (ch != 39);
 		ch = obtch();
 		lexid[i] = '\0';
-		printf("\n%s", lexid);
+		//printf("\n%s", lexid);
 		if (i == 3)
 			token = tok_caracter;
 		else
@@ -156,7 +156,7 @@ void obtoken()
 			else // Es identificador
 				token = tok_id;
 
-			printf("\n%s", lexid);
+			//printf("\n%s", lexid);
 
 			strcpy(lex, lexid); //copiar en lex
 		}
@@ -178,73 +178,73 @@ void obtoken()
 				if (es_flotante == 1) token = tok_flotante;
 				else token = tok_numero;
 				valor = atol(lexid); //valor numérico de una lexeme correspondiene a un número
-				printf("\n%s", lexid);
+				//printf("\n%s", lexid);
 			}
 			else //reconocimiento de símbolos especiales, incluyendo pares de simbolos (aplicamos "lookahead symbol technique")
 				if (ch == '<') {
 					ch = obtch();
 					if (ch == '=') {
-						printf("\n<=");
+						//printf("\n<=");
 						token = tok_menorigual;
 						ch = obtch();
 					}
 					else {
-						printf("\n<");
+						//printf("\n<");
 						token = tok_menor;
 					}
 					/*if (ch=='>') {
-						printf("\n<>");
+						//printf("\n<>");
 					   token=tok_null;
 					   ch=obtch();
 					}
 					else{
-						printf("\n<");
+						//printf("\n<");
 					   token=tok_menor;
 					}*/
 				}
 				else if (ch == '>') {
 					ch = obtch();
 					if (ch == '=') {
-						printf("\n>=");
+						//printf("\n>=");
 						token = tok_mayorigual;
 						ch = obtch();
 					}
 					else {
-						printf("\n>");
+						//printf("\n>");
 						token = tok_mayor;
 					}
 				}
 				else if (ch == ':') {
 					ch = obtch();
 					if (ch == '=') {
-						printf("\n:=");
+						//printf("\n:=");
 						token = tok_asignar;
 						ch = obtch();
 					}
 					else {
-						printf("\n%c", ch);
+						//printf("\n%c", ch);
 						token = tok_null;
 					}
 				} else {
 					if (ch == '+') {
 						ch = obtch();
 						if (ch == '=') {
-							printf("\n+=");
+							//printf("\n+=");
 							token = tok_sumasign;
 							ch = obtch();
 						} else {
-							printf("\n%c", ch);
+							//printf("\n%c", ch);
 							token = tok_sum;
 						}
 					} else {
 						if (ch == '=') {
 							ch = obtch();
 							if (ch == '=') {
-								printf("\n==");
+								//printf("\n==");
 								token = tok_igual;
 								ch = obtch();
 							} else {
-								printf("\n%c", ch);
+								//printf("\n%c", ch);
 								token = tok_null;
 							}
 
@@ -252,37 +252,37 @@ void obtoken()
 							if (ch == '!') {
 								ch = obtch();
 								if (ch == '=') {
-									printf("\n!=");
+									//printf("\n!=");
 									token = tok_negacion;
 									ch = obtch();
 								} else {
-									printf("\n%c", ch);
+									//printf("\n%c", ch);
 									token = tok_null;
 								}
 							} else {
 								if (ch == '&') {
 									ch = obtch();
 									if (ch == '&') {
-										printf("\n&&");
+										//printf("\n&&");
 										token = tok_and;
 										ch = obtch();
 									} else {
-										printf("\n%c", ch);
+										//printf("\n%c", ch);
 										token = tok_null;
 									}
 								} else {
 									if (ch == '|') {
 										ch = obtch();
 										if (ch == '|') {
-											printf("\n||");
+											//printf("\n||");
 											token = tok_or;
 											ch = obtch();
 										} else {
-											printf("\n%c", ch);
+											//printf("\n%c", ch);
 											token = tok_null;
 										}
 									} else {
-										printf("\n%c", ch);
+										//printf("\n%c", ch);
 										token = espec[ch]; //hashing directo en la tabla de tokens de símbolos especiales del lenguaje
 										ch = obtch();
 									}
@@ -292,7 +292,7 @@ void obtoken()
 					}
 				}
 	/* else {
-	 	printf("\n%c",ch);
+	 	//printf("\n%c",ch);
 	    token=espec[ch]; //hashing directo en la tabla de tokens de símbolos especiales del lenguaje
 	    ch=obtch();
 	 }*/
@@ -304,7 +304,7 @@ int obtch()
 
 	if (fin_de_archivo == 1) {
 		fclose(fp);//cerrar el programa fuente
-		printf("\n\nFin del analisis lexicografico.\n");
+		printf("\n\nFin del analisis sintactico, Sintaxis correcta.\n");
 		exit(1); //salir...
 	}
 
@@ -314,7 +314,7 @@ int obtch()
 			fin_de_archivo = 1; //se retrasa en un blanco la deteccion de EOF, porque obtoken lleva un caracter adelantado. si no, en
 		//algunos casos tendríamos problemas, por ejemplo: no se reconoceria el punto final del programa (...end.)
 
-		//printf("\n%s",linea);
+		////printf("\n%s",linea);
 		offset = -1;
 	}
 
@@ -352,12 +352,12 @@ int busqueda_binaria_palabras_reservadas(int medio, char *palabra) {
 	int salir = 0;
 	do {
 		comparacion = strcmp(palabra, lexpal[medio]);
-		/*printf("\n\n\n-----------------------------------");
-		printf("\n PALABRA ACTUAL A BUSCAR : %s",palabra);
-		printf("\n MEDIO ANTERIOR: %d",medio_anterior );
-		printf("\nMEDIO ACTUAL: %d",medio);
-		printf("\nPALABRA RESERVADA lexpal[%d]: %s\n",medio, lexpal[medio]);
-		printf("\nRESULTADO DE LA COMPARACION: %d",comparacion);*/
+		/*//printf("\n\n\n-----------------------------------");
+		//printf("\n PALABRA ACTUAL A BUSCAR : %s",palabra);
+		//printf("\n MEDIO ANTERIOR: %d",medio_anterior );
+		//printf("\nMEDIO ACTUAL: %d",medio);
+		//printf("\nPALABRA RESERVADA lexpal[%d]: %s\n",medio, lexpal[medio]);
+		//printf("\nRESULTADO DE LA COMPARACION: %d",comparacion);*/
 
 		if (comparacion < 0) {
 			medio = medio - 1;
@@ -369,7 +369,7 @@ int busqueda_binaria_palabras_reservadas(int medio, char *palabra) {
 			//break;
 		}
 		if (comparacion == 0) {
-			//printf("\nentroooo\n");
+			////printf("\nentroooo\n");
 			salir = medio;
 			return medio;
 			//medio= MAXPAL+1;
@@ -377,7 +377,7 @@ int busqueda_binaria_palabras_reservadas(int medio, char *palabra) {
 
 
 		//return medio;
-		//printf("\n-----------------------------------\n\n");
+		////printf("\n-----------------------------------\n\n");
 	} while (medio >= 0 && medio <= MAXPAL && medio_anterior <= MAXPAL);
 	return -1;
 }

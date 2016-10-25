@@ -1,19 +1,21 @@
-﻿MAIN{
-    var.str d := "Soy una string";
-    var.int a; 
+main{
+    var.str d ;
+    var.str a; 
     var.int b;
-    var.int c := a + b; 
-    c+=1.56;
-    #Comentario
-    if(c==4 && a <=2 || b>=0){
-        var.bool banderita:= true;
+    var.float c 
+    var.bool banderita;
+	banderita:= true;
+	a:= "Soy una string";
+    c:=1.56;
+
+    if(c==4 && b <=2 || b>=0){
         while(banderita){
             console.write("hola %s %d %f mundo");
             banderita:=false;
             console.write('adios %d mundo');
         }
     }
-    #Otro comentario
+
     console.write("Prueba ");
     
 }

@@ -46,9 +46,6 @@ int main (int argc, char *argv[]) {
 			//activación del parser (en parser.h)
 			PROGRAMA();
 
-			if (token != tok_llavec)
-				error(9); //error 9: se esperaba un punto
-
 			//si llegamos a este punto, no se han detectado errores sintácticos en el programa fuente (estadisticas en auxiliares.cpp)
 			estadisticas();
 
