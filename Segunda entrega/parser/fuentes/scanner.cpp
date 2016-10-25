@@ -26,8 +26,7 @@ char palabras[MAXSTRING][MAXSTRING];
 char palabrasVar[MAXSTRING][MAXSTRING];
 char strTemp[MAXSTRING];
 
-//obtoken: obtiene el siguiente token del programa fuente
-void obtoken()
+void obtokenHelper()
 {
 	char lexid[MAXID + 1]; //+1 para colocar el marcador "\0"
 	int i, j;
@@ -297,6 +296,15 @@ void obtoken()
 	    token=espec[ch]; //hashing directo en la tabla de tokens de símbolos especiales del lenguaje
 	    ch=obtch();
 	 }*/
+}
+
+//obtoken: obtiene el siguiente token del programa fuente
+void obtoken()
+{
+	do
+	{
+		obtokenHelper();	
+	}while(token == COMENTARIO);
 }
 
 //obtch: obtiene el siguiente caracter del programa fuente

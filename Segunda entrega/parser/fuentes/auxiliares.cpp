@@ -19,7 +19,8 @@ int cantElementosSplit;
 //error: por el momento todo error es fatal
 int error(int no) {
   fclose(fp);//cerrar el programa fuente
-  printf ("\n^ error %d: %s~%d",no,mensaje_de_error[no],ln-1);
+  int numeroLinea = (no == 16)? ln-2 : ln-1;
+  printf ("\n^ error %d: %s~%d",no,mensaje_de_error[no],numeroLinea);
   exit(1); //estoy en modo de pánico...cualquier error es fatal
 }
 
