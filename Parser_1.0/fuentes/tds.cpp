@@ -7,6 +7,7 @@
 #include "parametros.h"
 
 int it = 0; //Indice para realizar busqueda de posicion
+registro *tabla;
 int posicion();
 registro* crear_registro(enum objeto k, int it);
 registro* agregar_registro(registro* reg, enum objeto k, int it);

@@ -1,5 +1,6 @@
 //un parser descendente deterministico para pl0
 #include <stdlib.h>
+#include <stdio.h>
 #include "parser.h"
 #include "tds.h"
 #include "auxiliares.h"
@@ -8,6 +9,7 @@
 
 
 void ABRIR_ARCHIVO() {
+	printf("*****************ABRIR_ARCHIVO\n");
 	if (token == tok_fileopen) {
 		obtoken();
 		if (token == tok_parena) {
@@ -64,6 +66,8 @@ void ABRIR_ARCHIVO() {
 }
 
 void ARREGLO() {
+
+	printf("*****************ARREGLO\n");
 	if (token == tok_corcha) {
 		obtoken();
 		if (token == tok_flotante || token == tok_numero || token == tok_cadena || token == tok_boolean || token == tok_caracter) {
@@ -141,6 +145,8 @@ void ARREGLO() {
 }
 
 void ASIGNACION() {
+
+	printf("*****************ASIGNACION\n");
 	if (token == tok_id) {
 		obtoken();
 		if (token == tok_asignar) {
@@ -168,6 +174,7 @@ void ASIGNACION() {
 }
 
 void BLOQUE() {
+	printf("*****************BLOQUE\n");
 	if (IS_DECLARACION()) {
 		DECLARACION();
 	}
@@ -193,6 +200,7 @@ void BLOQUE() {
 void CAD_VAR() {}
 
 void CASE() {
+	printf("*****************CASE\n");
 	if ( token == tok_case) {
 		while (token == tok_case) {
 			obtoken();
@@ -262,6 +270,7 @@ void CASE() {
 }
 
 void COMPAGENERAL() {
+	printf("*****************COMPAGENERAL\n");
 	if (token == tok_igual || token == tok_negacion) {
 		obtoken();
 	} else {
@@ -271,6 +280,7 @@ void COMPAGENERAL() {
 }
 
 void COMPANUM() {
+	printf("*****************COMPANUM\n");
 	if (token == tok_menor || token == tok_menorigual ||
 	        token == tok_mayor || token == tok_mayorigual) {
 		obtoken();
@@ -282,6 +292,7 @@ void COMPANUM() {
 
 
 void CONDICION() {
+	printf("*****************CONDICION\n");
 	if (IS_EXPRESION_BOOL()) {
 		EXPRESION_BOOL();
 	} else if (IS_EXPRESION_NUM()) {
@@ -315,6 +326,7 @@ void CONDICION() {
 }
 
 void CONJUNVAR() {
+	printf("*****************CONJUNVAR\n");
 	if (token == tok_parena) {
 		obtoken();
 		while (IS_VARIABLE()) {
@@ -344,6 +356,7 @@ void CONJUNVAR() {
 }
 
 void DATA_CAD() {
+	printf("*****************DATA_CAD\n");
 	if (IS_IDENTIFICADOR()) {
 		IDENTIFICADOR();
 	} else if (token == tok_cadena || token == tok_caracter) {
@@ -355,6 +368,7 @@ void DATA_CAD() {
 }
 
 void DATA_NUM() {
+	printf("*****************DATA_NUM\n");
 	if (IS_IDENTIFICADOR()) {
 		IDENTIFICADOR();
 		if (token == tok_sumasign) {
@@ -371,6 +385,7 @@ void DATA_NUM() {
 }
 
 void DECLARACION() {
+	printf("*****************DECLARACION\n");
 	while (IS_VARIABLE()) {
 		VARIABLE();
 		if (token == tok_id) {
@@ -389,6 +404,7 @@ void DECLARACION() {
 }
 
 void EXPRESION_ARR() {
+	printf("*****************EXPRESION_ARR\n");
 	if (token == tok_split) {
 		obtoken();
 		if (token == tok_parena) {
@@ -420,6 +436,7 @@ void EXPRESION_ARR() {
 }
 
 void EXPRESION_BOOL() {
+	printf("*****************EXPRESION_BOOL\n");
 	if (token == tok_true || token == tok_false ||
 	        token == tok_id) {
 		obtoken();
@@ -454,6 +471,7 @@ void EXPRESION_BOOL() {
 }
 
 void EXPRESION_CAD() {
+	printf("*****************EXPRESION_CAD\n");
 	if (IS_FUN_SUBSTRING()) {
 		FUN_SUBSTRING();
 	} else if (IS_FUN_CONCAT()) {
@@ -518,6 +536,7 @@ void EXPRESION_CAD() {
 }
 
 void EXPRESION_NUM() {
+	printf("*****************EXPRESION_NUM\n");
 	if (token == tok_round ||
 	        token == tok_sin ||
 	        token == tok_cos ||
@@ -611,6 +630,7 @@ void EXPRESION_NUM() {
 }
 
 void FUNCION() {
+	printf("*****************FUNCION\n");
 	if ( token == tok_funcint || token == tok_funcfloat
 	        || token ==  tok_funcchar || token ==  tok_funcstr
 	        || token == tok_funcvoid || token == tok_bool) {
@@ -622,6 +642,7 @@ void FUNCION() {
 }
 
 void FUNCION_INSTRUCCION() {
+	printf("*****************FUNCION_INSTRUCCION\n");
 	FUNCION();
 	if (token == tok_id) {
 		obtoken();
@@ -666,6 +687,7 @@ void FUNCION_INSTRUCCION() {
 }
 
 void FUN_CONCAT() {
+	printf("*****************FUN_CONCAT\n");
 	if (token == tok_concat) {
 		obtoken();
 		if (token == tok_parena) {
@@ -695,6 +717,7 @@ void FUN_CONCAT() {
 }
 
 void FUN_REPLACE() {
+	printf("*****************FUN_REPLACE\n");
 	if (token == tok_replace) {
 		obtoken();
 		if (token == tok_parena) {
@@ -731,6 +754,7 @@ void FUN_REPLACE() {
 }
 
 void FUN_SUBSTRING() {
+	printf("*****************FUN_SUBSTRING\n");
 	if (token == tok_substring) {
 		obtoken();
 		if (token == tok_parena) {
@@ -767,6 +791,7 @@ void FUN_SUBSTRING() {
 }
 
 void IDENTIFICADOR() {
+	printf("*****************IDENTIFICADOR\n");
 	if (token == tok_id) {
 		obtoken();
 		if (token == tok_corcha) {
@@ -787,6 +812,7 @@ void IDENTIFICADOR() {
 }
 
 void INS_CONSOLEREAD() {
+	printf("*****************INS_CONSOLEREAD\n");
 	if (token == tok_read) {
 		obtoken();
 		if (token == tok_parena) {
@@ -827,6 +853,7 @@ void INS_CONSOLEREAD() {
 }
 
 void INS_CONSOLEWRITE() {
+	printf("*****************INS_CONSOLEWRITE\n");
 	if (token == tok_write) {
 		obtoken();
 		if (token == tok_parena) {
@@ -870,6 +897,7 @@ void INS_CONSOLEWRITE() {
 }
 
 void INS_DO() {
+	printf("*****************INS_DO\n");
 	if (token == tok_do) {
 		obtoken();
 		LLAVE_INSTRUCCION();
@@ -887,6 +915,7 @@ void INS_DO() {
 }
 
 void INS_FOR() {
+	printf("*****************INS_FOR\n");
 	if (token == tok_for) {
 		obtoken();
 		if (token == tok_parena) {
@@ -925,6 +954,7 @@ void INS_FOR() {
 }
 
 void INS_IF() {
+	printf("*****************INS_IF\n");
 	if (token == tok_if) {
 		obtoken();
 		PAREN_CONDICION();
@@ -936,6 +966,7 @@ void INS_IF() {
 }
 
 void INS_SWITCH() {
+	printf("*****************INS_SWITCH\n");
 	if (token == tok_switch) {
 		obtoken();
 		if (token == tok_id) {
@@ -964,6 +995,7 @@ void INS_SWITCH() {
 }
 
 void INS_WHILE() {
+	printf("*****************INS_WHILE\n");
 	if (token == tok_while) {
 		obtoken();
 		PAREN_CONDICION();
@@ -975,6 +1007,7 @@ void INS_WHILE() {
 }
 
 void INSTRUCCION() {
+	printf("*****************INSTRUCCION\n");
 	//TODO: Evaluar instrucciones ASIGNACION(), INS_IF(), INS_WHILE(), INS_FOR(), INS_SWITCH(), INS_DO(), INS_CONSOLEWRITE(), INS_CONSOLEREAD(), ABRIR_ARCHIVO(), tok_id
 
 	if (token == tok_id) {
@@ -1029,6 +1062,7 @@ void INSTRUCCION() {
 }
 
 void LLAVE_INSTRUCCION() {
+	printf("*****************LLAVE_INSTRUCCION\n");
 	if (token == tok_llavea) {
 		obtoken();
 		INSTRUCCION();
@@ -1046,6 +1080,7 @@ void LLAVE_INSTRUCCION() {
 }
 
 void OPERACION_NUM() {
+	printf("*****************OPERACION_NUM\n");
 	while (token == tok_sum || token == tok_resta) {
 		obtoken();
 		TERMINO();
@@ -1053,6 +1088,7 @@ void OPERACION_NUM() {
 }
 
 void PAREN_CONDICION() {
+	printf("*****************PAREN_CONDICION\n");
 	if (token == tok_parena) {
 		obtoken();
 		CONDICION();
@@ -1070,6 +1106,7 @@ void PAREN_CONDICION() {
 }
 
 void PROGRAMA() {
+	printf("*****************PROGRAMA\n");
 	if (token == tok_main) {
 		obtoken();
 		if (token == tok_llavea) {
@@ -1095,6 +1132,7 @@ void PROGRAMA() {
 }
 
 void TERMINO() {
+	printf("*****************TERMINO\n");
 	EXPRESION_NUM();
 	while (token == tok_multi || token == tok_divi) {
 		obtoken();
@@ -1103,6 +1141,7 @@ void TERMINO() {
 }
 
 void TIPO_FILE() {
+	printf("*****************TIPO_FILE\n");
 	if ( token == tok_cadena) {
 		obtoken();
 	} else {
@@ -1112,6 +1151,7 @@ void TIPO_FILE() {
 }
 
 void VARIABLE() {
+	printf("*****************VARIABLE\n");
 	if ( token == tok_arrEntero || token == tok_arrFlotante
 	        || token ==  tok_arrCaracter || token ==  tok_arrBooleano
 	        || token == tok_arrCadena || token == tok_varint
