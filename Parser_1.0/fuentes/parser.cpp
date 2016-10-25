@@ -79,7 +79,7 @@ void ARREGLO() {
 						obtoken();
 					} else {
 						//Err: Se esperaba un flotante.
-						exit(28);
+						error(28);
 					}
 				}
 			} else if (token == tok_numero) {
@@ -90,7 +90,7 @@ void ARREGLO() {
 						obtoken();
 					} else {
 						//Err: Se esperaba un entero.
-						exit(29);
+						error(29);
 					}
 				}
 			} else if (token == tok_cadena) {
@@ -101,7 +101,7 @@ void ARREGLO() {
 						obtoken();
 					} else {
 						//Err: Se esperaba una cadena.
-						exit(30);
+						error(30);
 					}
 				}
 			} else if (token == tok_true || token == tok_false) {
@@ -112,7 +112,7 @@ void ARREGLO() {
 						obtoken();
 					} else {
 						//Err: Se esperaba un valor booleano.
-						exit(32);
+						error(32);
 					}
 				}
 			} else if (token == tok_caracter) {
@@ -123,7 +123,7 @@ void ARREGLO() {
 						obtoken();
 					} else {
 						//Err: Se esperaba un caracter.
-						exit(31);
+						error(31);
 					}
 				}
 			}
@@ -132,15 +132,15 @@ void ARREGLO() {
 				obtoken();
 			} else {
 				//err: Se esperaba corchete de cierre
-				exit(27);
+				error(27);
 			}
 		} else {
 			//err: Se esperaba un flotante, entero, cadena, booleano o caracter.
-			exit(1);
+			error(1);
 		}
 	} else {
 		//err: Se esperaba corchete de apertura
-		exit(26);
+		error(26);
 	}
 }
 
@@ -187,11 +187,11 @@ void BLOQUE() {
 				obtoken();
 			} else {
 				//err: Se esperaba punto y coma
-				exit(16);
+				error(16);
 			}
 		} else {
 			//err: Se esperaba un identificador
-			exit(5);
+			error(5);
 		}
 	}
 	INSTRUCCION();
@@ -275,7 +275,7 @@ void COMPAGENERAL() {
 		obtoken();
 	} else {
 		//err: Se esperaba un comparador == o !=
-		exit(11);
+		error(11);
 	}
 }
 
@@ -286,7 +286,7 @@ void COMPANUM() {
 		obtoken();
 	} else {
 		//err: Se esperaba un comparador numerico >, >=, < o <=
-		exit(12);
+		error(12);
 	}
 }
 
@@ -303,7 +303,7 @@ void CONDICION() {
 			COMPAGENERAL();
 		} else {
 			//err: Se esperaba un comparador !=, ==, >, >=, < o <=
-			exit(10);
+			error(10);
 		}
 
 		EXPRESION_NUM();
@@ -321,7 +321,7 @@ void CONDICION() {
 		}
 	} else {
 		//err: Se esperaba un expresion que genere un valor booleano
-		exit(36);
+		error(36);
 	}
 }
 
@@ -453,19 +453,19 @@ void EXPRESION_BOOL() {
 						obtoken();
 					} else {
 						//err: Se esperaba parentesis de cierre
-						exit(2);
+						error(2);
 					}
 				} else {
 					//err: Se esperaba una coma
-					exit(3);
+					error(3);
 				}
 			} else {
 				//err: Se esperaba parentesis de apertura
-				exit(1);
+				error(1);
 			}
 		} else {
 			//err: Se esperaba un valor booleano
-			exit(7);
+			error(7);
 		}
 	}
 }
@@ -494,15 +494,15 @@ void EXPRESION_CAD() {
 							obtoken();
 						} else {
 							//err: Se esperaba parentesis de cierre
-							exit(2);
+							error(2);
 						}
 					} else {
 						//err: Se esperaba un identificador
-						exit(5);
+						error(5);
 					}
 				} else {
 					//err: Se esperaba parentesis de apertura
-					exit(1);
+					error(1);
 				}
 			} else {
 				if (token == tok_fgets) {
@@ -515,19 +515,19 @@ void EXPRESION_CAD() {
 								obtoken();
 							} else {
 								//err: Se esperaba parentesis de cierre
-								exit(2);
+								error(2);
 							}
 						} else {
 							//err: Se esperaba un identificador
-							exit(5);
+							error(5);
 						}
 					} else {
 						//err: Se esperaba parentesis de apertura
-						exit(1);
+						error(1);
 					}
 				} else {
 					//err: Se esperaba una cadena
-					exit(6);
+					error(6);
 				}
 			}
 		}
@@ -554,11 +554,11 @@ void EXPRESION_NUM() {
 				obtoken();
 			} else {
 				//err: Se esperaba parentesis de cierre
-				exit(2);
+				error(2);
 			}
 		} else {
 			//err: Se esperaba parentesis de apertura
-			exit(1);
+			error(1);
 		}
 	} else {
 		if ( token == tok_length ) {
@@ -570,11 +570,11 @@ void EXPRESION_NUM() {
 					obtoken();
 				} else {
 					//err: Se esperaba parentesis de cierre
-					exit(2);
+					error(2);
 				}
 			} else {
 				//err: Se esperaba parentesis de apertura
-				exit(1);
+				error(1);
 			}
 		} else {
 			if (token == tok_pow || token == tok_log ) {
@@ -589,16 +589,16 @@ void EXPRESION_NUM() {
 							obtoken();
 						} else {
 							//err: Se esperaba parentesis de cierre
-							exit(2);
+							error(2);
 						}
 
 					} else {
 						//err: Se esperaba una coma
-						exit(3);
+						error(3);
 					}
 				} else {
 					//err: Se esperaba parentesis de apertura
-					exit(1);
+					error(1);
 				}
 			} else {
 				if (IS_DATA_NUM()) {
@@ -613,14 +613,14 @@ void EXPRESION_NUM() {
 							obtoken();
 						} else {
 							//err: Se esperaba parentesis de cierre
-							exit(2);
+							error(2);
 						}
 					} else {
 						if (token == tok_id ) {
 							obtoken();
 						} else {
 							//err: Se esperaba una expresion numerica o una variable
-							exit(4);
+							error(4);
 						}
 					}
 				}
@@ -637,7 +637,7 @@ void FUNCION() {
 		obtoken();
 	} else {
 		//err: Se esperaba un tipo de dato de retorno para la funcion
-		exit(14);
+		error(14);
 	}
 }
 
@@ -1071,11 +1071,11 @@ void LLAVE_INSTRUCCION() {
 			obtoken();
 		} else {
 			//err: Se esperaba llave de cierre
-			exit(19);
+			error(19);
 		}
 	} else {
 		//err: Se esperaba llave de apertura
-		exit(18);
+		error(18);
 	}
 }
 
@@ -1097,11 +1097,11 @@ void PAREN_CONDICION() {
 			obtoken();
 		} else {
 			//err: Se esperaba un parentesis de cierre.
-			exit(2);
+			error(2);
 		}
 	} else {
 		//err: Se esperaba un parentesis de apertura.
-		exit(1);
+		error(1);
 	}
 }
 
@@ -1119,15 +1119,15 @@ void PROGRAMA() {
 				}
 			} else {
 				//err: Se esperaba llave de cierre
-				exit(19);
+				error(19);
 			}
 		} else {
 			//err: Se esperaba llave de apertura
-			exit(18);
+			error(18);
 		}
 	} else {
 		//err: Se esperaba funcion main
-		exit(17);
+		error(17);
 	}
 }
 
@@ -1146,7 +1146,7 @@ void TIPO_FILE() {
 		obtoken();
 	} else {
 		//err: Se esperaba una cadena
-		exit(6);
+		error(6);
 	}
 }
 
@@ -1161,7 +1161,7 @@ void VARIABLE() {
 		obtoken();
 	} else {
 		//err: Se esperaba un tipo de dato para la variable
-		exit(15);
+		error(15);
 	}
 }
 
