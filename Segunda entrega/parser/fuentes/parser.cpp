@@ -197,7 +197,13 @@ void BLOQUE() {
 	INSTRUCCION();
 }
 
-void CAD_VAR() {}
+void CAD_VAR() {
+	if(token == tok_cadena){
+		obtoken();
+	}else{
+		error(6);
+	}
+}
 
 void CASE() {
 	//printf("*****************CASE\n");
@@ -830,7 +836,6 @@ void IDENTIFICADOR() {
 }
 
 void INS_CONSOLEREAD() {
-	//printf("*****************INS_CONSOLEREAD\n");
 	if (token == tok_read) {
 		obtoken();
 		if (token == tok_parena) {
@@ -838,6 +843,7 @@ void INS_CONSOLEREAD() {
 			CAD_VAR();
 			if (token == tok_coma) {
 				obtoken();
+				
 				if (token == tok_amp) {
 					obtoken();
 					if (token == tok_id) {
@@ -854,7 +860,7 @@ void INS_CONSOLEREAD() {
 					}
 				} else {
 					// Se esperaba un ampersand
-					error(43);
+					error(50);
 				}
 			} else {
 				// Se esperaba una coma
