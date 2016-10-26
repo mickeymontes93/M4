@@ -448,6 +448,7 @@ void EXPRESION_BOOL() {
 	if (token == tok_true || token == tok_false ||
 	        token == tok_id) {
 		obtoken();
+		CONJUNVAR();
 	} else {
 		if (token == tok_equal) {
 			obtoken();
@@ -485,6 +486,7 @@ void EXPRESION_CAD() {
 		if (i > 0) {
 			if ((regEncontrado->tipoDato == 3 || regEncontrado->tipoDato == 4) && regEncontrado->tipo == TIPO_FUNCION ) {
 				obtoken();
+				CONJUNVAR();
 			} else if ((regEncontrado->tipoDato == 3 || regEncontrado->tipoDato == 4 ) && regEncontrado->tipo == TIPO_VARIABLE ) {
 				DATA_CAD();
 			}
@@ -640,6 +642,7 @@ void EXPRESION_NUM() {
 					} else {
 						if (token == tok_id ) {
 							obtoken();
+							CONJUNVAR();
 						} else {
 							//err: Se esperaba una expresion numerica o una variable
 							error(4);
