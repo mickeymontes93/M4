@@ -38,6 +38,10 @@ int main (int argc, char *argv[]) {
 			fin_de_archivo = 0;
 			offset = -1; ll = 0;
 
+//while (1) {
+  //             obtoken();        //en scanner.cpp
+    //           imprime_token();  //en auxiliares.cpp
+      //   }
 			//invocar al scanner (en scanner.cpp)
 			obtoken();
 

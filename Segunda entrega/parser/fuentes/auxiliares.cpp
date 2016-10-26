@@ -70,7 +70,7 @@ void imprime_token() {
                          };
 
   if (token != COMENTARIO)
-    printf("\t -> %10s", token_string[token]);
+    printf("%s\t -> %10s\n", lex, token_string[token]);
 
 }
 
