@@ -34,7 +34,7 @@ void obtokenHelper()
 //quitar blancos, caracter de cambio de línea y tabuladores
 	while (ch == ' ' || ch == '\n' || ch == '\r' || ch == '\t' || (int) ch < 0) ch = obtch() ;
 
-
+				
 	//Si comienza con comillas dobles (34 en ascii), es String hasta donde terminen las comillas
 	if ((int) ch == 34) {
 		lexid[0] = ch;
@@ -132,12 +132,15 @@ void obtokenHelper()
 //si la lexeme comienza con una letra, es identificador o palabra reservada
 		if (isalpha(ch) ) {
 			lexid[0] = ch;
+			
 			i = 1;
 			int j;
-			while ( isalpha( (ch = obtch()) ) ||  isdigit(ch) || ch == '.' || ch == '_')
+			while ( isalpha( (ch = obtch()) ) ||  isdigit(ch) || ch == '.' || ch == '_'){
+				//printf("%d",MAXID);
 				if (i < MAXID) lexid[i++] = ch;
+			}
 			lexid[i] = '\0';
-
+				
 			//---------------BUSQUEDA BINARIA -----------------------
 			ok = busqueda_binaria_palabras_reservadas((int) MAXPAL / 2, lexid);
 			/*for (j=0;j<MAXPAL;++j)
@@ -326,13 +329,13 @@ int obtch()
 		////printf("\n%s",linea);
 		offset = -1;
 	}
-
 	++offset;
 
 	if ( (linea[offset] == '\0') || (fin_de_archivo == 1) )
 		return (' ');
-	else
+	else{
 		return (tolower(linea[offset])); //de esto depende si el lenguaje es sensitivo de mayúsculas o no.
+	}
 	//return(linea[offset]);
 
 }
@@ -361,6 +364,7 @@ int busqueda_binaria_palabras_reservadas(int medio, char *palabra) {
 	int comparacion, medio_anterior = 0;
 	int salir = 0;
 	do {
+		
 		comparacion = strcmp(palabra, lexpal[medio]);
 		/*//printf("\n\n\n-----------------------------------");
 		//printf("\n PALABRA ACTUAL A BUSCAR : %s",palabra);
@@ -388,6 +392,6 @@ int busqueda_binaria_palabras_reservadas(int medio, char *palabra) {
 
 		//return medio;
 		////printf("\n-----------------------------------\n\n");
-	} while (medio >= 0 && medio <= MAXPAL && medio_anterior <= MAXPAL);
+	} while (medio >= 0 && medio < MAXPAL && medio_anterior < MAXPAL);
 	return -1;
 }

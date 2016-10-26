@@ -40,8 +40,8 @@ int main (int argc, char *argv[]) {
 
 //while (1) {
   //             obtoken();        //en scanner.cpp
-    //           imprime_token();  //en auxiliares.cpp
-      //   }
+    //          imprime_token();  //en auxiliares.cpp
+      //  }
 			//invocar al scanner (en scanner.cpp)
 			obtoken();
 
