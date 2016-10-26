@@ -215,7 +215,7 @@ int IS_FUNCION_INSTRUCCION() {
 }
 
 int IS_ARREGLO() {
-	if (token == tok_llavea)
+	if (token == tok_corcha)
 		return 1;
 	else
 		return 0;
