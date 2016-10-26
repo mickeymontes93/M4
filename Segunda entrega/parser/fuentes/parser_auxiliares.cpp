@@ -220,5 +220,4 @@ int IS_ARREGLO() {
 	else
 		return 0;
 }
-
-
+//
