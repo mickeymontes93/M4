@@ -50,7 +50,7 @@ void inicializar_espec() {
   espec[47] = tok_divi;
   espec[59] = tok_finlinea;
   espec[91] = tok_corcha;
-  espec[92] = tok_corchc;
+  espec[93] = tok_corchc;
   espec[123] = tok_llavea;
   espec[125] = tok_llavec;
 }
