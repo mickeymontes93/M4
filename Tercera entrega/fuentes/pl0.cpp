@@ -46,6 +46,9 @@ int main (int argc, char *argv[]) {
 			//  }
 			//inicialización de conjuntos de estabilización (en conjuntos.cpp)
 			inicializa_conjuntos();
+
+			//inicializa los conjuntos siguientes. (en conjuntos.cpp)
+			conjuntos_siguientes();
 			
 			//invocar al scanner (en scanner.cpp)
 			obtoken();
