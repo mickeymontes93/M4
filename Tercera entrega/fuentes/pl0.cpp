@@ -13,6 +13,7 @@
 #include "scanner.h"
 #include "lexico.h"
 #include "tds.h"
+#include "conjuntos.h"
 #include "parser.h"
 
 FILE *fp; //apuntador a archivo conteniendo el programa fuente
@@ -52,7 +53,7 @@ int main (int argc, char *argv[]) {
 			it = 0; //inicializamos el índice sobre la tds (it en tds.h)
 
 			//activación del parser (en parser.h)
-			PROGRAMA(set_arranque);
+			PROGRAMA();//(set_arranque);
 
 			//si llegamos a este punto, no se han detectado errores sintácticos en el programa fuente (estadisticas en auxiliares.cpp)
 			estadisticas();
