@@ -306,7 +306,8 @@ void obtoken()
 {
 	do
 	{
-		obtokenHelper();	
+		obtokenHelper();
+		imprime_token();	
 	}while(token == COMENTARIO);
 }
 

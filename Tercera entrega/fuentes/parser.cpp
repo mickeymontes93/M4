@@ -1,12 +1,18 @@
 //un parser descendente deterministico para pl0
 #include <stdlib.h>
 #include <stdio.h>
+#include "pl0.h"
 #include "parser.h"
 #include "tds.h"
 #include "auxiliares.h"
 #include "lexico.h"
 #include "scanner.h"
+#include "conjuntos.h"
 
+//elementos a utilizar en tratamiento de errores
+int temp;
+int vacio[NOTOKENS];   //conjunto vacío
+int setpaso[NOTOKENS]; //conjunto de paso por valor
 
 void ABRIR_ARCHIVO() {
 	//printf("*****************ABRIR_ARCHIVO\n");
@@ -174,6 +180,7 @@ void ASIGNACION() {
 
 void BLOQUE() {
 	//printf("*****************BLOQUE\n");
+	init_set(vacio);
 	if (IS_DECLARACION()) {
 		DECLARACION();
 	}
@@ -194,7 +201,15 @@ void BLOQUE() {
 			error(5);
 		}
 	}
+	//se copia los tokens siguientes de instruccion
+	copia_set(setpaso,sig_auxllavec); //token siguiente de bloque
+	union_set(setpaso,setpaso,sig_instruccion); //token siguiente de instruccion
 	INSTRUCCION();
+
+	//aquí viene el chequeo explícito de que el token que viene a continuación
+ 	//está en el conjunto de sucesores correctos (los sucesores de bloque)
+	copia_set(setpaso,sig_auxllavec); //token siguiente de bloque
+	test(setpaso,vacio,51); //símbolo incorrecto detrás de las instrucciones de un bloque
 }
 
 void CAD_VAR() {
@@ -1034,6 +1049,8 @@ void INSTRUCCION() {
 	//printf("*****************INSTRUCCION\n");
 	//TODO: Evaluar instrucciones ASIGNACION(), INS_IF(), INS_WHILE(), INS_FOR(), INS_SWITCH(), INS_DO(), INS_CONSOLEWRITE(), INS_CONSOLEREAD(), ABRIR_ARCHIVO(), tok_id
 
+	init_set(vacio);
+	
 	if (token == tok_id) {
 		int r = posicion();
 		//printf("***************** POSICION %d \n", r);

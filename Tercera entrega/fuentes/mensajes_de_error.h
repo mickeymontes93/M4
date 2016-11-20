@@ -53,7 +53,8 @@ char *mensaje_de_error[]={"",
 /*Error 47*/ "Se esperaba una instruccion switch",
 /*Error 48*/ "Se esperaba una intruccion if, while, for, write, read, switch, do o fileopen",
 /*Error 49*/ "Identificador no declarado",
-/*Error 50*/ "Se esperaba un ampersand"
+/*Error 50*/ "Se esperaba un ampersand",
+/*Error 51*/ "Simbolo incorrecto detras de las instrucciones de un bloque"
 };
 
 /*Errores sintacticos : 1,2,3,4,5,6,7,8,9,10,13,16,17,18,19,20,22,23,24,32 */

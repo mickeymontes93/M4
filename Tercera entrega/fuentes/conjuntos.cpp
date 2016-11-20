@@ -1,3 +1,4 @@
+#include "stdio.h"
 #include "conjuntos.h"
 #include "parametros.h"
 #include "lexico.h"
@@ -10,8 +11,6 @@ int tokinidecl[NOTOKENS],tokiniinst[NOTOKENS],tokinifact[NOTOKENS];
 
 //conjunto de sincronización de arranque
 int set_arranque[NOTOKENS]; 
-
-
 
 //INICIO DE CONJUNTOS SIGUIENTES.
 
@@ -46,7 +45,7 @@ void conjuntos_siguientes(){
 		sig_auxpuntoycoma[tok_finlinea]=1;
 
 		init_set(sig_auxllavec);
-		sig_auxllavec[tok_parenc]=1;
+		sig_auxllavec[tok_llavec]=1;
 
 		init_set(sig_cadvar);
 		sig_cadvar[tok_coma]=1;
@@ -97,9 +96,11 @@ void conjuntos_siguientes(){
 
 		init_set(sig_funcion);
 		sig_funcion[tok_id]=1;
+		
 		init_set(sig_identificador);
 		union_set(sig_identificador,sig_identificador,sig_auxfunc);
 		sig_identificador[tok_sumasign]=1;
+		
 		init_set(sig_instruccion);
 		sig_instruccion[tok_return]=sig_instruccion[tok_llavec]=sig_instruccion[tok_break]=sig_instruccion[tok_fclose]=1;
 
@@ -174,6 +175,7 @@ void test (int conjunto1[],int conjunto2[],int n)
 {
  int conj_union[NOTOKENS];
 
+ printf("\n%d",conjunto1[token]);
  if (conjunto1[token]==0) { 
   //el token no está en el conjunto1
   error(n); //se marca el error

@@ -52,7 +52,7 @@ int main (int argc, char *argv[]) {
 			
 			//invocar al scanner (en scanner.cpp)
 			obtoken();
-
+			
 			it = 0; //inicializamos el índice sobre la tds (it en tds.h)
 
 			//activación del parser (en parser.h)
