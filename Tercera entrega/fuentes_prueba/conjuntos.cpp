@@ -174,14 +174,15 @@ void union_set(int conjunto1[],int conjunto2[],int conjunto3[])
 void test (int conjunto1[],int conjunto2[],int n)
 {
  int conj_union[NOTOKENS];
-
  if (conjunto1[token]==0) { 
   //el token no está en el conjunto1
   error(n); //se marca el error
   //se arma un conjunto de estabilización
   union_set(conj_union,conjunto1,conjunto2);
   //se salta texto de manera "inteligente"
-  while (conj_union[token]==0) 
-   obtoken();
+  while (conj_union[token]==0) {
+	   	printf("\n**");
+		obtoken();
+	}
  }
 }

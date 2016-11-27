@@ -192,7 +192,8 @@ void BLOQUE(int toksig[]) {
 
 	init_set(vacio);
 	if (IS_DECLARACION()) {
-		DECLARACION();
+		union_set(setpaso,toksig,sig_declaracion);
+		DECLARACION(setpaso);
 	}
 	while (IS_FUNCION()) {
 		FUNCION();
@@ -244,6 +245,7 @@ void CASE(int toksig[]) {
 				obtoken();
 				union_set(setpaso,toksig,sig_instruccion);
 				INSTRUCCION(setpaso);
+				
 				if (token == tok_break) {
 					obtoken();
 					if (token == tok_finlinea) {
@@ -261,6 +263,12 @@ void CASE(int toksig[]) {
 				} else {
 					// Se esperaba un break
 					error(33);
+					if (token == tok_llavec) {
+						obtoken();
+					} else {
+						// Se esperaba llave de cierre
+						error(19);
+					}
 				}
 			} else {
 				// Se esperaba llave de apertura
@@ -268,8 +276,55 @@ void CASE(int toksig[]) {
 			}
 		}
 	} else {
+		copia_set(setpaso,toksig);
+		setpaso[tok_case]=setpaso[tok_default]=1;
+		test(sig_auxllavec,setpaso,34);
 		// Se esperaba una instruccion case
-		error(34);
+		//error(34);
+		if (token == tok_llavec) {
+			obtoken();
+		} else {
+			// Se esperaba llave de cierre
+			error(19);
+		}
+		while (token == tok_case) {
+			obtoken();
+			union_set(setpaso,toksig,sig_parencondicion);
+			PAREN_CONDICION(setpaso);
+			if (token == tok_llavea) {
+				obtoken();
+				union_set(setpaso,toksig,sig_instruccion);
+				INSTRUCCION(setpaso);
+				
+				if (token == tok_break) {
+					obtoken();
+					if (token == tok_finlinea) {
+						obtoken();
+						if (token == tok_llavec) {
+							obtoken();
+						} else {
+							// Se esperaba llave de cierre
+							error(19);
+						}
+					} else {
+						// Se esperaba punto y coma
+						error(16);
+					}
+				} else {
+					// Se esperaba un break
+					error(33);
+					if (token == tok_llavec) {
+						obtoken();
+					} else {
+						// Se esperaba llave de cierre
+						error(19);
+					}
+				}
+			} else {
+				// Se esperaba llave de apertura
+				error(18);
+			}
+		}
 	}
 
 	if (token == tok_default) {
@@ -294,7 +349,13 @@ void CASE(int toksig[]) {
 				}
 			} else {
 				// Se esperaba un break
-				error(33);
+				//error(33);
+				if (token == tok_llavec) {
+					obtoken();
+				} else {
+					// Se esperaba llave de cierre
+					error(19);
+				}
 			}
 		} else {
 			// Se esperaba llave de apertura
@@ -304,6 +365,8 @@ void CASE(int toksig[]) {
 		// Se esperaba una instruccion default
 		error(35);
 	}
+	copia_set(setpaso,toksig);
+	test(sig_auxllavec,setpaso,18);
 }
 
 void COMPAGENERAL() {
@@ -459,10 +522,14 @@ void DATA_NUM(int toksig[]) {
 	}
 }
 
-void DECLARACION() {
+void DECLARACION(int toksig[]) {
 	//printf("*****************DECLARACION\n");
+	int setpaso[NOTOKENS];
+	init_set(setpaso);
 	while (IS_VARIABLE()) {
+
 		VARIABLE();
+
 		if (token == tok_id) {
 			poner(TIPO_VARIABLE);
 			obtoken();
@@ -475,8 +542,16 @@ void DECLARACION() {
 		} else {
 			// Se esperaba un identificador
 			error(5);
+			//while(token!= tok_finlinea && IS_VARIABLE()==0){
+			/*while(1){
+				if(token == tok_finlinea) break;
+				if(IS_VARIABLE()) break;
+				obtoken();
+			}*/
 		}
 	}
+	//copia_set(setpaso,sig_declaracion);
+	//test(setpaso,toksig,16);
 }
 
 void EXPRESION_ARR(int toksig[]) {
@@ -772,7 +847,8 @@ void FUNCION_INSTRUCCION(int toksig[]) {
 		CONJUNVAR(setpaso);
 		if (token == tok_llavea) {
 			obtoken();
-			DECLARACION();
+			union_set(setpaso,toksig,sig_declaracion);
+			DECLARACION(setpaso);
 			//se copia los tokens siguientes de instruccion
 			//copia_set(setpaso,sig_auxllavec); //token siguiente de bloque
 			union_set(setpaso,toksig,sig_instruccion); //token siguiente de instruccion
@@ -1202,7 +1278,8 @@ void INSTRUCCION(int toksig[]) {
 			}
 		} else {
 			//Identificador no declarado
-			error(49);
+			//error(49);
+			test(toksig,vacio,49);
 		}
 		copia_set(setpaso,toksig);
 		INSTRUCCION(setpaso);

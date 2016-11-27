@@ -2,7 +2,8 @@ MAIN{
 #DECLARACION
     var.str d;
     var.str a;
-    var.int b;
+    var.int b
+    var.int
     var.int e;
     var.float c;
     var.file varFILE;
@@ -37,13 +38,17 @@ func.void funcPrueba(){
 	}
 	
 	switch b {
-		case (b==2)
+		#case (b==2)
 		{
 			b:=3;
 			#break;
 		}
-		default 
-		{
+        case(b==3)
+        {
+            break;
+        }
+		#default 
+		#{
 			b:=0;
 			break;
 		}
