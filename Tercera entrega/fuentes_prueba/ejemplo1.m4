@@ -14,11 +14,14 @@ MAIN{
     var.str
 
 #FUNCION
+    func.str
     func.void funcPrueba();
+    func.int ;
+   
 
 #INSTRUCCION
     banderita:= true;
-    a:= "Soy una string";
+    a:= #"Soy una string";
     c:= 1.56;
     d:=10;
     arrEnteros := [10,20,30,40];

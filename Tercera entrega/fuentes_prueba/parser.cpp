@@ -190,7 +190,7 @@ void ASIGNACION(int toksig[]) {
 void BLOQUE(int toksig[]) {
 	//printf("*****************BLOQUE\n");
 	int setpaso[NOTOKENS]; //conjunto de paso por valor
-
+	init_set(setpaso);
 	init_set(vacio);
 	if (IS_DECLARACION()) {
 		union_set(setpaso,toksig,sig_declaracion);
@@ -212,6 +212,18 @@ void BLOQUE(int toksig[]) {
 		} else {
 			//err: Se esperaba un identificador
 			error(5);
+
+			if (token == tok_finlinea) {
+				obtoken();
+			} else {
+				//err: Se esperaba punto y coma
+				//error(16);
+				//tok_id, if, while, for, switch, do, console.write, console.read, file.fopen
+				setpaso[tok_id]=setpaso[tok_if]=setpaso[tok_while]=setpaso[tok_for]=1;
+				setpaso[tok_switch]=setpaso[tok_do]=setpaso[tok_write]=setpaso[tok_read]=1;
+				setpaso[tok_fileopen]=setpaso[tok_llavec];
+				test(setpaso,toksig,16);
+			}
 		}
 	}
 	//se copia los tokens siguientes de instruccion
@@ -395,7 +407,7 @@ void COMPANUM() {
 void CONDICION(int toksig[]) {
 	int setpaso[NOTOKENS]; //conjunto de paso por valor
 	init_set(vacio);
-	//printf("*****************CONDICION\n");
+	printf("*****************CONDICION\n");
 	if (IS_EXPRESION_BOOL()) {
 		union_set(setpaso,toksig,sig_exprbool);
 		EXPRESION_BOOL(setpaso);
@@ -1153,7 +1165,7 @@ void INS_DO(int toksig[]) {
 
 void INS_FOR(int toksig[]) {
 	int setpaso[NOTOKENS];
-	//printf("*****************INS_FOR\n");
+	printf("*****************INS_FOR\n");
 	if (token == tok_for) {
 		obtoken();
 		if (token == tok_parena) {
