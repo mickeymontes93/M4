@@ -110,7 +110,8 @@ void ARREGLO() {
 						obtoken();
 					} else {
 						//Err: Se esperaba una cadena.
-						error(30);
+
+						error(6);
 					}
 				}
 			} else if (token == tok_true || token == tok_false) {
@@ -531,6 +532,7 @@ void DECLARACION(int toksig[]) {
 		VARIABLE();
 
 		if (token == tok_id) {
+
 			poner(TIPO_VARIABLE);
 			obtoken();
 			if (token == tok_finlinea) {
@@ -542,12 +544,19 @@ void DECLARACION(int toksig[]) {
 		} else {
 			// Se esperaba un identificador
 			error(5);
+
 			//while(token!= tok_finlinea && IS_VARIABLE()==0){
-			/*while(1){
-				if(token == tok_finlinea) break;
-				if(IS_VARIABLE()) break;
+			while(1){
+
+				if(token == tok_finlinea){
+					obtoken();
+				 	break;
+				}
+				if(IS_VARIABLE()){
+				 	break;
+				}
 				obtoken();
-			}*/
+			}
 		}
 	}
 	//copia_set(setpaso,sig_declaracion);
@@ -710,6 +719,7 @@ void EXPRESION_CAD(int toksig[]) {
 					}
 				} else {
 					//err: Se esperaba una cadena
+
 					test(toksig,vacio,6);
 					//error(6);
 				}
@@ -1466,6 +1476,7 @@ void TIPO_FILE() {
 		obtoken();
 	} else {
 		//err: Se esperaba una cadena
+
 		error(6);
 	}
 }

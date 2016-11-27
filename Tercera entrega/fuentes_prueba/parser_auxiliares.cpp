@@ -9,7 +9,7 @@
 
 
 int IS_VARIABLE() {
-	
+
 	if ( token == tok_arrEntero ||
 	        token == tok_arrFlotante ||
 	        token == tok_arrBooleano ||

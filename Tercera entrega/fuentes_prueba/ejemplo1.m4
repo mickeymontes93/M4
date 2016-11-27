@@ -1,5 +1,6 @@
 MAIN{
 #DECLARACION
+    var.int 111;
     var.str d;
     var.str a;
     var.int b
@@ -10,6 +11,7 @@ MAIN{
     var.bool banderita;
     arr.int arrEnteros;
     arr.str arrStrings;
+    var.str
 
 #FUNCION
     func.void funcPrueba();

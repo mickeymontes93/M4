@@ -175,8 +175,10 @@ void obtokenHelper()
 					j++;
 				}
 				lexid[i] = '\0';
-				if (j > MAXDIGIT)
+				if (j > MAXDIGIT){
+				
 					error(30); //este número es demasiado grande
+				}
 
 				if (es_flotante == 1) token = tok_flotante;
 				else token = tok_numero;
