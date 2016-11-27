@@ -40,7 +40,7 @@ func.void funcPrueba(){
 		case (b==2)
 		{
 			b:=3;
-			break;
+			#break;
 		}
 		default 
 		{

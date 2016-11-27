@@ -374,7 +374,7 @@ void CONJUNVAR(int toksig[]) {
 	init_set(prim_conjunvar);
 	prim_conjunvar[tok_parena];
 
-	test(prim_conjunvar,toksig,54); //El simbolo no corresponde a un conjunto de variables
+	//test(prim_conjunvar,toksig,54); //El simbolo no corresponde a un conjunto de variables
 
 
 	if (token == tok_parena) {
@@ -1102,6 +1102,7 @@ void INS_FOR(int toksig[]) {
 		} else {
 			//err: Se esperaba un parentesis de apertura
 			error(1);
+			
 		}
 	} else {
 		//err: Se esperaba una instruccion for
@@ -1275,6 +1276,7 @@ void INSTRUCCION(int toksig[]) {
 		}
 	}
 
+	union_set(setpaso,setpaso,sig_instruccion);
 	test(setpaso,vacio,52); //error(52): Un simbolo incorrecto sigue a una instrucción
 }
 

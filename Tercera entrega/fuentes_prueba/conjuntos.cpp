@@ -175,7 +175,6 @@ void test (int conjunto1[],int conjunto2[],int n)
 {
  int conj_union[NOTOKENS];
 
- printf("\n%d",conjunto1[token]);
  if (conjunto1[token]==0) { 
   //el token no está en el conjunto1
   error(n); //se marca el error
