@@ -160,7 +160,8 @@ void ASIGNACION(int toksig[]) {
 	//printf("*****************ASIGNACION\n");
 	if (token == tok_id) {
 		obtoken();
-		if (token == tok_asignar) {
+		// Se perdona que se use "==" o ":="
+		if ((token == tok_asignar) || (token == tok_igual)) {
 			obtoken();
 			if (IS_EXPRESION_CAD()){
 				union_set(setpaso,toksig,sig_auxfunc);
@@ -192,44 +193,48 @@ void BLOQUE(int toksig[]) {
 	int setpaso[NOTOKENS]; //conjunto de paso por valor
 	init_set(setpaso);
 	init_set(vacio);
-	if (IS_DECLARACION()) {
-		union_set(setpaso,toksig,sig_declaracion);
-		DECLARACION(setpaso);
-	}
-	while (IS_FUNCION()) {
-		FUNCION();
-		if (token == tok_id) {
-			poner(TIPO_FUNCION);
-			obtoken();
-			union_set(setpaso,toksig,sig_conjunvar);
-			CONJUNVAR(setpaso);
-			if (token == tok_finlinea) {
+	do{
+		if (IS_DECLARACION()) {
+			union_set(setpaso,toksig,sig_declaracion);
+			DECLARACION(setpaso);
+		}
+		while (IS_FUNCION()) {
+			FUNCION();
+			if (token == tok_id) {
+				poner(TIPO_FUNCION);
 				obtoken();
+				union_set(setpaso,toksig,sig_conjunvar);
+				CONJUNVAR(setpaso);
+				if (token == tok_finlinea) {
+					obtoken();
+				} else {
+					//err: Se esperaba punto y coma
+					error(16);
+				}
 			} else {
-				//err: Se esperaba punto y coma
-				error(16);
-			}
-		} else {
-			//err: Se esperaba un identificador
-			error(5);
+				//err: Se esperaba un identificador
+				error(5);
 
-			if (token == tok_finlinea) {
-				obtoken();
-			} else {
-				//err: Se esperaba punto y coma
-				//error(16);
-				//tok_id, if, while, for, switch, do, console.write, console.read, file.fopen
-				setpaso[tok_id]=setpaso[tok_if]=setpaso[tok_while]=setpaso[tok_for]=1;
-				setpaso[tok_switch]=setpaso[tok_do]=setpaso[tok_write]=setpaso[tok_read]=1;
-				setpaso[tok_fileopen]=setpaso[tok_llavec];
-				test(setpaso,toksig,16);
+				if (token == tok_finlinea) {
+					obtoken();
+				} else {
+					//err: Se esperaba punto y coma
+					//error(16);
+					//tok_id, if, while, for, switch, do, console.write, console.read, file.fopen
+					setpaso[tok_id]=setpaso[tok_if]=setpaso[tok_while]=setpaso[tok_for]=1;
+					setpaso[tok_switch]=setpaso[tok_do]=setpaso[tok_write]=setpaso[tok_read]=1;
+					setpaso[tok_fileopen]=setpaso[tok_llavec];
+					test(setpaso,toksig,16);
+				}
 			}
 		}
-	}
-	//se copia los tokens siguientes de instruccion
-	//copia_set(setpaso,sig_auxllavec); //token siguiente de bloque
-	union_set(setpaso,setpaso,sig_instruccion); //token siguiente de instruccion
-	INSTRUCCION(setpaso);
+		//se copia los tokens siguientes de instruccion
+		//copia_set(setpaso,sig_auxllavec); //token siguiente de bloque
+		union_set(setpaso,setpaso,sig_instruccion); //token siguiente de instruccion
+		INSTRUCCION(setpaso);
+
+	//Este do-while garantiza que lea el bloque de declaración-función-instrucción sin importar el orden.
+	}while(tokinidecl[token]==1);
 
 	//aquí viene el chequeo explícito de que el token que viene a continuación
  	//está en el conjunto de sucesores correctos (los sucesores de bloque)
