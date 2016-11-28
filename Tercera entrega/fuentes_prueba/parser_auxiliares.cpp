@@ -94,7 +94,7 @@ int IS_EXPRESION_BOOL() {
 	if (token == tok_id) {
 		int i = posicion();
 		if (i > 0) {
-			if (regEncontrado->tipoDato == 5 ) {
+			if (regEncontrado->tipoDato == TIPO_BOOLEAN ) {
 				return 1;
 			} else {
 				return 0;
@@ -122,7 +122,7 @@ int IS_EXPRESION_CAD() {
 	if (token == tok_id) {
 		int i = posicion();
 		if (i > 0) {
-			if (regEncontrado->tipoDato == 3 || regEncontrado->tipoDato == 4) {
+			if (regEncontrado->tipoDato == TIPO_CADENA || regEncontrado->tipoDato == TIPO_CARACTER) {
 				return 1;
 			} else {
 				return 0;
@@ -145,7 +145,7 @@ int IS_EXPRESION_NUM() {
 	if (token == tok_id) {
 		int i = posicion();
 		if (i > 0) {
-			if (regEncontrado->tipoDato == 1 || regEncontrado->tipoDato == 2 ) {
+			if (regEncontrado->tipoDato == TIPO_ENTERO || regEncontrado->tipoDato == TIPO_FLOAT ) {
 				return 1;
 			} else {
 				return 0;
@@ -191,12 +191,12 @@ int IS_DECLARACION() {
 
 
 int GET_TIPO_DATO() {
-	if (token == tok_varint || token == tok_funcint) return 1;
-	if (token == tok_varfloat || token == tok_funcfloat) return 2;
-	if (token == tok_varstr || token == tok_funcstr) return 3;
-	if (token == tok_varchar || token == tok_funcchar) return 4;
-	if (token == tok_varbool || token == tok_bool) return 5;
-	if (token == tok_funcvoid) return 6;
+	if (token == tok_varint || token == tok_funcint) return TIPO_ENTERO;
+	if (token == tok_varfloat || token == tok_funcfloat) return TIPO_FLOAT;
+	if (token == tok_varstr || token == tok_funcstr) return TIPO_CADENA;
+	if (token == tok_varchar || token == tok_funcchar) return TIPO_CARACTER;
+	if (token == tok_varbool || token == tok_bool) return TIPO_BOOLEAN;
+	if (token == tok_funcvoid) return TIPO_VOID;
 }
 
 int IS_FUNCION() {

@@ -3,18 +3,18 @@ MAIN{
     var.int 111;
     var.str d;
     var.str a;
-    var.int b
-    var.int
+    var.int b;
+    var.int x;
     var.int e;
     var.float c;
     var.file varFILE;
     var.bool banderita;
     arr.int arrEnteros;
     arr.str arrStrings;
-    var.str
+    var.str a;
 
 #FUNCION
-    func.str
+    func.
     func.void funcPrueba();
     func.int ;
    

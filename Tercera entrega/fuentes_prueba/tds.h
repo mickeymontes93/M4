@@ -6,6 +6,7 @@
 
 //tipos de objetos de pl0
 enum objeto {TIPO_VARIABLE, TIPO_ARREGLO, TIPO_FUNCION}; //definidos aquí en el encabezado
+enum tipo_dato {TIPO_ENTERO, TIPO_FLOAT, TIPO_CADENA, TIPO_CARACTER, TIPO_BOOLEAN, TIPO_VOID}; //definidos aquí en el encabezado
 
 typedef struct struct_reg {
 	int cab;

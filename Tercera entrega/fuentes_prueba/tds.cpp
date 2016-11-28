@@ -48,12 +48,12 @@ void poner(enum objeto k) {
 
 void imprimirTDS() {
 	registro* aux = tabla;
-	//printf("\n\n**************** TDS\n");
+	printf("\n\n**************** TDS\n");
 	while (aux != NULL) {
 		//printf("%s, ", aux->nombre);
 		aux = aux->sig;
 	}
-	//printf("\n**************** FIN TDS \n\n");
+	printf("\n**************** FIN TDS \n\n");
 }
 
 
@@ -69,6 +69,7 @@ void borrar_registro(registro* regViejo) {
 //posicion: encontrar en la tds al identificador para ver si ya fue declarado y si su uso es semánticamente legal
 
 int posicion() {
+			printf("\n 1 **********\n");
 	if (tabla == NULL) return 0;
 
 	registro* aux = regUltimo;

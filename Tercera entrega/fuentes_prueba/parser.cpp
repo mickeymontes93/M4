@@ -21,14 +21,14 @@ void ABRIR_ARCHIVO(int toksig[]) {
 		obtoken();
 		if (token == tok_parena) {
 			obtoken();
-			union_set(setpaso,toksig,sig_data_cad);
+			union_set(setpaso, toksig, sig_data_cad);
 			DATA_CAD(setpaso);
 			if (token == tok_coma) {
 				obtoken();
 				TIPO_FILE();
 				if (token == tok_parenc) {
 					obtoken();
-					union_set(setpaso,toksig,sig_instruccion);
+					union_set(setpaso, toksig, sig_instruccion);
 					INSTRUCCION(setpaso);
 					if (token == tok_fclose) {
 						obtoken();
@@ -163,18 +163,18 @@ void ASIGNACION(int toksig[]) {
 		// Se perdona que se use "==" o ":="
 		if ((token == tok_asignar) || (token == tok_igual)) {
 			obtoken();
-			if (IS_EXPRESION_CAD()){
-				union_set(setpaso,toksig,sig_auxfunc);
+			if (IS_EXPRESION_CAD()) {
+				union_set(setpaso, toksig, sig_auxfunc);
 				EXPRESION_CAD(setpaso);
-			}else if (IS_EXPRESION_BOOL()){
-				union_set(setpaso,toksig,sig_exprbool);
+			} else if (IS_EXPRESION_BOOL()) {
+				union_set(setpaso, toksig, sig_exprbool);
 				EXPRESION_BOOL(setpaso);
-			}else if (IS_EXPRESION_NUM()){
-				union_set(setpaso,toksig,sig_exprnum);
+			} else if (IS_EXPRESION_NUM()) {
+				union_set(setpaso, toksig, sig_exprnum);
 				EXPRESION_NUM(setpaso);
-			}else if (IS_EXPRESION_ARR()){
+			} else if (IS_EXPRESION_ARR()) {
 				EXPRESION_ARR(toksig);
-			}else {
+			} else {
 				// Se esperaba una expresion numerica, booleana, cadena o arreglo
 				error(20);
 			}
@@ -193,9 +193,9 @@ void BLOQUE(int toksig[]) {
 	int setpaso[NOTOKENS]; //conjunto de paso por valor
 	init_set(setpaso);
 	init_set(vacio);
-	do{
+	do {
 		if (IS_DECLARACION()) {
-			union_set(setpaso,toksig,sig_declaracion);
+			union_set(setpaso, toksig, sig_declaracion);
 			DECLARACION(setpaso);
 		}
 		while (IS_FUNCION()) {
@@ -203,8 +203,8 @@ void BLOQUE(int toksig[]) {
 			if (token == tok_id) {
 				poner(TIPO_FUNCION);
 				obtoken();
-				union_set(setpaso,toksig,sig_conjunvar);
-				CONJUNVAR(setpaso);
+				union_set(setpaso, toksig, sig_conjunvar);
+				CONJUNVAR(setpaso,0);
 				if (token == tok_finlinea) {
 					obtoken();
 				} else {
@@ -221,31 +221,31 @@ void BLOQUE(int toksig[]) {
 					//err: Se esperaba punto y coma
 					//error(16);
 					//tok_id, if, while, for, switch, do, console.write, console.read, file.fopen
-					setpaso[tok_id]=setpaso[tok_if]=setpaso[tok_while]=setpaso[tok_for]=1;
-					setpaso[tok_switch]=setpaso[tok_do]=setpaso[tok_write]=setpaso[tok_read]=1;
-					setpaso[tok_fileopen]=setpaso[tok_llavec];
-					test(setpaso,toksig,16);
+					setpaso[tok_id] = setpaso[tok_if] = setpaso[tok_while] = setpaso[tok_for] = 1;
+					setpaso[tok_switch] = setpaso[tok_do] = setpaso[tok_write] = setpaso[tok_read] = 1;
+					setpaso[tok_fileopen] = setpaso[tok_llavec];
+					test(setpaso, toksig, 16);
 				}
 			}
 		}
 		//se copia los tokens siguientes de instruccion
 		//copia_set(setpaso,sig_auxllavec); //token siguiente de bloque
-		union_set(setpaso,setpaso,sig_instruccion); //token siguiente de instruccion
+		union_set(setpaso, setpaso, sig_instruccion); //token siguiente de instruccion
 		INSTRUCCION(setpaso);
 
-	//Este do-while garantiza que lea el bloque de declaración-función-instrucción sin importar el orden.
-	}while(tokinidecl[token]==1);
+		//Este do-while garantiza que lea el bloque de declaración-función-instrucción sin importar el orden.
+	} while (tokinidecl[token] == 1);
 
 	//aquí viene el chequeo explícito de que el token que viene a continuación
- 	//está en el conjunto de sucesores correctos (los sucesores de bloque)
-	copia_set(setpaso,sig_auxllavec); //token siguiente de bloque
-	test(setpaso,vacio,51); //símbolo incorrecto detrás de las instrucciones de un bloque
+	//está en el conjunto de sucesores correctos (los sucesores de bloque)
+	copia_set(setpaso, sig_auxllavec); //token siguiente de bloque
+	test(setpaso, vacio, 51); //símbolo incorrecto detrás de las instrucciones de un bloque
 }
 
 void CAD_VAR() {
-	if(token == tok_cadena){
+	if (token == tok_cadena) {
 		obtoken();
-	}else{
+	} else {
 		error(6);
 	}
 }
@@ -257,13 +257,13 @@ void CASE(int toksig[]) {
 	if ( token == tok_case) {
 		while (token == tok_case) {
 			obtoken();
-			union_set(setpaso,toksig,sig_parencondicion);
+			union_set(setpaso, toksig, sig_parencondicion);
 			PAREN_CONDICION(setpaso);
 			if (token == tok_llavea) {
 				obtoken();
-				union_set(setpaso,toksig,sig_instruccion);
+				union_set(setpaso, toksig, sig_instruccion);
 				INSTRUCCION(setpaso);
-				
+
 				if (token == tok_break) {
 					obtoken();
 					if (token == tok_finlinea) {
@@ -294,9 +294,9 @@ void CASE(int toksig[]) {
 			}
 		}
 	} else {
-		copia_set(setpaso,toksig);
-		setpaso[tok_case]=setpaso[tok_default]=1;
-		test(sig_auxllavec,setpaso,34);
+		copia_set(setpaso, toksig);
+		setpaso[tok_case] = setpaso[tok_default] = 1;
+		test(sig_auxllavec, setpaso, 34);
 		// Se esperaba una instruccion case
 		//error(34);
 		if (token == tok_llavec) {
@@ -307,13 +307,13 @@ void CASE(int toksig[]) {
 		}
 		while (token == tok_case) {
 			obtoken();
-			union_set(setpaso,toksig,sig_parencondicion);
+			union_set(setpaso, toksig, sig_parencondicion);
 			PAREN_CONDICION(setpaso);
 			if (token == tok_llavea) {
 				obtoken();
-				union_set(setpaso,toksig,sig_instruccion);
+				union_set(setpaso, toksig, sig_instruccion);
 				INSTRUCCION(setpaso);
-				
+
 				if (token == tok_break) {
 					obtoken();
 					if (token == tok_finlinea) {
@@ -349,7 +349,7 @@ void CASE(int toksig[]) {
 		obtoken();
 		if (token == tok_llavea) {
 			obtoken();
-			union_set(setpaso,toksig,sig_instruccion);
+			union_set(setpaso, toksig, sig_instruccion);
 			INSTRUCCION(setpaso);
 			if (token == tok_break) {
 				obtoken();
@@ -383,8 +383,8 @@ void CASE(int toksig[]) {
 		// Se esperaba una instruccion default
 		error(35);
 	}
-	copia_set(setpaso,toksig);
-	test(sig_auxllavec,setpaso,18);
+	copia_set(setpaso, toksig);
+	test(sig_auxllavec, setpaso, 18);
 }
 
 void COMPAGENERAL() {
@@ -414,10 +414,10 @@ void CONDICION(int toksig[]) {
 	init_set(vacio);
 	printf("*****************CONDICION\n");
 	if (IS_EXPRESION_BOOL()) {
-		union_set(setpaso,toksig,sig_exprbool);
+		union_set(setpaso, toksig, sig_exprbool);
 		EXPRESION_BOOL(setpaso);
 	} else if (IS_EXPRESION_NUM()) {
-		union_set(setpaso,toksig,sig_exprnum);
+		union_set(setpaso, toksig, sig_exprnum);
 		EXPRESION_NUM(setpaso);
 		if (IS_COMPANUM()) {
 			COMPANUM();
@@ -427,7 +427,7 @@ void CONDICION(int toksig[]) {
 			//err: Se esperaba un comparador !=, ==, >, >=, < o <=
 			error(10);
 		}
-		union_set(setpaso,toksig,sig_exprnum);
+		union_set(setpaso, toksig, sig_exprnum);
 		EXPRESION_NUM(setpaso);
 		if (token == tok_or || token == tok_and) {
 			obtoken();
@@ -435,7 +435,7 @@ void CONDICION(int toksig[]) {
 		}
 	} else if (IS_EXPRESION_CAD()) {
 		COMPAGENERAL();
-		union_set(setpaso,toksig,sig_auxfunc);
+		union_set(setpaso, toksig, sig_auxfunc);
 		EXPRESION_CAD(setpaso);
 
 		if (token == tok_or || token == tok_and) {
@@ -444,12 +444,12 @@ void CONDICION(int toksig[]) {
 		}
 	} else {
 		//err: Se esperaba un expresion que genere un valor booleano
-		test(toksig,vacio,36);
+		test(toksig, vacio, 36);
 		//error(36);
 	}
 }
 
-void CONJUNVAR(int toksig[]) {
+void CONJUNVAR(int toksig[], int declaracion) {
 	//printf("*****************CONJUNVAR\n");
 	int prim_conjunvar[NOTOKENS]; //para hacer un analisis previo
 	init_set(prim_conjunvar);
@@ -463,7 +463,8 @@ void CONJUNVAR(int toksig[]) {
 		while (IS_VARIABLE()) {
 			VARIABLE();
 			if (token == tok_id) {
-				poner(TIPO_VARIABLE);
+				if (declaracion)
+					poner(TIPO_VARIABLE);
 				obtoken();
 				if (token == tok_coma) {
 					obtoken();
@@ -483,7 +484,7 @@ void CONJUNVAR(int toksig[]) {
 		}
 	} else {
 		// Se esperaba parentesis de apertura
-		test(toksig,vacio,1);
+		test(toksig, vacio, 1);
 		//error(1);
 	}
 }
@@ -495,18 +496,18 @@ void DATA_CAD(int toksig[]) {
 
 	int prim_datacad[NOTOKENS];
 	init_set(prim_datacad);
-	prim_datacad[tok_id]=prim_datacad[tok_cadena]=prim_datacad[tok_caracter]=1;
-	test(prim_datacad,toksig,37);
+	prim_datacad[tok_id] = prim_datacad[tok_cadena] = prim_datacad[tok_caracter] = 1;
+	test(prim_datacad, toksig, 37);
 
 	if (IS_IDENTIFICADOR()) {
-		union_set(setpaso,toksig,sig_identificador);
+		union_set(setpaso, toksig, sig_identificador);
 		IDENTIFICADOR(setpaso);
 	} else if (token == tok_cadena || token == tok_caracter) {
 		obtoken();
 	} else {
 		// err: se esperaba una cadena, un caracter o un identificador.
 		//error(37);
-		test(toksig,vacio,37);
+		test(toksig, vacio, 37);
 	}
 }
 
@@ -518,16 +519,16 @@ void DATA_NUM(int toksig[]) {
 	//tok_id, entero, flotante
 	int prim_datanum[NOTOKENS];
 	init_set(prim_datanum);
-	prim_datanum[tok_id]=prim_datanum[tok_numero]=prim_datanum[tok_flotante]=1;
+	prim_datanum[tok_id] = prim_datanum[tok_numero] = prim_datanum[tok_flotante] = 1;
 
-	test(prim_datanum,toksig,38);
+	test(prim_datanum, toksig, 38);
 
 	if (IS_IDENTIFICADOR()) {
-		union_set(setpaso,toksig,sig_identificador);
+		union_set(setpaso, toksig, sig_identificador);
 		IDENTIFICADOR(setpaso);
 		if (token == tok_sumasign) {
 			obtoken();
-			union_set(setpaso,toksig,sig_exprnum);
+			union_set(setpaso, toksig, sig_exprnum);
 			EXPRESION_NUM(setpaso);
 		}
 	} else if (token == tok_numero || token == tok_flotante) {
@@ -536,7 +537,7 @@ void DATA_NUM(int toksig[]) {
 	} else {
 		// err: se esperaba una numero entero, numero flotante o un identificador.
 		//error(38);
-		test(prim_datanum,toksig,38);
+		test(prim_datanum, toksig, 38);
 	}
 }
 
@@ -549,7 +550,6 @@ void DECLARACION(int toksig[]) {
 		VARIABLE();
 
 		if (token == tok_id) {
-
 			poner(TIPO_VARIABLE);
 			obtoken();
 			if (token == tok_finlinea) {
@@ -563,14 +563,14 @@ void DECLARACION(int toksig[]) {
 			error(5);
 
 			//while(token!= tok_finlinea && IS_VARIABLE()==0){
-			while(1){
+			while (1) {
 
-				if(token == tok_finlinea){
+				if (token == tok_finlinea) {
 					obtoken();
-				 	break;
+					break;
 				}
-				if(IS_VARIABLE()){
-				 	break;
+				if (IS_VARIABLE()) {
+					break;
 				}
 				obtoken();
 			}
@@ -587,11 +587,11 @@ void EXPRESION_ARR(int toksig[]) {
 		obtoken();
 		if (token == tok_parena) {
 			obtoken();
-			union_set(setpaso,toksig,sig_auxfunc);
+			union_set(setpaso, toksig, sig_auxfunc);
 			EXPRESION_CAD(setpaso);
 			if (token == tok_coma) {
 				obtoken();
-				union_set(setpaso,toksig,sig_auxfunc);
+				union_set(setpaso, toksig, sig_auxfunc);
 				EXPRESION_CAD(setpaso);
 				if (token == tok_parenc) {
 					obtoken();
@@ -618,7 +618,7 @@ void EXPRESION_ARR(int toksig[]) {
 void EXPRESION_BOOL(int toksig[]) {
 	//printf("*****************EXPRESION_BOOL\n");
 	int setpaso[NOTOKENS]; //conjunto de paso por valor
-	init_set(vacio); 
+	init_set(vacio);
 	if (token == tok_true || token == tok_false ||
 	        token == tok_id) {
 		obtoken();
@@ -627,11 +627,11 @@ void EXPRESION_BOOL(int toksig[]) {
 			obtoken();
 			if (token == tok_parena) {
 				obtoken();
-				union_set(setpaso,toksig,sig_auxfunc);
+				union_set(setpaso, toksig, sig_auxfunc);
 				EXPRESION_CAD(setpaso);
 				if (token == tok_coma) {
 					obtoken();
-					union_set(setpaso,toksig,sig_auxfunc);
+					union_set(setpaso, toksig, sig_auxfunc);
 					EXPRESION_CAD(setpaso);
 					if (token == tok_parenc) {
 						obtoken();
@@ -648,8 +648,8 @@ void EXPRESION_BOOL(int toksig[]) {
 				error(1);
 			}
 		} else {
-			copia_set(setpaso,toksig);
-			test(setpaso,vacio,7);
+			copia_set(setpaso, toksig);
+			test(setpaso, vacio, 7);
 			//err: Se esperaba un valor booleano
 			//error(7);
 		}
@@ -664,12 +664,12 @@ void EXPRESION_CAD(int toksig[]) {
 	if (token == tok_id) {
 		int i = posicion();
 		if (i > 0) {
-			if ((regEncontrado->tipoDato == 3 || regEncontrado->tipoDato == 4) && regEncontrado->tipo == TIPO_FUNCION ) {
+			if ((regEncontrado->tipoDato == TIPO_CADENA || regEncontrado->tipoDato == TIPO_CARACTER) && regEncontrado->tipo == TIPO_FUNCION ) {
 				obtoken();
-				union_set(setpaso,toksig,sig_conjunvar);
-				CONJUNVAR(setpaso);
-			} else if ((regEncontrado->tipoDato == 3 || regEncontrado->tipoDato == 4 ) && regEncontrado->tipo == TIPO_VARIABLE ) {
-				union_set(setpaso,toksig,sig_data_cad);
+				union_set(setpaso, toksig, sig_conjunvar);
+				CONJUNVAR(setpaso,0);
+			} else if ((regEncontrado->tipoDato == TIPO_CADENA || regEncontrado->tipoDato == TIPO_CARACTER ) && regEncontrado->tipo == TIPO_VARIABLE ) {
+				union_set(setpaso, toksig, sig_data_cad);
 				DATA_CAD(setpaso);
 			}
 		} else {
@@ -678,16 +678,16 @@ void EXPRESION_CAD(int toksig[]) {
 		}
 	}
 	if (IS_FUN_SUBSTRING()) {
-		union_set(setpaso,toksig,sig_auxfunc);
+		union_set(setpaso, toksig, sig_auxfunc);
 		FUN_SUBSTRING(setpaso);
 	} else if (IS_FUN_CONCAT()) {
-		union_set(setpaso,toksig,sig_auxfunc);
+		union_set(setpaso, toksig, sig_auxfunc);
 		FUN_CONCAT(setpaso);
 	} else if (IS_FUN_REPLACE()) {
-		union_set(setpaso,toksig,sig_auxfunc);
+		union_set(setpaso, toksig, sig_auxfunc);
 		FUN_REPLACE(setpaso);
 	} else if (IS_DATA_CAD()) {
-		union_set(setpaso,toksig,sig_data_cad);
+		union_set(setpaso, toksig, sig_data_cad);
 		DATA_CAD(setpaso);
 	} else {
 		if (token == tok_id) {
@@ -737,7 +737,7 @@ void EXPRESION_CAD(int toksig[]) {
 				} else {
 					//err: Se esperaba una cadena
 
-					test(toksig,vacio,6);
+					test(toksig, vacio, 6);
 					//error(6);
 				}
 			}
@@ -777,7 +777,7 @@ void EXPRESION_NUM(int toksig[]) {
 			obtoken();
 			if (token == tok_parena) {
 				obtoken();
-				union_set(setpaso,toksig,sig_auxfunc);
+				union_set(setpaso, toksig, sig_auxfunc);
 				EXPRESION_CAD(setpaso);
 				if (token == tok_parenc) {
 					obtoken();
@@ -814,17 +814,17 @@ void EXPRESION_NUM(int toksig[]) {
 					error(1);
 				}
 			} else {
-				
+
 				if (IS_OPERACION_NUM()) {
-					union_set(setpaso,toksig,sig_operacionnum);
+					union_set(setpaso, toksig, sig_operacionnum);
 					OPERACION_NUM(setpaso);
 				} else if (IS_DATA_NUM()) {
-					union_set(setpaso,toksig,sig_data_num);
+					union_set(setpaso, toksig, sig_data_num);
 					DATA_NUM(setpaso);
 				} else {
 					if (token == tok_parena) {
 						obtoken();
-						union_set(setpaso,toksig,sig_auxfunc);
+						union_set(setpaso, toksig, sig_auxfunc);
 						EXPRESION_CAD(setpaso);
 						if (token == tok_parenc) {
 							obtoken();
@@ -835,11 +835,11 @@ void EXPRESION_NUM(int toksig[]) {
 					} else {
 						if (token == tok_id ) {
 							obtoken();
-							union_set(setpaso,toksig,sig_conjunvar);
-							CONJUNVAR(setpaso);
+							union_set(setpaso, toksig, sig_conjunvar);
+							CONJUNVAR(setpaso,0);
 						} else {
 							//err: Se esperaba una expresion numerica o una variable
-							test(toksig,vacio,4);
+							test(toksig, vacio, 4);
 							//error(4);
 						}
 					}
@@ -868,30 +868,29 @@ void FUNCION_INSTRUCCION(int toksig[]) {
 	init_set(vacio);
 	FUNCION();
 	if (token == tok_id) {
-		poner(TIPO_FUNCION);
 		obtoken();
-		union_set(setpaso,toksig,sig_conjunvar);
-		CONJUNVAR(setpaso);
+		union_set(setpaso, toksig, sig_conjunvar);
+		CONJUNVAR(setpaso,1);
 		if (token == tok_llavea) {
 			obtoken();
-			union_set(setpaso,toksig,sig_declaracion);
+			union_set(setpaso, toksig, sig_declaracion);
 			DECLARACION(setpaso);
 			//se copia los tokens siguientes de instruccion
 			//copia_set(setpaso,sig_auxllavec); //token siguiente de bloque
-			union_set(setpaso,toksig,sig_instruccion); //token siguiente de instruccion
+			union_set(setpaso, toksig, sig_instruccion); //token siguiente de instruccion
 			INSTRUCCION(setpaso);
 			if (token == tok_return) {
 				obtoken();
-				if (IS_EXPRESION_CAD()){
-					union_set(setpaso,toksig,sig_auxfunc);
+				if (IS_EXPRESION_CAD()) {
+					union_set(setpaso, toksig, sig_auxfunc);
 					EXPRESION_CAD(setpaso);
-				}else if (IS_EXPRESION_NUM()){
-					union_set(setpaso,toksig,sig_exprnum);
+				} else if (IS_EXPRESION_NUM()) {
+					union_set(setpaso, toksig, sig_exprnum);
 					EXPRESION_NUM(setpaso);
-				}else if (IS_EXPRESION_BOOL()){
-					union_set(setpaso,toksig,sig_exprbool);
+				} else if (IS_EXPRESION_BOOL()) {
+					union_set(setpaso, toksig, sig_exprbool);
 					EXPRESION_BOOL(setpaso);
-				}else {
+				} else {
 					// Se esperaba una expresion numerica, booleana o de cadena
 					error(20);
 				}
@@ -928,11 +927,11 @@ void FUN_CONCAT(int toksig[]) {
 		obtoken();
 		if (token == tok_parena) {
 			obtoken();
-			union_set(setpaso,toksig,sig_auxfunc);
+			union_set(setpaso, toksig, sig_auxfunc);
 			EXPRESION_CAD(setpaso);
 			if (token == tok_coma) {
 				obtoken();
-				union_set(setpaso,toksig,sig_auxfunc);
+				union_set(setpaso, toksig, sig_auxfunc);
 				EXPRESION_CAD(setpaso);
 				if (token == tok_parenc) {
 					obtoken();
@@ -999,15 +998,15 @@ void FUN_SUBSTRING(int toksig[]) {
 		obtoken();
 		if (token == tok_parena) {
 			obtoken();
-			union_set(setpaso,toksig,sig_auxfunc);
+			union_set(setpaso, toksig, sig_auxfunc);
 			EXPRESION_CAD(setpaso);
 			if (token == tok_coma) {
 				obtoken();
-				union_set(setpaso,toksig,sig_exprnum);
+				union_set(setpaso, toksig, sig_exprnum);
 				EXPRESION_NUM(setpaso);
 				if (token == tok_coma) {
 					obtoken();
-					union_set(setpaso,toksig,sig_exprnum);
+					union_set(setpaso, toksig, sig_exprnum);
 					EXPRESION_NUM(setpaso);
 					if (token == tok_parenc) {
 						obtoken();
@@ -1038,14 +1037,14 @@ void IDENTIFICADOR(int toksig[]) {
 	int setpaso[NOTOKENS]; //conjunto de paso por valor
 	int prim_identificador[NOTOKENS];
 	init_set(prim_identificador);
-	prim_identificador[tok_id]=1;
+	prim_identificador[tok_id] = 1;
 
-	test(prim_identificador,toksig,5);
+	test(prim_identificador, toksig, 5);
 	if (token == tok_id) {
 		obtoken();
 		if (token == tok_corcha) {
 			obtoken();
-			union_set(setpaso,toksig,sig_exprnum);
+			union_set(setpaso, toksig, sig_exprnum);
 			EXPRESION_NUM(setpaso);
 			if (token == tok_corchc) {
 				//Se completo exitosamente esta parte.
@@ -1057,7 +1056,7 @@ void IDENTIFICADOR(int toksig[]) {
 		}
 	} else {
 		//err: Se esperaba un identificador
-		test(prim_identificador,toksig,5);
+		test(prim_identificador, toksig, 5);
 		//error(5);
 	}
 }
@@ -1071,7 +1070,7 @@ void INS_CONSOLEREAD() {
 			CAD_VAR();
 			if (token == tok_coma) {
 				obtoken();
-				
+
 				if (token == tok_amp) {
 					obtoken();
 					if (token == tok_id) {
@@ -1111,7 +1110,7 @@ void INS_CONSOLEWRITE(int toksig[]) {
 		obtoken();
 		if (token == tok_parena) {
 			obtoken();
-			union_set(setpaso,toksig,sig_auxfunc);
+			union_set(setpaso, toksig, sig_auxfunc);
 			EXPRESION_CAD(setpaso);
 			if (token == tok_coma) {
 				obtoken();
@@ -1152,11 +1151,11 @@ void INS_DO(int toksig[]) {
 	//printf("*****************INS_DO\n");
 	if (token == tok_do) {
 		obtoken();
-		union_set(setpaso,toksig,sig_llaveinstr);
+		union_set(setpaso, toksig, sig_llaveinstr);
 		LLAVE_INSTRUCCION(setpaso);
 		if (token == tok_while) {
 			obtoken();
-			union_set(setpaso,toksig,sig_parencondicion);
+			union_set(setpaso, toksig, sig_parencondicion);
 			PAREN_CONDICION(setpaso);
 		} else {
 			// Se esperaba una instruccion while
@@ -1175,19 +1174,19 @@ void INS_FOR(int toksig[]) {
 		obtoken();
 		if (token == tok_parena) {
 			obtoken();
-			union_set(setpaso,toksig,sig_auxpuntoycoma);
+			union_set(setpaso, toksig, sig_auxpuntoycoma);
 			ASIGNACION(setpaso);
 			if (token == tok_finlinea) {
 				obtoken();
-				union_set(setpaso,toksig,sig_condicion);
+				union_set(setpaso, toksig, sig_condicion);
 				CONDICION(setpaso);
 				if (token == tok_finlinea) {
 					obtoken();
-					union_set(setpaso,toksig,sig_operacionnum);
+					union_set(setpaso, toksig, sig_operacionnum);
 					OPERACION_NUM(setpaso);
 					if (token == tok_parenc) {
 						obtoken();
-						union_set(setpaso,toksig,sig_llaveinstr);
+						union_set(setpaso, toksig, sig_llaveinstr);
 						LLAVE_INSTRUCCION(setpaso);
 						//Se completo
 					} else {
@@ -1205,7 +1204,7 @@ void INS_FOR(int toksig[]) {
 		} else {
 			//err: Se esperaba un parentesis de apertura
 			error(1);
-			
+
 		}
 	} else {
 		//err: Se esperaba una instruccion for
@@ -1218,9 +1217,9 @@ void INS_IF(int toksig[]) {
 	//printf("*****************INS_IF\n");
 	if (token == tok_if) {
 		obtoken();
-		union_set(setpaso,toksig,sig_parencondicion);
+		union_set(setpaso, toksig, sig_parencondicion);
 		PAREN_CONDICION(setpaso);
-		union_set(setpaso,toksig,sig_llaveinstr);
+		union_set(setpaso, toksig, sig_llaveinstr);
 		LLAVE_INSTRUCCION(setpaso);
 	} else {
 		//err: Se esperaba un if.
@@ -1237,7 +1236,7 @@ void INS_SWITCH(int toksig[]) {
 			obtoken();
 			if (token == tok_llavea) {
 				obtoken();
-				union_set(setpaso,setpaso,sig_auxllavec);
+				union_set(setpaso, setpaso, sig_auxllavec);
 				CASE(setpaso);
 				if (token == tok_llavec) {
 					obtoken();
@@ -1264,9 +1263,9 @@ void INS_WHILE(int toksig[]) {
 	//printf("*****************INS_WHILE\n");
 	if (token == tok_while) {
 		obtoken();
-		union_set(setpaso,toksig,sig_parencondicion);
+		union_set(setpaso, toksig, sig_parencondicion);
 		PAREN_CONDICION(setpaso);
-		union_set(setpaso,toksig,sig_llaveinstr);
+		union_set(setpaso, toksig, sig_llaveinstr);
 		LLAVE_INSTRUCCION(setpaso);
 	} else {
 		//err: Se esperaba una instruccion while
@@ -1284,71 +1283,71 @@ void INSTRUCCION(int toksig[]) {
 		int r = posicion();
 		//printf("***************** POSICION %d \n", r);
 		if (r > 0) {
-			if (regEncontrado->tipoDato != 6) {
-				union_set(setpaso,toksig,sig_auxpuntoycoma);
+			if (regEncontrado->tipoDato != TIPO_VOID) {
+				union_set(setpaso, toksig, sig_auxpuntoycoma);
 				ASIGNACION(setpaso);
 				if (token == tok_finlinea) {
 					//Se completo
 					obtoken();
-					copia_set(setpaso,toksig);
+					copia_set(setpaso, toksig);
 					INSTRUCCION(setpaso);
-					
+
 				} else {
 					//err: Se esperaba punto y coma
 					error(16);
 				}
 			} else {
 				obtoken();
-				copia_set(setpaso,toksig);
+				copia_set(setpaso, toksig);
 				INSTRUCCION(setpaso);
-				
+
 			}
 		} else {
 			//Identificador no declarado
 			//error(49);
-			test(toksig,vacio,49);
+			test(toksig, vacio, 49);
 		}
-		copia_set(setpaso,toksig);
+		copia_set(setpaso, toksig);
 		INSTRUCCION(setpaso);
-		
+
 	} else if (token == tok_if) {
-		union_set(setpaso,toksig,sig_auxinstr);
+		union_set(setpaso, toksig, sig_auxinstr);
 		INS_IF(setpaso);
-		copia_set(setpaso,toksig);
+		copia_set(setpaso, toksig);
 		INSTRUCCION(setpaso);
-		
+
 	} else if (token == tok_while) {
-		union_set(setpaso,toksig,sig_auxinstr);
+		union_set(setpaso, toksig, sig_auxinstr);
 		INS_WHILE(setpaso);
-		copia_set(setpaso,toksig);
+		copia_set(setpaso, toksig);
 		INSTRUCCION(setpaso);
-		
+
 	} else if (token == tok_for) {
-		union_set(setpaso,toksig,sig_auxinstr);
+		union_set(setpaso, toksig, sig_auxinstr);
 		INS_FOR(setpaso);
-		copia_set(setpaso,toksig);
+		copia_set(setpaso, toksig);
 		INSTRUCCION(setpaso);
-		
+
 	} else if (token == tok_switch) {
-		union_set(setpaso,toksig,sig_auxinstr);
+		union_set(setpaso, toksig, sig_auxinstr);
 		INS_SWITCH(setpaso);
-		copia_set(setpaso,toksig);
+		copia_set(setpaso, toksig);
 		INSTRUCCION(setpaso);
-		
+
 	} else if (token == tok_do) {
-		union_set(setpaso,toksig,sig_auxinstr);
+		union_set(setpaso, toksig, sig_auxinstr);
 		INS_DO(setpaso);
-		copia_set(setpaso,toksig);
+		copia_set(setpaso, toksig);
 		INSTRUCCION(setpaso);
-		
+
 	} else if (token == tok_write) {
-		union_set(setpaso,toksig,sig_auxpuntoycoma);
+		union_set(setpaso, toksig, sig_auxpuntoycoma);
 		INS_CONSOLEWRITE(setpaso);
 		if (token == tok_finlinea) {
 			obtoken();
-			copia_set(setpaso,toksig);
+			copia_set(setpaso, toksig);
 			INSTRUCCION(setpaso);
-			
+
 		} else {
 			//err: Se esperaba punto y coma
 			error(16);
@@ -1358,30 +1357,30 @@ void INSTRUCCION(int toksig[]) {
 		if (token == tok_finlinea) {
 			//Se completo
 			obtoken();
-			copia_set(setpaso,toksig);
+			copia_set(setpaso, toksig);
 			INSTRUCCION(setpaso);
-			
+
 		} else {
 			//err: Se esperaba punto y coma
 			error(16);
 		}
 	} else if (token == tok_fileopen) {
-		union_set(setpaso,toksig,sig_auxpuntoycoma);
+		union_set(setpaso, toksig, sig_auxpuntoycoma);
 		ABRIR_ARCHIVO(setpaso);
 		if (token == tok_finlinea) {
 			//Se completo
 			obtoken();
-			copia_set(setpaso,toksig);
+			copia_set(setpaso, toksig);
 			INSTRUCCION(setpaso);
-			
+
 		} else {
 			//err: Se esperaba punto y coma
 			error(16);
 		}
 	}
 
-	union_set(setpaso,setpaso,sig_instruccion);
-	test(setpaso,vacio,52); //error(52): Un simbolo incorrecto sigue a una instrucción
+	union_set(setpaso, setpaso, sig_instruccion);
+	test(setpaso, vacio, 52); //error(52): Un simbolo incorrecto sigue a una instrucción
 }
 
 void LLAVE_INSTRUCCION(int toksig[]) {
@@ -1390,7 +1389,7 @@ void LLAVE_INSTRUCCION(int toksig[]) {
 
 	if (token == tok_llavea) {
 		obtoken();
-		union_set(setpaso,toksig,sig_instruccion);
+		union_set(setpaso, toksig, sig_instruccion);
 		INSTRUCCION(setpaso);
 		if (token == tok_llavec) {
 			//EXITOOOO
@@ -1411,11 +1410,11 @@ void OPERACION_NUM(int toksig[]) {
 	init_set(vacio);
 	while (token == tok_sum || token == tok_resta) {
 		obtoken();
-		union_set(setpaso,toksig,sig_termino);
+		union_set(setpaso, toksig, sig_termino);
 		TERMINO(setpaso);
 	}
 
-	test(toksig,vacio,55); //se esperaba un simbolo de operacion numerica
+	test(toksig, vacio, 55); //se esperaba un simbolo de operacion numerica
 }
 
 void PAREN_CONDICION(int toksig[]) {
@@ -1423,7 +1422,7 @@ void PAREN_CONDICION(int toksig[]) {
 	//printf("*****************PAREN_CONDICION\n");
 	if (token == tok_parena) {
 		obtoken();
-		union_set(setpaso,toksig,sig_condicion);
+		union_set(setpaso, toksig, sig_condicion);
 		CONDICION(setpaso);
 		if (token == tok_parenc) {
 			//EXITOOOO
@@ -1471,15 +1470,15 @@ void TERMINO(int toksig[]) {
 	//={ round, sin, cos, arcsin, arccos, arctan, tan, sqrt, length, pow, log, tok_id, entero, flotante, +, - , (,  }
 	int prim_termino[NOTOKENS];
 	init_set(prim_termino);
-	prim_termino[tok_round]=prim_termino[tok_sin]=prim_termino[tok_cos]=prim_termino[tok_arcsin]=1;
-	prim_termino[tok_arccos]=prim_termino[tok_arctan]=prim_termino[tok_tan]=prim_termino[tok_sqrt]=1; 
-	prim_termino[tok_length]=prim_termino[tok_pow]=prim_termino[tok_log]=prim_termino[tok_id]=1;
-	prim_termino[tok_numero]=prim_termino[tok_flotante]=prim_termino[tok_sum]=prim_termino[tok_resta]=1;
-	prim_termino[tok_parena]=1;
+	prim_termino[tok_round] = prim_termino[tok_sin] = prim_termino[tok_cos] = prim_termino[tok_arcsin] = 1;
+	prim_termino[tok_arccos] = prim_termino[tok_arctan] = prim_termino[tok_tan] = prim_termino[tok_sqrt] = 1;
+	prim_termino[tok_length] = prim_termino[tok_pow] = prim_termino[tok_log] = prim_termino[tok_id] = 1;
+	prim_termino[tok_numero] = prim_termino[tok_flotante] = prim_termino[tok_sum] = prim_termino[tok_resta] = 1;
+	prim_termino[tok_parena] = 1;
 
-	test(prim_termino,toksig,56); //El simbolo no corresponde a un termino valido
-	
-	union_set(setpaso,toksig,sig_exprnum);
+	test(prim_termino, toksig, 56); //El simbolo no corresponde a un termino valido
+
+	union_set(setpaso, toksig, sig_exprnum);
 	EXPRESION_NUM(setpaso);
 	while (token == tok_multi || token == tok_divi) {
 		obtoken();
