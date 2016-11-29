@@ -15,9 +15,12 @@
 #include "tds.h"
 #include "conjuntos.h"
 #include "parser.h"
+#include "codigo_p.h"
+
 
 FILE *fp; //apuntador a archivo conteniendo el programa fuente
 int no_de_errores; //contador de errores detectados (ya hay un contador de errores!---en pl0.h)
+int niv;           //nivel de anidamiento de los bloques
 
 //main: inicia el compilador...solo scanner
 int main (int argc, char *argv[]) {
@@ -49,11 +52,13 @@ int main (int argc, char *argv[]) {
 
 			//inicializa los conjuntos siguientes. (en conjuntos.cpp)
 			conjuntos_siguientes();
-			
+
 			//invocar al scanner (en scanner.cpp)
 			obtoken();
-			
+
 			it = 0; //inicializamos el índice sobre la tds (it en tds.h)
+			niv = 0; //inicializamos el nivel de anidamiento (niv en pl0.h)
+			ic = 0; //inicializamos el índice sobre el codigo-p (ic en codigo_p.h)
 
 			//activación del parser (en parser.h)
 			PROGRAMA();//(set_arranque);
@@ -63,6 +68,12 @@ int main (int argc, char *argv[]) {
 
 			//cerrar el programa fuente
 			fclose(fp);
+
+			//listar y escribir en disco el código-p resultado de la compilación (en codigo_p.cpp)
+			if (no_de_errores == 0) {
+				listar_p();
+				escribe_codigop(argv[1]);
+			}
 		}
 	}
 	return (0);

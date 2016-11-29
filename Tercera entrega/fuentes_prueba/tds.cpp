@@ -6,6 +6,7 @@
 #include "auxiliares.h"
 #include "scanner.h"
 #include "parametros.h"
+#include "pl0.h"
 
 int it = 0, tipoDato; //Indice para realizar busqueda de posicion
 registro *tabla = NULL;
@@ -18,6 +19,13 @@ void imprimirTDS() ;
 
 void poner(enum objeto k) {
 	it++;
+
+	if (it > MAXIT) {
+		error(58) ; //error 58 : Limitación del compilador (se rebasó el tamaño de la tds estática)
+		estadisticas();
+		fclose(fp);
+		exit(1); //el error es fatal
+	}
 
 	if (tabla == NULL) {
 		tabla = (registro*) malloc(sizeof(registro));
@@ -69,7 +77,7 @@ void borrar_registro(registro* regViejo) {
 //posicion: encontrar en la tds al identificador para ver si ya fue declarado y si su uso es semánticamente legal
 
 int posicion() {
-			printf("\n 1 **********\n");
+	printf("\n 1 **********\n");
 	if (tabla == NULL) return 0;
 
 	registro* aux = regUltimo;

@@ -60,6 +60,10 @@ char *mensaje_de_error[]={"",
 /*Error 54*/ "El simbolo no corresponde a un conjunto de variables",
 /*Error 55*/ "Se esperaba un simbolo de operacion numerica",
 /*Error 56*/ "El simbolo no corresponde a un termino valido",
+
+/*ERRORES DE CODIGO P*/
+/*Error 57*/ "El programa fuente es demasiado largo",
+/*Error 58*/ "Se rebaso el tamaño de la Tabla de Simbolos",
 };
 
 /*Errores sintacticos : 1,2,3,4,5,6,7,8,9,10,13,16,17,18,19,20,22,23,24,32 */
