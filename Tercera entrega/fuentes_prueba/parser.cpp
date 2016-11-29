@@ -273,6 +273,7 @@ void CASE(int toksig[]) {
 						} else {
 							// Se esperaba llave de cierre
 							error(19);
+							CASE(setpaso); 
 						}
 					} else {
 						// Se esperaba punto y coma
@@ -286,11 +287,41 @@ void CASE(int toksig[]) {
 					} else {
 						// Se esperaba llave de cierre
 						error(19);
+						CASE(setpaso); 
 					}
 				}
 			} else {
 				// Se esperaba llave de apertura
 				error(18);
+				union_set(setpaso, toksig, sig_instruccion);
+				INSTRUCCION(setpaso);
+
+				if (token == tok_break) {
+					obtoken();
+					if (token == tok_finlinea) {
+						obtoken();
+						if (token == tok_llavec) {
+							obtoken();
+						} else {
+							// Se esperaba llave de cierre
+							error(19);
+							CASE(setpaso); 
+						}
+					} else {
+						// Se esperaba punto y coma
+						error(16);
+					}
+				} else {
+					// Se esperaba un break
+					error(33);
+					if (token == tok_llavec) {
+						obtoken();
+					} else {
+						// Se esperaba llave de cierre
+						error(19);
+						CASE(setpaso); 
+					}
+				}
 			}
 		}
 	} else {
@@ -1408,6 +1439,13 @@ void OPERACION_NUM(int toksig[]) {
 	//printf("*****************OPERACION_NUM\n");
 	int setpaso[NOTOKENS]; //conjunto de paso por valor
 	init_set(vacio);
+	if (token != tok_sum && token != tok_resta)
+	{
+		error(55);
+		union_set(setpaso,toksig,sig_termino);
+		TERMINO(setpaso);
+	}
+	
 	while (token == tok_sum || token == tok_resta) {
 		obtoken();
 		union_set(setpaso, toksig, sig_termino);
