@@ -184,6 +184,7 @@ void BLOQUE() {
 	if (IS_DECLARACION()) {
 		DECLARACION();
 	}
+
 	while (IS_FUNCION()) {
 		FUNCION();
 		if (token == tok_id) {

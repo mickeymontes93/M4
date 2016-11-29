@@ -14,7 +14,6 @@ MAIN{
     var.str a;
 
 #FUNCION
-    func.
     func.void funcPrueba();
     func.int ;
    

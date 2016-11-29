@@ -1169,7 +1169,7 @@ void INS_DO(int toksig[]) {
 
 void INS_FOR(int toksig[]) {
 	int setpaso[NOTOKENS];
-	printf("*****************INS_FOR\n");
+	//printf("*****************INS_FOR\n");
 	if (token == tok_for) {
 		obtoken();
 		if (token == tok_parena) {
