@@ -8,6 +8,7 @@
 #include "lexico.h"
 #include "scanner.h"
 #include "conjuntos.h"
+#include "codigo_p.h"
 
 //elementos a utilizar en tratamiento de errores
 int temp;
@@ -189,6 +190,20 @@ void ASIGNACION(int toksig[]) {
 }
 
 void BLOQUE(int toksig[]) {
+	int idat; //índice de asignación de memoria, comienza con 3 por ED, DR y EE
+	int it0 ; //índice que "recuerda" en donde comienzan las instrucciones de este bloque
+	idat = 3;
+	it0 = it; //recordamos en donde comienzan en la TDS las declaraciones de este bloque
+
+	//detalle técnico
+	registro* elto = getElemento(it);
+	elto->tipoDato = TIPO_FUNCION;
+	elto->variante.dir = ic;
+
+	gen(SAL, 0, 0); //un procedimiento significa un salto en el código. luego cambiaremos nivel y direccion,
+	//los mostrados arriba (0 y 0) son 'paja', lo que pasa es que todavia no sabemos
+	//todavía hacia donde saltar
+
 	//printf("*****************BLOQUE\n");
 	int setpaso[NOTOKENS]; //conjunto de paso por valor
 	init_set(setpaso);
@@ -204,7 +219,7 @@ void BLOQUE(int toksig[]) {
 				poner(TIPO_FUNCION);
 				obtoken();
 				union_set(setpaso, toksig, sig_conjunvar);
-				CONJUNVAR(setpaso,0);
+				CONJUNVAR(setpaso, 0);
 				if (token == tok_finlinea) {
 					obtoken();
 				} else {
@@ -228,6 +243,16 @@ void BLOQUE(int toksig[]) {
 				}
 			}
 		}
+
+		//parchamos a la TDS y el código intermedio
+		//backpatching sobre TDS y código
+		registro* elto = getElemento(it0);
+		codigo[elto->variante.dir].di = ic;
+		elto->variante.dir = ic; //aquí en ic es donde comienza el código para este procedure
+
+		//se abre espacio en la memoria para un mínimo de 3 direcciones
+		gen(INS, 0, idat);
+
 		//se copia los tokens siguientes de instruccion
 		//copia_set(setpaso,sig_auxllavec); //token siguiente de bloque
 		union_set(setpaso, setpaso, sig_instruccion); //token siguiente de instruccion
@@ -273,7 +298,7 @@ void CASE(int toksig[]) {
 						} else {
 							// Se esperaba llave de cierre
 							error(19);
-							CASE(setpaso); 
+							CASE(setpaso);
 						}
 					} else {
 						// Se esperaba punto y coma
@@ -287,7 +312,7 @@ void CASE(int toksig[]) {
 					} else {
 						// Se esperaba llave de cierre
 						error(19);
-						CASE(setpaso); 
+						CASE(setpaso);
 					}
 				}
 			} else {
@@ -305,7 +330,7 @@ void CASE(int toksig[]) {
 						} else {
 							// Se esperaba llave de cierre
 							error(19);
-							CASE(setpaso); 
+							CASE(setpaso);
 						}
 					} else {
 						// Se esperaba punto y coma
@@ -319,7 +344,7 @@ void CASE(int toksig[]) {
 					} else {
 						// Se esperaba llave de cierre
 						error(19);
-						CASE(setpaso); 
+						CASE(setpaso);
 					}
 				}
 			}
@@ -698,7 +723,7 @@ void EXPRESION_CAD(int toksig[]) {
 			if ((regEncontrado->tipoDato == TIPO_CADENA || regEncontrado->tipoDato == TIPO_CARACTER) && regEncontrado->tipo == TIPO_FUNCION ) {
 				obtoken();
 				union_set(setpaso, toksig, sig_conjunvar);
-				CONJUNVAR(setpaso,0);
+				CONJUNVAR(setpaso, 0);
 			} else if ((regEncontrado->tipoDato == TIPO_CADENA || regEncontrado->tipoDato == TIPO_CARACTER ) && regEncontrado->tipo == TIPO_VARIABLE ) {
 				union_set(setpaso, toksig, sig_data_cad);
 				DATA_CAD(setpaso);
@@ -867,7 +892,7 @@ void EXPRESION_NUM(int toksig[]) {
 						if (token == tok_id ) {
 							obtoken();
 							union_set(setpaso, toksig, sig_conjunvar);
-							CONJUNVAR(setpaso,0);
+							CONJUNVAR(setpaso, 0);
 						} else {
 							//err: Se esperaba una expresion numerica o una variable
 							test(toksig, vacio, 4);
@@ -901,7 +926,7 @@ void FUNCION_INSTRUCCION(int toksig[]) {
 	if (token == tok_id) {
 		obtoken();
 		union_set(setpaso, toksig, sig_conjunvar);
-		CONJUNVAR(setpaso,1);
+		CONJUNVAR(setpaso, 1);
 		if (token == tok_llavea) {
 			obtoken();
 			union_set(setpaso, toksig, sig_declaracion);
@@ -1442,10 +1467,10 @@ void OPERACION_NUM(int toksig[]) {
 	if (token != tok_sum && token != tok_resta)
 	{
 		error(55);
-		union_set(setpaso,toksig,sig_termino);
+		union_set(setpaso, toksig, sig_termino);
 		TERMINO(setpaso);
 	}
-	
+
 	while (token == tok_sum || token == tok_resta) {
 		obtoken();
 		union_set(setpaso, toksig, sig_termino);

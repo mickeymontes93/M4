@@ -10,21 +10,26 @@ enum tipo_dato {TIPO_ENTERO, TIPO_FLOAT, TIPO_CADENA, TIPO_CARACTER, TIPO_BOOLEA
 
 typedef struct struct_reg {
 	int cab;
-	char nombre[50+1];
+	char nombre[50 + 1];
 	enum objeto tipo;
-	int tipoDato; //1: entero, 2: float, 3: cadena, 4: caracter, 5:booleano, 6:void
+	int tipoDato; 
 	struct struct_reg* sig;
 	struct struct_reg* ant;
+	union {
+		int val;
+		int dir;
+	} variante;
 } registro;
 
 
 //tabla de símbolos
 extern registro *tabla; //MAXIT en parametros (+1 porque tabla[0] esta reservada)
 extern int it;                  //índice para recorrer la tabla
-extern int tipoDato; 
-extern registro *regEncontrado; 
+extern int tipoDato;
+extern registro *regEncontrado;
 extern registro *regUltimo;
 
 void poner(enum objeto k);
 int posicion();
+registro* getElemento(int indice);
 

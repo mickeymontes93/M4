@@ -15,7 +15,22 @@ registro *regUltimo;
 int posicion();
 registro* agregar_registro(registro* reg, enum objeto k, int it);
 void borrar_registro(registro* regViejo);
-void imprimirTDS() ;
+void imprimirTDS();
+
+registro* getElemento(int indice) {
+	if (tabla == NULL) return NULL;
+
+	registro* aux = tabla;
+	do {
+		if (aux->cab == indice) {
+			return aux;
+		}
+		aux = aux->sig;
+	} while (aux != NULL);
+
+	return NULL;
+}
+
 
 void poner(enum objeto k) {
 	it++;
@@ -77,7 +92,6 @@ void borrar_registro(registro* regViejo) {
 //posicion: encontrar en la tds al identificador para ver si ya fue declarado y si su uso es semánticamente legal
 
 int posicion() {
-	printf("\n 1 **********\n");
 	if (tabla == NULL) return 0;
 
 	registro* aux = regUltimo;
