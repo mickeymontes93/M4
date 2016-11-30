@@ -237,6 +237,30 @@ void interpretar(void) {
                         printf("suma igual de %d + %d (s en %d)",p[s],p[s+1],s);
                         p[s]=p[s]+p[s+1];
                         break;
+                    case 31: //----------> CONSOLE.WRITE
+                        break;
+                    case 32: //----------> CONSOLE.READ
+                        break;
+                    case 33: //----------> FCLOSE
+                        break;
+                    case 34: //----------> FOPEN
+                        break;
+                    case 35: //----------> FSCANF
+                        break;
+                    case 36: //----------> FGETS
+                        break;
+                    case 37: //----------> SPLIT
+                        break;
+                    case 38: //----------> TRIM
+                        break;
+                    case 39: //----------> LENGTH
+                        break;
+                    case 40: //----------> CONCAT
+                        break;
+                    case 41: //----------> REPLACE
+                        break;
+                    case 42: //----------> EQUAL
+                        break;
                };
                break;
     
