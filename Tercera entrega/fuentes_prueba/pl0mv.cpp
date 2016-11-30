@@ -10,16 +10,35 @@
 #include <stdlib.h>
 #include <math.h>
 
+#include "parametros.h"
 #define MAXIC     200  //tamaño máximo del array de código-p
-#define LONGSTACK 500  //tamaño-longitud del stack de datos                    
+#define LONGSTACK 700  //tamaño-longitud del stack de datos                    
 
 //instrucciones(mnemónicos) del código-p
 enum fcn {LIT,OPR,CAR,ALM,LLA,INS,SAL,SAC};
+enum tipo_dato {NO_TIPO, ENTERO, FLOAT, CADENA, CARACTER, BOOLEAN}; 
 
 typedef struct {
- enum fcn f; //mnemónico
- int     ni; //nivel (0..MAXNIV)
- int     di; //dirección o desplazamiento (0..32767)
+     enum fcn f; //mnemónico de la instrucción a utilizar
+     int     ni; //nivel (0..MAXNIV), donde 0 es global y 1 es local
+     int     di; //dirección o desplazamiento (0..32767)
+                  /*EN LIT d es el número que se va a ingresar, este dato da igual */
+     enum tipo_dato ti; // indica el tipo de dato con el que la instruccion va a trabajar:
+                  /*
+                      0----> no es un tipo de dato
+                      1----> numero entero
+                      2----> numero flotante
+                      3----> Cadena
+                      4----> Caracter
+                      5----> Boolean
+                  */
+      union{
+        int entero;
+        float flotante;
+        int booleano;
+        char caracter;
+        char cadena[MAXSTRING];
+      }Dato;
 } codigo_intermedio;
 
 codigo_intermedio codigo[MAXIC]; //array con las instrucciones de codigo-p
@@ -27,7 +46,18 @@ int ic;                          //índice sobre el array de código-p
 
 FILE *obj; //apuntador al archivo de código intermedio
 
-int p[LONGSTACK] ; //memoria de datos-stack
+
+//int p[LONGSTACK] ; //memoria de datos-stack
+struct pila {
+  enum tipo_dato ti;
+  union{
+    int entero;
+    float flotante;
+    int booleano;
+    char caracter;
+    char cadena[MAXSTRING]; 
+  }Dato;
+};
 
 //arrays para mostrar como string el mnemónico de la instrucción
 char *mnemonico[]={"LIT","OPR","CAR","ALM","LLA","INS","SAL","SAC"};
@@ -40,6 +70,7 @@ char *mnemonico[]={"LIT","OPR","CAR","ALM","LLA","INS","SAL","SAC"};
 //prototipos de funciones
 void interpretar(void),listar_p(void);
 int base(int ni,int b);
+struct pila p[LONGSTACK]; 
 
 //main: inicia la ejecución
 int main(int argc,char *argv[]) {
@@ -74,10 +105,12 @@ void interpretar(void) {
  register int b;       //registro de dirección base
  register int s;       //apuntador al tope del stack
  codigo_intermedio i;  //registro de instrucción: contiene la siguiente instrucción a ejecutar		     
-			
- s=-1;b=0;d=0;
- p[0]=p[1]=p[2]=0;   //ED,EE y DR para el programa principal
+float op1,op2; //auxiliares
  
+ s=-1;b=0;d=0;
+ p[0].Dato.entero=p[1].Dato.entero=p[2].Dato.entero=0;   //ED, EE y DR para el programa principal
+ p[0].ti=p[1].ti=p[2].ti=ENTERO;
+
  //bucle de ejecución
  do {
   
@@ -85,98 +118,594 @@ void interpretar(void) {
     printf("\n\nejecutando la instruccion %4d: %3s %5d %5d",d-1,mnemonico[i.f],i.ni,i.di); 
    
     switch(i.f) {
-          case LIT:
-               p[++s]=i.di;
-	           printf("\nLIT : cargando la literal %d en la direccion %d (s en %d)",i.di,s,s);
+          case LIT: // LIT nivel X tipo_dato
+               //p[++s]=i.di;
+                switch(i.ti){
+                  case ENTERO:
+                      ++s;
+                      p[s].Dato.entero= i.Dato.entero;
+                      p[s].ti=ENTERO;
+                      printf("\n[ s = %d ] [  LIT ---> N = %d  D = %d  T = %d  ] Cargado dato %d en direccion %d ",s,i.ni,i.di,i.ti,i.Dato.entero,s);
+                      break;
+                  case FLOAT:
+                      ++s;
+                      p[s].Dato.flotante= i.Dato.flotante;
+                      p[s].ti=FLOAT;
+                      printf("\n[ s = %d ] [  LIT ---> N = %d  D = %d  T = %d  ] Cargado dato %f en direccion %d ",s,i.ni,i.di,i.ti,i.Dato.flotante,s);
+                      break;
+                  case CARACTER:
+                      ++s;
+                      p[s].Dato.caracter= i.Dato.caracter;
+                      p[s].ti=CARACTER;
+                      printf("\n[ s = %d ] [  LIT ---> N = %d  D = %d  T = %d  ] Cargado dato %c en direccion %d ",s,i.ni,i.di,i.ti,i.Dato.caracter,s);
+                      break;
+                  case CADENA:
+                      ++s;
+                      strcpy(p[s].Dato.cadena,i.Dato.cadena);
+                      p[s].ti=CADENA;
+                      printf("\n[ s = %d ] [  LIT ---> N = %d  D = %d  T = %d  ] Cargado dato %s en direccion %d ",s,i.ni,i.di,i.ti,i.Dato.cadena,s);
+                      break;
+                  case BOOLEAN:
+                      ++s;
+                      p[s].Dato.booleano= i.Dato.booleano;
+                      p[s].ti=BOOLEAN;
+                      printf("\n[ s = %d ] [  LIT ---> N = %d  D = %d  T = %d  ] Cargado dato %d en direccion %d ",s,i.ni,i.di,i.ti,i.Dato.booleano,s);
+                      break;
+                }
+
                break;
 
-          case OPR:
-               printf("\nOPR : ");
+          case OPR: // OPR nivel tipo_opr tipo_dato
+               //printf("\nOPR : ");
 			   //determinar de que operador se trata
                switch(i.di) {  
 			       case 0: //retornar o fin
                         s=--b;
-                        d=p[s+3];
-                        b=p[s+2];
-	                    printf("retornar a la instruccion %d, base=%d (s en %d)",d,b,s);
+                        d=p[s+3].Dato.entero;
+                        b=p[s+2].Dato.entero;
+	                      printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] Retornar a la instruccion %d, base=%d ",s,i.ni,i.di,i.ti,d,b);
                         break;
 
                    case 1: //----------> MENOS UNARIO
-	                    printf("- unario para %d (s en %d)",p[s],s);
-                        p[s]=-p[s];
+                        switch(i.ti){
+                          case ENTERO:
+                            printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] Operador ( - )  unario para %d",s,i.ni,i.di,i.ti,p[s].Dato.entero);
+                            p[s].Dato.entero=-p[s].Dato.entero;
+                            break;
+                          case FLOAT:
+                            printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] Operador ( - )  unario para %f",s,i.ni,i.di,i.ti,p[s].Dato.flotante);
+                            p[s].Dato.flotante=-p[s].Dato.flotante;
+                            break;
+                          default:
+                            fclose(obj);
+                            printf("\nError a tiempo de ejecucion\nError en tipos de datos");
+                            printf("\n--Programa abortado--");
+                            exit(1); //el error es fatal
+                        }
                         break;
 
                    case 2: //----------> SUMA
                         --s;
-	                    printf("suma de %d + %d (s en %d)",p[s],p[s+1],s);
-                        p[s]=p[s]+p[s+1];
-	                    break;
+                        if(p[s].ti==ENTERO && p[s+1].ti==ENTERO){
+                          printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] suma de %d + %d",s,i.ni,i.di,i.ti,p[s].Dato.entero,p[s+1].Dato.entero);
+                          p[s].Dato.entero=p[s].Dato.entero+p[s+1].Dato.entero;
+                          p[s].ti=ENTERO;
+                        }else if(p[s].ti==ENTERO && p[s+1].ti==FLOAT){
+                          printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] suma de %d + %f",s,i.ni,i.di,i.ti,p[s].Dato.entero,p[s+1].Dato.flotante);
+                          p[s].Dato.flotante=p[s].Dato.entero+p[s+1].Dato.flotante;
+                          p[s].ti=FLOAT;
+                        }else if(p[s].ti==FLOAT && p[s+1].ti==ENTERO){
+                          printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] suma de %f + %d",s,i.ni,i.di,i.ti,p[s].Dato.flotante,p[s+1].Dato.entero);
+                          p[s].Dato.flotante=p[s].Dato.flotante+p[s+1].Dato.entero;
+                          p[s].ti=FLOAT;
+                        }else if(p[s].ti==FLOAT && p[s+1].ti==FLOAT){
+                          printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] suma de %f + %f",s,i.ni,i.di,i.ti,p[s].Dato.flotante,p[s+1].Dato.flotante);
+                          p[s].Dato.flotante=p[s].Dato.flotante+p[s+1].Dato.flotante;
+                          p[s].ti=FLOAT;
+                        }else{
+                            fclose(obj);
+                            printf("\nError a tiempo de ejecucion\nError en tipos de datos");
+                            printf("\n--Programa abortado--");
+                            exit(1); //el error es fatal
+                        }  
+	                      break;
 
-                   case 3:
-	                    --s; //----------> RESTA
-                        printf("resta de %d - %d (s en %d)",p[s],p[s+1],s);
-                        p[s]=p[s]-p[s+1];
+                   case 3://----------> RESTA
+	                      --s; 
+                        //printf("resta de %d - %d (s en %d)",p[s],p[s+1],s);
+                        //p[s]=p[s]-p[s+1];
+                        if(p[s].ti==ENTERO && p[s+1].ti==ENTERO){
+                          printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] resta de %d - %d",s,i.ni,i.di,i.ti,p[s].Dato.entero,p[s+1].Dato.entero);
+                          p[s].Dato.entero=p[s].Dato.entero-p[s+1].Dato.entero;
+                          p[s].ti=ENTERO;
+                        }else if(p[s].ti==ENTERO && p[s+1].ti==FLOAT){
+                          printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] resta de %d - %f",s,i.ni,i.di,i.ti,p[s].Dato.entero,p[s+1].Dato.flotante);
+                          p[s].Dato.flotante=p[s].Dato.entero-p[s+1].Dato.flotante;
+                          p[s].ti=FLOAT;
+                        }else if(p[s].ti==FLOAT && p[s+1].ti==ENTERO){
+                          printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] resta de %f - %d",s,i.ni,i.di,i.ti,p[s].Dato.flotante,p[s+1].Dato.entero);
+                          p[s].Dato.flotante=p[s].Dato.flotante-p[s+1].Dato.entero;
+                          p[s].ti=FLOAT;
+                        }else if(p[s].ti==FLOAT && p[s+1].ti==FLOAT){
+                          printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] resta de %f - %f",s,i.ni,i.di,i.ti,p[s].Dato.flotante,p[s+1].Dato.flotante);
+                          p[s].Dato.flotante=p[s].Dato.flotante-p[s+1].Dato.flotante;
+                          p[s].ti=FLOAT;
+                        }else{
+                            fclose(obj);
+                            printf("\nError a tiempo de ejecucion\nError en tipos de datos");
+                            printf("\n--Programa abortado--");
+                            exit(1); //el error es fatal
+                        }
                         break;
 
                    case 4: //----------> MULTIPLICACION
-	                    --s;
-                        printf("multiplicacion de %d * %d (s en %d)",p[s],p[s+1],s);
-                        p[s]=p[s]*p[s+1];
+	                      --s;
+                       // printf("multiplicacion de %d * %d (s en %d)",p[s],p[s+1],s);
+                       // p[s]=p[s]*p[s+1];
+                        if(p[s].ti==ENTERO && p[s+1].ti==ENTERO){
+                            printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] multiplicacion de %d * %d",s,i.ni,i.di,i.ti,p[s].Dato.entero,p[s+1].Dato.entero);
+                            p[s].Dato.entero=p[s].Dato.entero*p[s+1].Dato.entero;
+                            p[s].ti=ENTERO;
+                        }else if(p[s].ti==ENTERO && p[s+1].ti==FLOAT){
+                            printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] multiplicacion de %d * %f",s,i.ni,i.di,i.ti,p[s].Dato.entero,p[s+1].Dato.flotante);
+                            p[s].Dato.flotante=p[s].Dato.entero*p[s+1].Dato.flotante;
+                            p[s].ti=FLOAT;
+                        }else if(p[s].ti==FLOAT && p[s+1].ti==ENTERO){
+                            printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] multiplicacion de %f * %d",s,i.ni,i.di,i.ti,p[s].Dato.flotante,p[s+1].Dato.entero);
+                            p[s].Dato.flotante=p[s].Dato.flotante*p[s+1].Dato.entero;
+                            p[s].ti=FLOAT;
+                        }else if(p[s].ti==FLOAT && p[s+1].ti==FLOAT){
+                            printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] multiplicacion de %f * %f",s,i.ni,i.di,i.ti,p[s].Dato.flotante,p[s+1].Dato.flotante);
+                            p[s].Dato.flotante=p[s].Dato.flotante*p[s+1].Dato.flotante;
+                            p[s].ti=FLOAT;
+                        }else{
+                            fclose(obj);
+                            printf("\nError a tiempo de ejecucion\nError en tipos de datos");
+                            printf("\n--Programa abortado--");
+                            exit(1); //el error es fatal
+                        }
                         break;
 
                    case 5: //---------->  DIVISION
                         --s;
-	                    printf("division entera de %d / %d (s en %d)",p[s],p[s+1],s);
-                        if(p[s+1]==0) {
-						  fclose(obj);
-	                      printf("\nError a tiempo de ejecucion\nSe intenta dividir entre cero");
-	                      printf("\n--Programa abortado--");
-	                      exit(1); //el error es fatal
+	                     //printf("division entera de %d / %d (s en %d)",p[s],p[s+1],s);
+                        if((p[s+1].ti==ENTERO && p[s+1].Dato.entero==0) or (p[s+1].ti==FLOAT && p[s+1].Dato.flotante==0)) {
+    						            fclose(obj);
+    	                      printf("\nError a tiempo de ejecucion\nSe intenta dividir entre cero");
+    	                      printf("\n--Programa abortado--");
+    	                      exit(1); //el error es fatal
                         }
-                        p[s]=p[s]/p[s+1];
+                        //p[s]=p[s]/p[s+1];
+                        if(p[s].ti==ENTERO && p[s+1].ti==ENTERO){
+                            printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] division de %d / %d",s,i.ni,i.di,i.ti,p[s].Dato.entero,p[s+1].Dato.entero);
+                            p[s].Dato.flotante=p[s].Dato.entero/p[s+1].Dato.entero;
+                            p[s].ti=FLOAT;
+                        }else if(p[s].ti==ENTERO && p[s+1].ti==FLOAT){
+                            printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] division de %d / %f",s,i.ni,i.di,i.ti,p[s].Dato.entero,p[s+1].Dato.flotante);
+                            p[s].Dato.flotante=p[s].Dato.entero/p[s+1].Dato.flotante;
+                            p[s].ti=FLOAT;
+                        }else if(p[s].ti==FLOAT && p[s+1].ti==ENTERO){
+                            printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] division de %f / %d",s,i.ni,i.di,i.ti,p[s].Dato.flotante,p[s+1].Dato.entero);
+                            p[s].Dato.flotante=p[s].Dato.flotante/p[s+1].Dato.entero;
+                            p[s].ti=FLOAT;
+                        }else if(p[s].ti==FLOAT && p[s+1].ti==FLOAT){
+                            printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] division de %f / %f",s,i.ni,i.di,i.ti,p[s].Dato.flotante,p[s+1].Dato.flotante);
+                            p[s].Dato.flotante=p[s].Dato.flotante/p[s+1].Dato.flotante;
+                            p[s].ti=FLOAT;
+                        }else{
+                            fclose(obj);
+                            printf("\nError a tiempo de ejecucion\nError en tipos de datos");
+                            printf("\n--Programa abortado--");
+                            exit(1); //el error es fatal
+                        }
                         break;
 
                    case 6: //----------> ODD
-                        printf("odd(%d)? (s en %d)",p[s],s);
-                        p[s]=(p[s]%2!=0);
+                        switch(p[s].ti){
+                            case ENTERO:
+                               printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] odd(%d)?",s,i.ni,i.di,i.ti,p[s].Dato.entero);
+                               p[s].Dato.entero=(((p[s].Dato.entero)%2)!=0);
+                               p[s].ti=ENTERO;
+                               break;
+                            /*case FLOAT:
+                               printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] odd(%f)?",s,i.ni,i.di,i.ti,p[s].Dato.flotante);
+                               p[s].Dato.entero=(((p[s].Dato.flotante)%2)!=0);
+                               p[s].ti=ENTERO;
+                               break;*/
+                        }
+                        //printf("odd(%d)? (s en %d)",p[s],s);
+                        //p[s]=(p[s]%2!=0);
+                        break;
        
                    case 7: //sin uso
                         break;
 
                    case 8: //----------> IGUAL (==)
-	                    --s;
-                        printf("%d=%d? (s en %d)",p[s],p[s+1],s);
-                        p[s]=(p[s]==p[s+1]);
+	                      --s;
+                        switch(p[s].ti){
+                            case ENTERO:
+                                switch(p[s+1].ti){
+                                    case ENTERO:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %d=%d?",s,i.ni,i.di,i.ti,p[s].Dato.entero,p[s+1].Dato.entero);
+                                        p[s].Dato.entero=(p[s].Dato.entero==p[s+1].Dato.entero);
+                                        p[s].ti=ENTERO;
+                                        break;
+                                    case BOOLEAN:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %d=%d?",s,i.ni,i.di,i.ti,p[s].Dato.entero,p[s+1].Dato.booleano);
+                                        p[s].Dato.entero=0;
+                                        p[s].ti=ENTERO;
+                                        break;
+                                    case CARACTER:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %d=%c?",s,i.ni,i.di,i.ti,p[s].Dato.entero,p[s+1].Dato.caracter);
+                                        p[s].Dato.entero=0;
+                                        p[s].ti=ENTERO;
+                                        break;
+                                    case CADENA:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %d=%s?",s,i.ni,i.di,i.ti,p[s].Dato.entero,p[s+1].Dato.cadena);
+                                        p[s].Dato.entero=0;
+                                        p[s].ti=ENTERO;
+                                        break;
+                                    case FLOAT:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %d=%f?",s,i.ni,i.di,i.ti,p[s].Dato.entero,p[s+1].Dato.flotante);
+                                        p[s].Dato.entero=(p[s].Dato.entero==p[s+1].Dato.flotante);
+                                        p[s].ti=ENTERO;
+                                        break;
+                                }
+
+                                break;
+                            case BOOLEAN:
+                                switch(p[s+1].ti){
+                                    case ENTERO:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %d=%d?",s,i.ni,i.di,i.ti,p[s].Dato.booleano,p[s+1].Dato.entero);
+                                        p[s].Dato.entero=0;
+                                        p[s].ti=ENTERO;
+                                        break;
+                                    case BOOLEAN:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %d=%d?",s,i.ni,i.di,i.ti,p[s].Dato.booleano,p[s+1].Dato.booleano);
+                                        p[s].Dato.entero=(p[s].Dato.booleano==p[s+1].Dato.booleano);
+                                        p[s].ti=ENTERO;
+                                        break;
+                                    case CARACTER:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %d=%c?",s,i.ni,i.di,i.ti,p[s].Dato.booleano,p[s+1].Dato.caracter);
+                                        p[s].Dato.entero=0;
+                                        p[s].ti=ENTERO;
+                                        break;
+                                    case CADENA:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %d=%s?",s,i.ni,i.di,i.ti,p[s].Dato.booleano,p[s+1].Dato.cadena);
+                                        p[s].Dato.entero=0;
+                                        p[s].ti=ENTERO;
+                                        break;
+                                    case FLOAT:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %d=%f?",s,i.ni,i.di,i.ti,p[s].Dato.booleano,p[s+1].Dato.flotante);
+                                        p[s].Dato.entero=0;
+                                        p[s].ti=ENTERO;
+                                        break;
+                                }
+
+                                break;
+                            case CARACTER:
+                                switch(p[s+1].ti){
+                                    case ENTERO:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %c=%d?",s,i.ni,i.di,i.ti,p[s].Dato.caracter,p[s+1].Dato.entero);
+                                        p[s].Dato.entero=0;
+                                        p[s].ti=ENTERO;
+                                        break;
+                                    case BOOLEAN:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %c=%d?",s,i.ni,i.di,i.ti,p[s].Dato.caracter,p[s+1].Dato.booleano);
+                                        p[s].Dato.entero=0;
+                                        p[s].ti=ENTERO;
+                                        break;
+                                    case CARACTER:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %c=%c?",s,i.ni,i.di,i.ti,p[s].Dato.caracter,p[s+1].Dato.caracter);
+                                        p[s].Dato.entero=(p[s].Dato.caracter==p[s+1].Dato.caracter);
+                                        p[s].ti=ENTERO;
+                                        break;
+                                    case CADENA:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %c=%s?",s,i.ni,i.di,i.ti,p[s].Dato.caracter,p[s+1].Dato.cadena);
+                                        p[s].Dato.entero=0;
+                                        p[s].ti=ENTERO;
+                                        break;
+                                    case FLOAT:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %c=%f?",s,i.ni,i.di,i.ti,p[s].Dato.caracter,p[s+1].Dato.flotante);
+                                        p[s].Dato.entero=0;
+                                        p[s].ti=ENTERO;
+                                        break;
+                                }
+
+                                break;
+
+                            case CADENA:
+                                switch(p[s+1].ti){
+                                    case ENTERO:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %s=%d?",s,i.ni,i.di,i.ti,p[s].Dato.cadena,p[s+1].Dato.entero);
+                                        p[s].Dato.entero=0;
+                                        p[s].ti=ENTERO;
+                                        break;
+                                    case BOOLEAN:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %s=%d?",s,i.ni,i.di,i.ti,p[s].Dato.cadena,p[s+1].Dato.booleano);
+                                        p[s].Dato.entero=0;
+                                        p[s].ti=ENTERO;
+                                        break;
+                                    case CARACTER:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %s=%c?",s,i.ni,i.di,i.ti,p[s].Dato.cadena,p[s+1].Dato.caracter);
+                                        p[s].Dato.entero=0;
+                                        p[s].ti=ENTERO;
+                                        break;
+                                    case CADENA:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %s=%s?",s,i.ni,i.di,i.ti,p[s].Dato.cadena,p[s+1].Dato.cadena);
+                                        p[s].Dato.entero=(p[s].Dato.cadena==p[s+1].Dato.cadena);
+                                        p[s].ti=ENTERO;
+                                        break;
+                                    case FLOAT:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %s=%f?",s,i.ni,i.di,i.ti,p[s].Dato.cadena,p[s+1].Dato.flotante);
+                                        p[s].Dato.entero=0;
+                                        p[s].ti=ENTERO;
+                                        break;
+                                }
+
+                                break;
+
+
+                            case FLOAT:
+                                switch(p[s+1].ti){
+                                    case ENTERO:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %f=%d?",s,i.ni,i.di,i.ti,p[s].Dato.flotante,p[s+1].Dato.entero);
+                                        p[s].Dato.entero=0;
+                                        p[s].ti=ENTERO;
+                                        break;
+                                    case BOOLEAN:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %f=%d?",s,i.ni,i.di,i.ti,p[s].Dato.flotante,p[s+1].Dato.booleano);
+                                        p[s].Dato.entero=0;
+                                        p[s].ti=ENTERO;
+                                        break;
+                                    case CARACTER:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %f=%c?",s,i.ni,i.di,i.ti,p[s].Dato.flotante,p[s+1].Dato.caracter);
+                                        p[s].Dato.entero=0;
+                                        p[s].ti=ENTERO;
+                                        break;
+                                    case CADENA:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %f=%s?",s,i.ni,i.di,i.ti,p[s].Dato.flotante,p[s+1].Dato.cadena);
+                                        p[s].Dato.entero=0;
+                                        p[s].ti=ENTERO;
+                                        break;
+                                    case FLOAT:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %f=%f?",s,i.ni,i.di,i.ti,p[s].Dato.flotante,p[s+1].Dato.flotante);
+                                        p[s].Dato.entero=(p[s].Dato.flotante==p[s+1].Dato.flotante);
+                                        p[s].ti=ENTERO;
+                                        break;
+                                }
+
+                                break;
+                        }
+                        //printf("%d=%d? (s en %d)",p[s],p[s+1],s);
+                        //p[s]=(p[s]==p[s+1]);
                         break;
 
                    case 9: //----------> DIFERENTE DE (!=)
                         --s;
-                        printf("%d!=%d? (s en %d)",p[s],p[s+1],s);
+                       /* printf("%d!=%d? (s en %d)",p[s],p[s+1],s);
                         p[s]=(p[s]!=p[s+1]);
+                        break;*/
+                        switch(p[s].ti){
+                            case ENTERO:
+                                switch(p[s+1].ti){
+                                    case ENTERO:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %d!=%d?",s,i.ni,i.di,i.ti,p[s].Dato.entero,p[s+1].Dato.entero);
+                                        p[s].Dato.entero=(p[s].Dato.entero!=p[s+1].Dato.entero);
+                                        p[s].ti=ENTERO;
+                                        break;
+                                    case BOOLEAN:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %d!=%d?",s,i.ni,i.di,i.ti,p[s].Dato.entero,p[s+1].Dato.booleano);
+                                        p[s].Dato.entero=1;
+                                        p[s].ti=ENTERO;
+                                        break;
+                                    case CARACTER:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %d!=%c?",s,i.ni,i.di,i.ti,p[s].Dato.entero,p[s+1].Dato.caracter);
+                                        p[s].Dato.entero=1;
+                                        p[s].ti=ENTERO;
+                                        break;
+                                    case CADENA:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %d!=%s?",s,i.ni,i.di,i.ti,p[s].Dato.entero,p[s+1].Dato.cadena);
+                                        p[s].Dato.entero=1;
+                                        p[s].ti=ENTERO;
+                                        break;
+                                    case FLOAT:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %d!=%f?",s,i.ni,i.di,i.ti,p[s].Dato.entero,p[s+1].Dato.flotante);
+                                        p[s].Dato.entero=(p[s].Dato.entero!=p[s+1].Dato.flotante);
+                                        p[s].ti=ENTERO;
+                                        break;
+                                }
+
+                                break;
+                            case BOOLEAN:
+                                switch(p[s+1].ti){
+                                    case ENTERO:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %d!=%d?",s,i.ni,i.di,i.ti,p[s].Dato.booleano,p[s+1].Dato.entero);
+                                        p[s].Dato.entero=1;
+                                        p[s].ti=ENTERO;
+                                        break;
+                                    case BOOLEAN:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %d!=%d?",s,i.ni,i.di,i.ti,p[s].Dato.booleano,p[s+1].Dato.booleano);
+                                        p[s].Dato.entero=(p[s].Dato.booleano!=p[s+1].Dato.booleano);
+                                        p[s].ti=ENTERO;
+                                        break;
+                                    case CARACTER:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %d!=%c?",s,i.ni,i.di,i.ti,p[s].Dato.booleano,p[s+1].Dato.caracter);
+                                        p[s].Dato.entero=1;
+                                        p[s].ti=ENTERO;
+                                        break;
+                                    case CADENA:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %d!=%s?",s,i.ni,i.di,i.ti,p[s].Dato.booleano,p[s+1].Dato.cadena);
+                                        p[s].Dato.entero=1;
+                                        p[s].ti=ENTERO;
+                                        break;
+                                    case FLOAT:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %d!=%f?",s,i.ni,i.di,i.ti,p[s].Dato.booleano,p[s+1].Dato.flotante);
+                                        p[s].Dato.entero=1;
+                                        p[s].ti=ENTERO;
+                                        break;
+                                }
+
+                                break;
+                            case CARACTER:
+                                switch(p[s+1].ti){
+                                    case ENTERO:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %c!=%d?",s,i.ni,i.di,i.ti,p[s].Dato.caracter,p[s+1].Dato.entero);
+                                        p[s].Dato.entero=1;
+                                        p[s].ti=ENTERO;
+                                        break;
+                                    case BOOLEAN:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %c!=%d?",s,i.ni,i.di,i.ti,p[s].Dato.caracter,p[s+1].Dato.booleano);
+                                        p[s].Dato.entero=1;
+                                        p[s].ti=ENTERO;
+                                        break;
+                                    case CARACTER:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %c!=%c?",s,i.ni,i.di,i.ti,p[s].Dato.caracter,p[s+1].Dato.caracter);
+                                        p[s].Dato.entero=(p[s].Dato.caracter!=p[s+1].Dato.caracter);
+                                        p[s].ti=ENTERO;
+                                        break;
+                                    case CADENA:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %c!=%s?",s,i.ni,i.di,i.ti,p[s].Dato.caracter,p[s+1].Dato.cadena);
+                                        p[s].Dato.entero=1;
+                                        p[s].ti=ENTERO;
+                                        break;
+                                    case FLOAT:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %c!=%f?",s,i.ni,i.di,i.ti,p[s].Dato.caracter,p[s+1].Dato.flotante);
+                                        p[s].Dato.entero=1;
+                                        p[s].ti=ENTERO;
+                                        break;
+                                }
+
+                                break;
+
+                            case CADENA:
+                                switch(p[s+1].ti){
+                                    case ENTERO:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %s!=%d?",s,i.ni,i.di,i.ti,p[s].Dato.cadena,p[s+1].Dato.entero);
+                                        p[s].Dato.entero=1;
+                                        p[s].ti=ENTERO;
+                                        break;
+                                    case BOOLEAN:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %s!=%d?",s,i.ni,i.di,i.ti,p[s].Dato.cadena,p[s+1].Dato.booleano);
+                                        p[s].Dato.entero=1;
+                                        p[s].ti=ENTERO;
+                                        break;
+                                    case CARACTER:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %s!=%c?",s,i.ni,i.di,i.ti,p[s].Dato.cadena,p[s+1].Dato.caracter);
+                                        p[s].Dato.entero=1;
+                                        p[s].ti=ENTERO;
+                                        break;
+                                    case CADENA:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %s!=%s?",s,i.ni,i.di,i.ti,p[s].Dato.cadena,p[s+1].Dato.cadena);
+                                        p[s].Dato.entero=(p[s].Dato.cadena!=p[s+1].Dato.cadena);
+                                        p[s].ti=ENTERO;
+                                        break;
+                                    case FLOAT:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %s!=%f?",s,i.ni,i.di,i.ti,p[s].Dato.cadena,p[s+1].Dato.flotante);
+                                        p[s].Dato.entero=1;
+                                        p[s].ti=ENTERO;
+                                        break;
+                                }
+
+                                break;
+
+
+                            case FLOAT:
+                                switch(p[s+1].ti){
+                                    case ENTERO:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %f=%d?",s,i.ni,i.di,i.ti,p[s].Dato.flotante,p[s+1].Dato.entero);
+                                        p[s].Dato.entero=0;
+                                        p[s].ti=ENTERO;
+                                        break;
+                                    case BOOLEAN:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %f=%d?",s,i.ni,i.di,i.ti,p[s].Dato.flotante,p[s+1].Dato.booleano);
+                                        p[s].Dato.entero=0;
+                                        p[s].ti=ENTERO;
+                                        break;
+                                    case CARACTER:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %f=%c?",s,i.ni,i.di,i.ti,p[s].Dato.flotante,p[s+1].Dato.caracter);
+                                        p[s].Dato.entero=0;
+                                        p[s].ti=ENTERO;
+                                        break;
+                                    case CADENA:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %f=%s?",s,i.ni,i.di,i.ti,p[s].Dato.flotante,p[s+1].Dato.cadena);
+                                        p[s].Dato.entero=0;
+                                        p[s].ti=ENTERO;
+                                        break;
+                                    case FLOAT:
+                                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %f=%f?",s,i.ni,i.di,i.ti,p[s].Dato.flotante,p[s+1].Dato.flotante);
+                                        p[s].Dato.entero=(p[s].Dato.flotante==p[s+1].Dato.flotante);
+                                        p[s].ti=ENTERO;
+                                        break;
+                                }
+
+                                break;
+                        }
+                        //printf("%d=%d? (s en %d)",p[s],p[s+1],s);
+                        //p[s]=(p[s]==p[s+1]);
                         break;
 
                    case 10: //----------> MENOR QUE
                         --s;
-                        printf("%d<%d? (s en %d)",p[s],p[s+1],s);
-                        p[s]=(p[s]<p[s+1]);
+                        //printf("%d<%d? (s en %d)",p[s],p[s+1],s);
+                        
+                        if(p[s].ti==ENTERO) op1=float(p[s].Dato.entero);
+                        else op1=p[s].Dato.flotante;
+
+                        if(p[s+1].ti==ENTERO) op2=float(p[s+1].Dato.entero);
+                        else op2=p[s+1].Dato.flotante;
+
+                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %f<%f?",s,i.ni,i.di,i.ti,op1,op2);
+                        p[s].Dato.entero=(op1<op2);
+                        p[s].ti=ENTERO;
                         break;
 
                    case 11: //----------> MAYOR O IGUAL QUE
                         --s;
-                        printf("%d>=%d? (s en %d)",p[s],p[s+1],s);
-                        p[s]=(p[s]>=p[s+1]);
+                        //printf("%d>=%d? (s en %d)",p[s],p[s+1],s);
+                        //p[s]=(p[s]>=p[s+1]);
+                        
+                        if(p[s].ti==ENTERO) op1=float(p[s].Dato.entero);
+                        else op1=p[s].Dato.flotante;
+
+                        if(p[s+1].ti==ENTERO) op2=float(p[s+1].Dato.entero);
+                        else op2=p[s+1].Dato.flotante;
+
+                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %f>=%f?",s,i.ni,i.di,i.ti,op1,op2);
+                        p[s].Dato.entero=(op1>=op2);
+                        p[s].ti=ENTERO;
                         break;
 
                    case 12: //----------> MAYOR QUE
                         --s; 
-                        printf("%d>%d? (s en %d)",p[s],p[s+1],s);
-                        p[s]=(p[s]>p[s+1]);
+                       // printf("%d>%d? (s en %d)",p[s],p[s+1],s);
+                       // p[s]=(p[s]>p[s+1]);
+                        
+                        if(p[s].ti==ENTERO) op1=float(p[s].Dato.entero);
+                        else op1=p[s].Dato.flotante;
+
+                        if(p[s+1].ti==ENTERO) op2=float(p[s+1].Dato.entero);
+                        else op2=p[s+1].Dato.flotante;
+
+                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %f>%f?",s,i.ni,i.di,i.ti,op1,op2);
+                        p[s].Dato.entero=(op1>op2);
+                        p[s].ti=ENTERO;
                         break;
 
                    case 13: //----------> MENOR O IGUAL QUE
 	                    --s;
-                        printf("%d<=%d? (s en %d)",p[s],p[s+1],s);
-                        p[s]=(p[s]<=p[s+1]);
+                        //printf("%d<=%d? (s en %d)",p[s],p[s+1],s);
+                        //p[s]=(p[s]<=p[s+1]);
+                        
+                        if(p[s].ti==ENTERO) op1=float(p[s].Dato.entero);
+                        else op1=p[s].Dato.flotante;
+
+                        if(p[s+1].ti==ENTERO) op2=float(p[s+1].Dato.entero);
+                        else op2=p[s+1].Dato.flotante;
+
+                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] %f<=%f?",s,i.ni,i.di,i.ti,op1,op2);
+                        p[s].Dato.entero=(op1<=op2);
+                        p[s].ti=ENTERO;
                         break;
                     case 14:
                         break;
@@ -192,50 +721,144 @@ void interpretar(void) {
                         break;
                     //-------------------- FUNCIONES DE M4 -------------------------     
                     case 20: //----------> SQRT
-                        printf("squrt( %d )? (s en %d)",p[s],s);
-                        p[s]=sqrt(p[s]);
+                        //printf("squrt( %d )? (s en %d)",p[s],s);
+                        if(p[s].ti==ENTERO) op1=float(p[s].Dato.entero);
+                        else op1=p[s].Dato.flotante;
+
+
+                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] sqrt(%f)?",s,i.ni,i.di,i.ti,op1);
+                        p[s].Dato.flotante=sqrt(op1);
+                        p[s].ti=FLOAT;
                         break;
                     case 21: //----------> POW
                         --s;
-                        printf("pow( %d, %d )? (s en %d) ",p[s],p[s+1],s);
-                        p[s]=pow(p[s],p[s+1]);
+                        //printf("pow( %d, %d )? (s en %d) ",p[s],p[s+1],s);
+                        if(p[s].ti==ENTERO) op1=float(p[s].Dato.entero);
+                        else op1=p[s].Dato.flotante;
+
+                        if(p[s+1].ti==ENTERO) op2=float(p[s+1].Dato.entero);
+                        else op2=p[s+1].Dato.flotante;
+                        
+
+                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] pow(%f,%f)?",s,i.ni,i.di,i.ti,op1,op2);
+                        
+                        p[s].ti=FLOAT;
+                        p[s].Dato.flotante=pow(op1,op2);
                         break;
                     case 22: //----------> SIN
-                        printf("sin( %d )? (s en %d)", p[s],s);
-                        p[s]=sin(p[s]);
+                        //printf("sin( %d )? (s en %d)", p[s],s);
+                        // p[s]=sin(p[s]);
+                        if(p[s].ti==ENTERO) op1=float(p[s].Dato.entero);
+                        else op1=p[s].Dato.flotante;
+
+
+                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] sin(%f)?",s,i.ni,i.di,i.ti,op1);
+                        p[s].Dato.flotante=sin(op1);
+                        p[s].ti=FLOAT;
                         break;
                     case 23: //----------> COS
-                        printf("cos( %d )? (s en %d)", p[s],s);
-                        p[s]=cos(p[s]);
+                       // printf("cos( %d )? (s en %d)", p[s],s);
+                       // p[s]=cos(p[s]);
+                        if(p[s].ti==ENTERO) op1=float(p[s].Dato.entero);
+                        else op1=p[s].Dato.flotante;
+
+
+                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] cos(%f)?",s,i.ni,i.di,i.ti,op1);
+                        p[s].Dato.flotante=cos(op1);
+                        p[s].ti=FLOAT;
                         break;
                     case 24: //----------> TAN
-                        printf("tan( %d )? (s en %d)", p[s],s);
-                        p[s]=tan(p[s]);
+                       // printf("tan( %d )? (s en %d)", p[s],s);
+                        //p[s]=tan(p[s]);
+                        if(p[s].ti==ENTERO) op1=float(p[s].Dato.entero);
+                        else op1=p[s].Dato.flotante;
+
+
+                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] tan(%f)?",s,i.ni,i.di,i.ti,op1);
+                        p[s].Dato.flotante=tan(op1);
+                        p[s].ti=FLOAT;
                         break;
                     case 25: //----------> LOG 
-                        printf("log( %d )? (s en %d)", p[s],s);
-                        p[s]=log(p[s]);
+                        //printf("log( %d )? (s en %d)", p[s],s);
+                        //p[s]=log(p[s]);
+                        if(p[s].ti==ENTERO) op1=float(p[s].Dato.entero);
+                        else op1=p[s].Dato.flotante;
+
+
+                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] log(%f)?",s,i.ni,i.di,i.ti,op1);
+                        p[s].Dato.flotante=log(op1);
+                        p[s].ti=FLOAT;
                         break;
                     case 26: //---------->ARCSIN
-                        printf("arctan( %d )? (s en %d)", p[s],s);
-                        p[s]=asin(p[s]);
+                        //printf("arctan( %d )? (s en %d)", p[s],s);
+                        //p[s]=asin(p[s]);
+                        if(p[s].ti==ENTERO) op1=float(p[s].Dato.entero);
+                        else op1=p[s].Dato.flotante;
+
+
+                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] asin(%f)?",s,i.ni,i.di,i.ti,op1);
+                        p[s].Dato.flotante=asin(op1);
+                        p[s].ti=FLOAT;
                         break;
                     case 27: //---------->ARCCOS
-                        printf("arccos( %d )? (s en %d)", p[s],s);
-                        p[s]=acos(p[s]);
+                        //printf("arccos( %d )? (s en %d)", p[s],s);
+                        //p[s]=acos(p[s]);
+                        if(p[s].ti==ENTERO) op1=float(p[s].Dato.entero);
+                        else op1=p[s].Dato.flotante;
+
+
+                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] acos(%f)?",s,i.ni,i.di,i.ti,op1);
+                        p[s].Dato.flotante=acos(op1);
+                        p[s].ti=FLOAT;
                         break;
                     case 28: //---------->ARCTAN
-                        printf("arctan( %d )? (s en %d)", p[s],s);
-                        p[s]=atan(p[s]);
+                        //printf("arctan( %d )? (s en %d)", p[s],s);
+                        //p[s]=atan(p[s]);
+                        if(p[s].ti==ENTERO) op1=float(p[s].Dato.entero);
+                        else op1=p[s].Dato.flotante;
+
+
+                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] atan(%f)?",s,i.ni,i.di,i.ti,op1);
+                        p[s].Dato.flotante=atan(op1);
+                        p[s].ti=FLOAT;
                         break;
                     case 29: //---------->ROUND
-                        printf("round( %d )? (s en %d)", p[s],s);
-                        p[s]=round(p[s]);
+                        //printf("round( %d )? (s en %d)", p[s],s);
+                        //p[s]=round(p[s]);
+                        if(p[s].ti==ENTERO) op1=float(p[s].Dato.entero);
+                        else op1=p[s].Dato.flotante;
+
+
+                        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] round(%f)?",s,i.ni,i.di,i.ti,op1);
+                        p[s].Dato.flotante=round(op1);
+                        p[s].ti=FLOAT;
                         break;
                     case 30: //----------> += 
                         --s;
-                        printf("suma igual de %d + %d (s en %d)",p[s],p[s+1],s);
-                        p[s]=p[s]+p[s+1];
+                        //printf("suma igual de %d + %d (s en %d)",p[s],p[s+1],s);
+                        //p[s]=p[s]+p[s+1];
+                         if(p[s].ti==ENTERO && p[s+1].ti==ENTERO){
+                          printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] suma igual de %d + %d",s,i.ni,i.di,i.ti,p[s].Dato.entero,p[s+1].Dato.entero);
+                          p[s].Dato.entero=p[s].Dato.entero+p[s+1].Dato.entero;
+                          p[s].ti=ENTERO;
+                        }else if(p[s].ti==ENTERO && p[s+1].ti==FLOAT){
+                          printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] suma igual de %d + %f",s,i.ni,i.di,i.ti,p[s].Dato.entero,p[s+1].Dato.flotante);
+                          p[s].Dato.flotante=p[s].Dato.entero+p[s+1].Dato.flotante;
+                          p[s].ti=FLOAT;
+                        }else if(p[s].ti==FLOAT && p[s+1].ti==ENTERO){
+                          printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] suma igual de %f + %d",s,i.ni,i.di,i.ti,p[s].Dato.flotante,p[s+1].Dato.entero);
+                          p[s].Dato.flotante=p[s].Dato.flotante+p[s+1].Dato.entero;
+                          p[s].ti=FLOAT;
+                        }else if(p[s].ti==FLOAT && p[s+1].ti==FLOAT){
+                          printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] suma igual de %f + %f",s,i.ni,i.di,i.ti,p[s].Dato.flotante,p[s+1].Dato.flotante);
+                          p[s].Dato.flotante=p[s].Dato.flotante+p[s+1].Dato.flotante;
+                          p[s].ti=FLOAT;
+                        }else{
+                            fclose(obj);
+                            printf("\nError a tiempo de ejecucion\nError en tipos de datos");
+                            printf("\n--Programa abortado--");
+                            exit(1); //el error es fatal
+                        }  
                         break;
                     case 31: //----------> CONSOLE.WRITE
                         break;
@@ -266,21 +889,21 @@ void interpretar(void) {
     
           case CAR:
                p[++s]=p[base(i.ni,b)+i.di];
-	           printf("\nCAR : cargando %d en la direccion %d (s en %d)",p[base(i.ni,b)+i.di],s,s);
+	           printf("\nCAR : cargando %d en la direccion %d (s en %d)",p[base(i.ni,b)+i.di].Dato.entero,s,s);
                break;
 
           case ALM:
-               printf("\nALM : almacenando %d en la direccion %d (s en %d)",p[s],base(i.ni,b)+i.di,s-1);
+               printf("\nALM : almacenando %d en la direccion %d (s en %d)",p[s].Dato.entero,base(i.ni,b)+i.di,s-1);
                p[base(i.ni,b)+i.di]=p[s];
                --s;
                break;
 
           case LLA:
                //generar un nuevo bloque
-               p[s+1]=base(i.ni,b);
-               p[s+2]=b;
-               p[s+3]=d;
-               printf("\nLLA : activando subrutina, enlaces y DR: %d %d %d",p[s+1],p[s+2],p[s+3]);
+               p[s+1].Dato.entero=base(i.ni,b);
+               p[s+2].Dato.entero=b;
+               p[s+3].Dato.entero=d;
+               printf("\nLLA : activando subrutina, enlaces y DR: %d %d %d",p[s+1].Dato.entero,p[s+2].Dato.entero,p[s+3].Dato.entero);
 
                b=s+1;d=i.di;
                printf("\n    : nueva base %d, instruccion %d (s en %d)",b,d,s);
@@ -298,7 +921,7 @@ void interpretar(void) {
 
           case SAC:
                printf("\nSAC : ");
-               if (p[s]==0) {
+               if (p[s].Dato.entero==0) {
                   d=i.di;
                   printf("la condicion es falsa. saltando condicionalmente a la instruccion %d.",d);
                }
@@ -319,7 +942,7 @@ int base(int ni,int b)
  int b1;
  b1=b;
  while (ni>0) {
-       b1=p[b1];
+       b1=p[b1].Dato.entero;
        --ni;
  }
  return (b1);
