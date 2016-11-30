@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <math.h>
 
 #define MAXIC     200  //tamaño máximo del array de código-p
 #define LONGSTACK 500  //tamaño-longitud del stack de datos                    
@@ -100,30 +101,30 @@ void interpretar(void) {
 	                    printf("retornar a la instruccion %d, base=%d (s en %d)",d,b,s);
                         break;
 
-                   case 1:
+                   case 1: //----------> MENOS UNARIO
 	                    printf("- unario para %d (s en %d)",p[s],s);
                         p[s]=-p[s];
                         break;
 
-                   case 2:
+                   case 2: //----------> SUMA
                         --s;
 	                    printf("suma de %d + %d (s en %d)",p[s],p[s+1],s);
                         p[s]=p[s]+p[s+1];
 	                    break;
 
                    case 3:
-	                    --s;
+	                    --s; //----------> RESTA
                         printf("resta de %d - %d (s en %d)",p[s],p[s+1],s);
                         p[s]=p[s]-p[s+1];
                         break;
 
-                   case 4:
+                   case 4: //----------> MULTIPLICACION
 	                    --s;
                         printf("multiplicacion de %d * %d (s en %d)",p[s],p[s+1],s);
                         p[s]=p[s]*p[s+1];
                         break;
 
-                   case 5:
+                   case 5: //---------->  DIVISION
                         --s;
 	                    printf("division entera de %d / %d (s en %d)",p[s],p[s+1],s);
                         if(p[s+1]==0) {
@@ -135,48 +136,107 @@ void interpretar(void) {
                         p[s]=p[s]/p[s+1];
                         break;
 
-                   case 6:
+                   case 6: //----------> ODD
                         printf("odd(%d)? (s en %d)",p[s],s);
                         p[s]=(p[s]%2!=0);
        
                    case 7: //sin uso
                         break;
 
-                   case 8:
+                   case 8: //----------> IGUAL (==)
 	                    --s;
                         printf("%d=%d? (s en %d)",p[s],p[s+1],s);
                         p[s]=(p[s]==p[s+1]);
                         break;
 
-                   case 9:
+                   case 9: //----------> DIFERENTE DE (!=)
                         --s;
                         printf("%d!=%d? (s en %d)",p[s],p[s+1],s);
                         p[s]=(p[s]!=p[s+1]);
                         break;
 
-                   case 10:
+                   case 10: //----------> MENOR QUE
                         --s;
                         printf("%d<%d? (s en %d)",p[s],p[s+1],s);
                         p[s]=(p[s]<p[s+1]);
                         break;
 
-                   case 11:
+                   case 11: //----------> MAYOR O IGUAL QUE
                         --s;
                         printf("%d>=%d? (s en %d)",p[s],p[s+1],s);
                         p[s]=(p[s]>=p[s+1]);
                         break;
 
-                   case 12:
-                        --s;
+                   case 12: //----------> MAYOR QUE
+                        --s; 
                         printf("%d>%d? (s en %d)",p[s],p[s+1],s);
                         p[s]=(p[s]>p[s+1]);
                         break;
 
-                   case 13:
+                   case 13: //----------> MENOR O IGUAL QUE
 	                    --s;
                         printf("%d<=%d? (s en %d)",p[s],p[s+1],s);
                         p[s]=(p[s]<=p[s+1]);
-                        break;       
+                        break;
+                    case 14:
+                        break;
+                    case 15:
+                        break;
+                    case 16:
+                        break;
+                    case 17:
+                        break;
+                    case 18:
+                        break;
+                    case 19:
+                        break;
+                    //-------------------- FUNCIONES DE M4 -------------------------     
+                    case 20: //----------> SQRT
+                        printf("squrt( %d )? (s en %d)",p[s],s);
+                        p[s]=sqrt(p[s]);
+                        break;
+                    case 21: //----------> POW
+                        --s;
+                        printf("pow( %d, %d )? (s en %d) ",p[s],p[s+1],s);
+                        p[s]=pow(p[s],p[s+1]);
+                        break;
+                    case 22: //----------> SIN
+                        printf("sin( %d )? (s en %d)", p[s],s);
+                        p[s]=sin(p[s]);
+                        break;
+                    case 23: //----------> COS
+                        printf("cos( %d )? (s en %d)", p[s],s);
+                        p[s]=cos(p[s]);
+                        break;
+                    case 24: //----------> TAN
+                        printf("tan( %d )? (s en %d)", p[s],s);
+                        p[s]=tan(p[s]);
+                        break;
+                    case 25: //----------> LOG 
+                        printf("log( %d )? (s en %d)", p[s],s);
+                        p[s]=log(p[s]);
+                        break;
+                    case 26: //---------->ARCSIN
+                        printf("arctan( %d )? (s en %d)", p[s],s);
+                        p[s]=asin(p[s]);
+                        break;
+                    case 27: //---------->ARCCOS
+                        printf("arccos( %d )? (s en %d)", p[s],s);
+                        p[s]=acos(p[s]);
+                        break;
+                    case 28: //---------->ARCTAN
+                        printf("arctan( %d )? (s en %d)", p[s],s);
+                        p[s]=atan(p[s]);
+                        break;
+                    case 29: //---------->ROUND
+                        printf("round( %d )? (s en %d)", p[s],s);
+                        p[s]=round(p[s]);
+                        break;
+                    case 30: //----------> += 
+                        --s;
+                        printf("suma igual de %d + %d (s en %d)",p[s],p[s+1],s);
+                        p[s]=p[s]+p[s+1];
+                        break;
                };
                break;
     
