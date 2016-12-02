@@ -163,6 +163,10 @@ void ASIGNACION(int toksig[]) {
 		obtoken();
 		// Se perdona que se use "==" o ":="
 		if ((token == tok_asignar) || (token == tok_igual)) {
+			if(token == tok_igual){
+				//Se esperaba una asignación con :=					
+				error(21);
+			}
 			obtoken();
 			if (IS_EXPRESION_CAD()) {
 				union_set(setpaso, toksig, sig_auxfunc);
