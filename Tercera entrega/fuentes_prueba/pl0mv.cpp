@@ -174,14 +174,13 @@ float op1,op2; //auxiliares
           case OPR: // OPR nivel tipo_opr tipo_dato
                //printf("\nOPR : ");
          //determinar de que operador se trata
-               switch(i.Dato.entero) {  
-             case 0: //retornar o fin
-                        s=--b;
-                        d=p[s+3].Dato.entero;
-      b=p[s+2].Dato.entero;
-                        //printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] Retornar a la instruccion %d, base=%d ",s,i.ni,i.di,i.ti,d,b);
-        printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] Retornar a la instruccion %d, base=%d ",s,i.ni,i.Dato.entero,i.ti,p[s+3].Dato.entero,b);
-                        break;
+               switch(i.d) {  
+                   case 0: //retornar o fin
+                              s=--b;
+                              d=p[s+3].Dato.entero;
+                              b=p[s+2].Dato.entero;
+                              printf("\n[ s = %d ] [ OPR ---> N = %d D= %d T = %d ] Retornar a la instruccion %d, base=%d ",s,i.ni,i.Dato.entero,i.ti,p[s+3].Dato.entero,b);
+                              break;
 
                    case 1: //----------> MENOS UNARIO
                         switch(i.ti){
