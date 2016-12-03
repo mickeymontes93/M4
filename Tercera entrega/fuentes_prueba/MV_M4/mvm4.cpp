@@ -875,25 +875,22 @@ void interpretar(void) {
                     	p[s].t=CADENA;
                         break;
 
-                    case 37: //----------> SPLIT
-                        break;
-
-                    case 38: //----------> LENGTH
+                    case 37: //----------> LENGTH
                     	p[s].Dato.entero= strlen(p[s].Dato.cadena);
                     	p[s].t=ENTERO;
                         break;
 
-                    case 39: //----------> CONCAT
+                    case 38: //----------> CONCAT
                     	--s;
                     	strcat(p[s].Dato.cadena, p[s+1].Dato.cadena);
                         break;
 
-                    case 40: //----------> REPLACE
+                    case 39: //----------> REPLACE
                     	s=s-2;
                     	replace_cad(s);
                         break;
 
-                    case 41: //----------> EQUAL
+                    case 40: //----------> EQUAL
                     	--s;
                     	int res= strcmp(p[s].Dato.cadena,p[s+1].Dato.cadena);
                     	if(res<0 || res > 0){
