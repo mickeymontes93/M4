@@ -57,7 +57,7 @@ typedef struct {
 pila p[MAXIC];
 int ip; 
 
-FILE *obj; //apuntador al archivo de código intermedio
+FILE *obj, *file_aux; //apuntador al archivo de código intermedio
 
 //----> DECLARACION DE FUNCIONES.
 void listar_p(void);
@@ -856,16 +856,23 @@ void interpretar(void) {
                         break;
 
                     case 33: //----------> FCLOSE
+                    	fclose(file_aux);
                         break;
 
                     case 34: //----------> FOPEN
-
+                    	file_aux = fopen (p[s].Dato.cadena, "r");
+                    	s=s-1;
                         break;
 
                     case 35: //----------> FSCANF
+                    	s++;
+                    	fscanf (file_aux, "%s", &p[s].Dato.cadena);
+                    	p[s].t=CADENA;
                         break;
 
                     case 36: //----------> FGETS
+                    	fgets (p[s].Dato.cadena, MAXSTRING, file_aux);
+                    	p[s].t=CADENA;
                         break;
 
                     case 37: //----------> SPLIT
