@@ -148,13 +148,16 @@ namespace IDE_M4 {
             this.Text = "IDE M4 - " + editor.FileName;
         }
 
-        private void btnRun_Click(object sender, EventArgs e) {
+        private void executeObject(string fileName)
+        {
             this.txtConsole.Clear();
             CustomM4Editor editor = (CustomM4Editor)tabControl1.SelectedTab.Controls[0];
 
-            Process proc = new Process {
-                StartInfo = new ProcessStartInfo {
-                    FileName = "parser\\objeto\\parser.exe",
+            Process proc = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = "scanner\\objeto\\" + fileName,
                     Arguments = "\"" + editor.FileName + "\"",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
@@ -164,7 +167,8 @@ namespace IDE_M4 {
             };
 
             proc.Start();
-            while (!proc.StandardOutput.EndOfStream) {
+            while (!proc.StandardOutput.EndOfStream)
+            {
                 string line = proc.StandardOutput.ReadLine();
                 var decompose = line.Split('~');
                 if (decompose.Count() >= 2)
@@ -180,6 +184,11 @@ namespace IDE_M4 {
             }
         }
 
+        private void btnRun_Click(object sender, EventArgs e) {
+            // agregar el codigo objeto de entrega final
+            // executeObject("scanner.exe");
+        }
+
         private void contentsToolStripMenuItem_Click(object sender, EventArgs e) {
             System.Diagnostics.Process.Start("ayuda.pdf");
         }
@@ -187,6 +196,17 @@ namespace IDE_M4 {
         private void parametrizarScannerToolStripMenuItem_Click(object sender, EventArgs e) {
             frmParametrizacionScanner form = new frmParametrizacionScanner();
             form.ShowDialog(this);
+        }
+
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+            executeObject("scanner.exe");
+        }
+
+        private void toolStripButton2_Click(object sender, EventArgs e)
+        {
+            executeObject("parser.exe");
+
         }
     }
 }

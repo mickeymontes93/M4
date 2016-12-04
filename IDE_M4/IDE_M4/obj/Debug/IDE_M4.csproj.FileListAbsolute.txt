@@ -12,3 +12,17 @@ C:\Users\jeronimo\Documents\gitProjects\M4\IDE_M4\IDE_M4\obj\Debug\IDE_M4.Proper
 C:\Users\jeronimo\Documents\gitProjects\M4\IDE_M4\IDE_M4\obj\Debug\IDE_M4.csproj.GenerateResource.Cache
 C:\Users\jeronimo\Documents\gitProjects\M4\IDE_M4\IDE_M4\obj\Debug\IDE_M4.exe
 C:\Users\jeronimo\Documents\gitProjects\M4\IDE_M4\IDE_M4\obj\Debug\IDE_M4.pdb
+C:\Users\Miguel Montes\Documents\GitHub\M4\IDE_M4\IDE_M4\bin\Debug\IDE_M4.exe.config
+C:\Users\Miguel Montes\Documents\GitHub\M4\IDE_M4\IDE_M4\obj\Debug\IDE_M4.exe
+C:\Users\Miguel Montes\Documents\GitHub\M4\IDE_M4\IDE_M4\obj\Debug\IDE_M4.pdb
+C:\Users\Miguel Montes\Documents\GitHub\M4\IDE_M4\IDE_M4\bin\Debug\IDE_M4.exe
+C:\Users\Miguel Montes\Documents\GitHub\M4\IDE_M4\IDE_M4\bin\Debug\IDE_M4.pdb
+C:\Users\Miguel Montes\Documents\GitHub\M4\IDE_M4\IDE_M4\bin\Debug\FastColoredTextBox.pdb
+C:\Users\Miguel Montes\Documents\GitHub\M4\IDE_M4\IDE_M4\bin\Debug\FastColoredTextBox.xml
+C:\Users\Miguel Montes\Documents\GitHub\M4\IDE_M4\IDE_M4\obj\Debug\IDE_M4.csprojResolveAssemblyReference.cache
+C:\Users\Miguel Montes\Documents\GitHub\M4\IDE_M4\IDE_M4\obj\Debug\IDE_M4.CustomM4Editor.resources
+C:\Users\Miguel Montes\Documents\GitHub\M4\IDE_M4\IDE_M4\obj\Debug\IDE_M4.frmMain.resources
+C:\Users\Miguel Montes\Documents\GitHub\M4\IDE_M4\IDE_M4\obj\Debug\IDE_M4.frmNuevoArchivo.resources
+C:\Users\Miguel Montes\Documents\GitHub\M4\IDE_M4\IDE_M4\obj\Debug\IDE_M4.frmParametrizacionScanner.resources
+C:\Users\Miguel Montes\Documents\GitHub\M4\IDE_M4\IDE_M4\obj\Debug\IDE_M4.Properties.Resources.resources
+C:\Users\Miguel Montes\Documents\GitHub\M4\IDE_M4\IDE_M4\obj\Debug\IDE_M4.csproj.GenerateResource.Cache

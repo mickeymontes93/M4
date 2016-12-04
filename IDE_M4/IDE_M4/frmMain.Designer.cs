@@ -39,6 +39,8 @@
             this.undoStripButton = new System.Windows.Forms.ToolStripButton();
             this.redoStripButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.btnScanner = new System.Windows.Forms.ToolStripButton();
+            this.btnParser = new System.Windows.Forms.ToolStripButton();
             this.btnRun = new System.Windows.Forms.ToolStripButton();
             this.helpToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.fileMenu = new System.Windows.Forms.ToolStripMenuItem();
@@ -135,6 +137,8 @@
             this.undoStripButton,
             this.redoStripButton,
             this.toolStripSeparator2,
+            this.btnScanner,
+            this.btnParser,
             this.btnRun,
             this.helpToolStripButton});
             this.toolStrip.Location = new System.Drawing.Point(0, 24);
@@ -228,6 +232,28 @@
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
             // 
+            // btnScanner
+            // 
+            this.btnScanner.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnScanner.Image = global::IDE_M4.Properties.Resources.scanner;
+            this.btnScanner.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnScanner.Name = "btnScanner";
+            this.btnScanner.Size = new System.Drawing.Size(23, 22);
+            this.btnScanner.Text = "Ejecutar scanner";
+            this.btnScanner.ToolTipText = "Ejecutar scanner";
+            this.btnScanner.Click += new System.EventHandler(this.toolStripButton1_Click);
+            // 
+            // btnParser
+            // 
+            this.btnParser.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnParser.Image = global::IDE_M4.Properties.Resources.parser;
+            this.btnParser.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnParser.Name = "btnParser";
+            this.btnParser.Size = new System.Drawing.Size(23, 22);
+            this.btnParser.Text = "Ejecutar parser";
+            this.btnParser.ToolTipText = "Ejecutar parser";
+            this.btnParser.Click += new System.EventHandler(this.toolStripButton2_Click);
+            // 
             // btnRun
             // 
             this.btnRun.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -235,8 +261,8 @@
             this.btnRun.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnRun.Name = "btnRun";
             this.btnRun.Size = new System.Drawing.Size(23, 22);
-            this.btnRun.Text = "Ejecutar scanner";
-            this.btnRun.ToolTipText = "Ejecutar scanner";
+            this.btnRun.Text = "Ejecutar";
+            this.btnRun.ToolTipText = "Ejecutar";
             this.btnRun.Click += new System.EventHandler(this.btnRun_Click);
             // 
             // helpToolStripButton
@@ -685,5 +711,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem5;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem6;
+        private System.Windows.Forms.ToolStripButton btnScanner;
+        private System.Windows.Forms.ToolStripButton btnParser;
     }
 }
