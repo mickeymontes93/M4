@@ -28,7 +28,6 @@ char *comentario[]={";cargar una constante",";operacion aritmetica, relacional o
 typedef struct {
  enum fcn f; // mnemónico
  int      n; //nivel
- int      d; //este valor depende del valor de f.
  tipo_dato t;
  union{
 	int entero;

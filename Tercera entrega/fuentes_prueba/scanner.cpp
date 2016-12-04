@@ -13,7 +13,10 @@ int ll;                   //contador de caracteres
 int offset;               //corrimiento en la lectura de los caracteres del programa fuente
 int fin_de_archivo;       //bandera de fin de archivo (obtch)
 int ch;                   //último caracter leído
-long int valor ;          //valor numérico de una lexeme correspondiene a un número
+
+//union valor de una lexeme correspondiene a un tipo de dato
+valorPorTipo valor;
+
 int ln = 0;				  //contador de lineas;
 
 int obtch(), getline(char s[], int lim); //funciones internas a scanner.cpp
@@ -34,7 +37,7 @@ void obtokenHelper()
 //quitar blancos, caracter de cambio de línea y tabuladores
 	while (ch == ' ' || ch == '\n' || ch == '\r' || ch == '\t' || (int) ch < 0) ch = obtch() ;
 
-				
+
 	//Si comienza con comillas dobles (34 en ascii), es String hasta donde terminen las comillas
 	if ((int) ch == 34) {
 		lexid[0] = ch;
@@ -65,10 +68,13 @@ void obtokenHelper()
 		ch = obtch();
 		lexid[i] = '\0';
 		//printf("\n%s", lexid);
-		if (i == 3)
+		if (i == 3) {
 			token = tok_caracter;
-		else
+			valor.caracter = lexid[1];
+		} else {
 			token = tok_cadena;
+			strncpy(valor.cadena, lexid + 1, strlen(lexid) - 1);
+		}
 
 		strTemp[strlen(strTemp) - 1] = '\0';
 		strcpy(palabrasVar[k], strTemp);
@@ -108,10 +114,13 @@ void obtokenHelper()
 		ch = obtch();
 		lexid[i] = '\0';
 		//printf("\n%s", lexid);
-		if (i == 3)
+		if (i == 3) {
 			token = tok_caracter;
-		else
+			valor.caracter = lexid[1];
+		} else {
 			token = tok_cadena;
+			strncpy(valor.cadena, lexid + 1, strlen(lexid) - 1);
+		}
 
 		strTemp[strlen(strTemp) - 1] = '\0';
 		strcpy(palabrasVar[k], strTemp);
@@ -132,15 +141,15 @@ void obtokenHelper()
 //si la lexeme comienza con una letra, es identificador o palabra reservada
 		if (isalpha(ch) ) {
 			lexid[0] = ch;
-			
+
 			i = 1;
 			int j;
-			while ( isalpha( (ch = obtch()) ) ||  isdigit(ch) || ch == '.' || ch == '_'){
+			while ( isalpha( (ch = obtch()) ) ||  isdigit(ch) || ch == '.' || ch == '_') {
 				//printf("%d",MAXID);
 				if (i < MAXID) lexid[i++] = ch;
 			}
 			lexid[i] = '\0';
-				
+
 			//---------------BUSQUEDA BINARIA -----------------------
 			ok = busqueda_binaria_palabras_reservadas((int) MAXPAL / 2, lexid);
 			/*for (j=0;j<MAXPAL;++j)
@@ -150,10 +159,14 @@ void obtokenHelper()
 				}*/
 
 			//Este descomentar para busqueda binaria
-			if (ok != -1)
+			if (ok != -1) {
 				token = tokpal[ok]; //es palabra reservada
-
-
+				if (token == tok_false) {
+					valor.booleano = 0;
+				} else if (token == tok_true) {
+					valor.booleano = 1;
+				}
+			}
 			/*if (ok == 1)
 				token= tokpal[j];*/
 			else // Es identificador
@@ -175,14 +188,19 @@ void obtokenHelper()
 					j++;
 				}
 				lexid[i] = '\0';
-				if (j > MAXDIGIT){
-				
+				if (j > MAXDIGIT) {
+
 					error(30); //este número es demasiado grande
 				}
 
-				if (es_flotante == 1) token = tok_flotante;
-				else token = tok_numero;
-				valor = atol(lexid); //valor numérico de una lexeme correspondiene a un número
+				if (es_flotante == 1) {
+					token = tok_flotante;
+					valor.flotante = atof(lexid);//valor numérico de una lexeme correspondiene a un flotante
+				}
+				else {
+					token = tok_numero;
+					valor.entero = atol(lexid); //valor numérico de una lexeme correspondiene a un número
+				}
 				//printf("\n%s", lexid);
 			}
 			else //reconocimiento de símbolos especiales, incluyendo pares de simbolos (aplicamos "lookahead symbol technique")
@@ -309,8 +327,8 @@ void obtoken()
 	do
 	{
 		obtokenHelper();
-		imprime_token();	
-	}while(token == COMENTARIO);
+		imprime_token();
+	} while (token == COMENTARIO);
 }
 
 //obtch: obtiene el siguiente caracter del programa fuente
@@ -336,7 +354,7 @@ int obtch()
 
 	if ( (linea[offset] == '\0') || (fin_de_archivo == 1) )
 		return (' ');
-	else{
+	else {
 		return (tolower(linea[offset])); //de esto depende si el lenguaje es sensitivo de mayúsculas o no.
 	}
 	//return(linea[offset]);
@@ -367,7 +385,7 @@ int busqueda_binaria_palabras_reservadas(int medio, char *palabra) {
 	int comparacion, medio_anterior = 0;
 	int salir = 0;
 	do {
-		
+
 		comparacion = strcmp(palabra, lexpal[medio]);
 		/*//printf("\n\n\n-----------------------------------");
 		//printf("\n PALABRA ACTUAL A BUSCAR : %s",palabra);

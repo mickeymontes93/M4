@@ -10,7 +10,6 @@
 #include "pl0.h"
 #include "parametros.h"
 #include "auxiliares.h"
-#include "scanner.h"
 #include "lexico.h"
 #include "tds.h"
 #include "conjuntos.h"

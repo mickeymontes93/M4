@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "tds.h"
+#include "codigo_p.h"
 #include "auxiliares.h"
-#include "scanner.h"
 #include "parametros.h"
 #include "pl0.h"
 
@@ -32,7 +32,7 @@ registro* getElemento(int indice) {
 }
 
 
-void poner(enum objeto k) {
+void poner(enum objeto k, int *idat) {
 	it++;
 
 	if (it > MAXIT) {
@@ -45,7 +45,7 @@ void poner(enum objeto k) {
 	if (tabla == NULL) {
 		tabla = (registro*) malloc(sizeof(registro));
 		tabla->cab = it;
-		tabla->tipo = k;
+		tabla->tipoObjeto = k;
 		strcpy(tabla->nombre, lex);
 		tabla->tipoDato = tipoDato;
 		tabla->sig = NULL;
@@ -58,7 +58,7 @@ void poner(enum objeto k) {
 		}
 		registro* newReg = (registro*) malloc(sizeof(registro));
 		newReg->cab = it;
-		newReg->tipo = k;
+		newReg->tipoObjeto = k;
 		strcpy(newReg->nombre, lex);
 		newReg->tipoDato = tipoDato;
 		newReg->sig = NULL;
@@ -66,6 +66,41 @@ void poner(enum objeto k) {
 		aux->sig = newReg;
 		regUltimo = newReg;
 	}
+
+	switch (k) {
+	case TIPO_ARREGLO:
+		tabla[it].variante.nivdir.nivel = niv;
+		tabla[it].variante.nivdir.dir  = *idat;
+		++(*idat);
+		break;
+	case TIPO_VARIABLE:
+		tabla[it].variante.nivdir.nivel = niv;
+		tabla[it].variante.nivdir.dir  = *idat;
+		++(*idat);
+		break;
+	case TIPO_FUNCION:
+		tabla[it].variante.nivdir.nivel = niv; //a "dir" la parchamos en bloque
+		break;
+	};
+
+	switch (tipoDato) {
+	case TIPO_ENTERO:
+		tabla->variante.val.entero = valor.entero;
+		break;
+	case TIPO_FLOAT:
+		tabla->variante.val.flotante = valor.flotante;
+		break;
+	case TIPO_CADENA:
+		strcpy(tabla->variante.val.cadena, valor.cadena);
+		break;
+	case TIPO_CARACTER:
+		tabla->variante.val.caracter = valor.caracter;
+		break;
+	case TIPO_BOOLEAN:
+		tabla->variante.val.booleano = valor.booleano;
+		break;
+	}
+
 	imprimirTDS();
 }
 

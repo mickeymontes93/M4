@@ -5,7 +5,7 @@
 #include "tds.h"
 #include "auxiliares.h"
 #include "lexico.h"
-#include "scanner.h"
+#include "codigo_p.h"
 
 
 int IS_VARIABLE() {

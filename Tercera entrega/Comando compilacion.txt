@@ -1,1 +1,1 @@
-	gcc  auxiliares.h lexico.h parametros.h scanner.h tds.h conjuntos.h mensajes_de_error.h parser.h codigo_p.h pl0.h auxiliares.cpp lexico.cpp scanner.cpp tds.cpp conjuntos.cpp parser_auxiliares.cpp parser.cpp codigo_p.cpp pl0.cpp -o parser.o
+	gcc -w auxiliares.h lexico.h parametros.h scanner.h tds.h conjuntos.h mensajes_de_error.h parser.h codigo_p.h pl0.h auxiliares.cpp lexico.cpp scanner.cpp tds.cpp conjuntos.cpp parser_auxiliares.cpp parser.cpp codigo_p.cpp pl0.cpp -o parser.o

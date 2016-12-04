@@ -1,12 +1,12 @@
 //un parser descendente deterministico para pl0
 #include <stdlib.h>
+#include <string.h>
 #include <stdio.h>
 #include "pl0.h"
 #include "parser.h"
 #include "tds.h"
 #include "auxiliares.h"
 #include "lexico.h"
-#include "scanner.h"
 #include "conjuntos.h"
 #include "codigo_p.h"
 
@@ -163,8 +163,8 @@ void ASIGNACION(int toksig[]) {
 		obtoken();
 		// Se perdona que se use "==" o ":="
 		if ((token == tok_asignar) || (token == tok_igual)) {
-			if(token == tok_igual){
-				//Se esperaba una asignación con :=					
+			if (token == tok_igual) {
+				//Se esperaba una asignación con :=
 				error(21);
 			}
 			obtoken();
@@ -194,17 +194,19 @@ void ASIGNACION(int toksig[]) {
 }
 
 void BLOQUE(int toksig[]) {
+	int temp, tempniv;
 	int idat; //índice de asignación de memoria, comienza con 3 por ED, DR y EE
 	int it0 ; //índice que "recuerda" en donde comienzan las instrucciones de este bloque
 	idat = 3;
 	it0 = it; //recordamos en donde comienzan en la TDS las declaraciones de este bloque
 
 	//detalle técnico
-	registro* elto = getElemento(it);
-	elto->tipoDato = TIPO_FUNCION;
-	elto->variante.dir = ic;
-
-	gen(SAL, 0, 0); //un procedimiento significa un salto en el código. luego cambiaremos nivel y direccion,
+	//registro* elto = getElemento(it);
+	//elto->tipoDato = TIPO_FUNCION;
+	//elto->variante.dir = ic;
+	valorPorTipo val;
+	val.entero = 1;
+	gen(SAL, 0, TIPO_ENTERO, val); //un procedimiento significa un salto en el código. luego cambiaremos nivel y direccion,
 	//los mostrados arriba (0 y 0) son 'paja', lo que pasa es que todavia no sabemos
 	//todavía hacia donde saltar
 
@@ -215,12 +217,12 @@ void BLOQUE(int toksig[]) {
 	do {
 		if (IS_DECLARACION()) {
 			union_set(setpaso, toksig, sig_declaracion);
-			DECLARACION(setpaso);
+			DECLARACION(setpaso, &idat);
 		}
 		while (IS_FUNCION()) {
 			FUNCION();
 			if (token == tok_id) {
-				poner(TIPO_FUNCION);
+				poner(TIPO_FUNCION, &idat);
 				obtoken();
 				union_set(setpaso, toksig, sig_conjunvar);
 				CONJUNVAR(setpaso, 0);
@@ -248,23 +250,28 @@ void BLOQUE(int toksig[]) {
 			}
 		}
 
-		//parchamos a la TDS y el código intermedio
-		//backpatching sobre TDS y código
-		registro* elto = getElemento(it0);
-		codigo[elto->variante.dir].di = ic;
-		elto->variante.dir = ic; //aquí en ic es donde comienza el código para este procedure
 
-		//se abre espacio en la memoria para un mínimo de 3 direcciones
-		gen(INS, 0, idat);
-
-		//se copia los tokens siguientes de instruccion
-		//copia_set(setpaso,sig_auxllavec); //token siguiente de bloque
-		union_set(setpaso, setpaso, sig_instruccion); //token siguiente de instruccion
-		INSTRUCCION(setpaso);
-
-		//Este do-while garantiza que lea el bloque de declaración-función-instrucción sin importar el orden.
 	} while (tokinidecl[token] == 1);
 
+	//parchamos a la TDS y el código intermedio
+	//backpatching sobre TDS y código
+	registro* elto = getElemento(it0);
+	codigo[elto->variante.nivdir.dir].Dato.entero = ic;
+	elto->variante.nivdir.dir = ic; //aquí en ic es donde comienza el código para este procedure
+
+	//se abre espacio en la memoria para un mínimo de 3 direcciones
+	val.entero = idat;
+	gen(INS, 0, TIPO_ENTERO, val);
+
+	//se copia los tokens siguientes de instruccion
+	//copia_set(setpaso,sig_auxllavec); //token siguiente de bloque
+	union_set(setpaso, setpaso, sig_instruccion); //token siguiente de instruccion
+	INSTRUCCION(setpaso);
+
+	valorPorTipo retorno;
+	retorno.entero = 0;
+	gen(OPR, 0, TIPO_ENTERO, retorno); //retorno
+	//Este do-while garantiza que lea el bloque de declaración-función-instrucción sin importar el orden.
 	//aquí viene el chequeo explícito de que el token que viene a continuación
 	//está en el conjunto de sucesores correctos (los sucesores de bloque)
 	copia_set(setpaso, sig_auxllavec); //token siguiente de bloque
@@ -524,8 +531,8 @@ void CONJUNVAR(int toksig[], int declaracion) {
 			VARIABLE();
 			if (token == tok_id) {
 				if (declaracion)
-					poner(TIPO_VARIABLE);
-				obtoken();
+					//poner(TIPO_VARIABLE);
+					obtoken();
 				if (token == tok_coma) {
 					obtoken();
 				} else {
@@ -601,7 +608,7 @@ void DATA_NUM(int toksig[]) {
 	}
 }
 
-void DECLARACION(int toksig[]) {
+void DECLARACION(int toksig[], int *idat) {
 	//printf("*****************DECLARACION\n");
 	int setpaso[NOTOKENS];
 	init_set(setpaso);
@@ -610,7 +617,7 @@ void DECLARACION(int toksig[]) {
 		VARIABLE();
 
 		if (token == tok_id) {
-			poner(TIPO_VARIABLE);
+			poner(TIPO_VARIABLE, &(*idat));
 			obtoken();
 			if (token == tok_finlinea) {
 				obtoken();
@@ -724,11 +731,11 @@ void EXPRESION_CAD(int toksig[]) {
 	if (token == tok_id) {
 		int i = posicion();
 		if (i > 0) {
-			if ((regEncontrado->tipoDato == TIPO_CADENA || regEncontrado->tipoDato == TIPO_CARACTER) && regEncontrado->tipo == TIPO_FUNCION ) {
+			if ((regEncontrado->tipoDato == TIPO_CADENA || regEncontrado->tipoDato == TIPO_CARACTER) && regEncontrado->tipoObjeto == TIPO_FUNCION ) {
 				obtoken();
 				union_set(setpaso, toksig, sig_conjunvar);
 				CONJUNVAR(setpaso, 0);
-			} else if ((regEncontrado->tipoDato == TIPO_CADENA || regEncontrado->tipoDato == TIPO_CARACTER ) && regEncontrado->tipo == TIPO_VARIABLE ) {
+			} else if ((regEncontrado->tipoDato == TIPO_CADENA || regEncontrado->tipoDato == TIPO_CARACTER ) && regEncontrado->tipoObjeto == TIPO_VARIABLE ) {
 				union_set(setpaso, toksig, sig_data_cad);
 				DATA_CAD(setpaso);
 			}
@@ -923,6 +930,23 @@ void FUNCION() {
 }
 
 void FUNCION_INSTRUCCION(int toksig[]) {
+	int temp, tempniv;
+	int idat; //índice de asignación de memoria, comienza con 3 por ED, DR y EE
+	int it0 ; //índice que "recuerda" en donde comienzan las instrucciones de este bloque
+	idat = 3;
+	it0 = it; //recordamos en donde comienzan en la TDS las declaraciones de este bloque
+
+	//detalle técnico
+	//registro* elto = getElemento(it);
+	//elto->tipoDato = TIPO_FUNCION;
+	//elto->variante.dir = ic;
+	valorPorTipo val;
+	val.entero = 0;
+	gen(SAL, 0, TIPO_ENTERO, val); //un procedimiento significa un salto en el código. luego cambiaremos nivel y direccion,
+	//los mostrados arriba (0 y 0) son 'paja', lo que pasa es que todavia no sabemos
+	//todavía hacia donde saltar
+
+
 	int setpaso[NOTOKENS];
 	//printf("*****************FUNCION_INSTRUCCION\n");
 	init_set(vacio);
@@ -934,7 +958,7 @@ void FUNCION_INSTRUCCION(int toksig[]) {
 		if (token == tok_llavea) {
 			obtoken();
 			union_set(setpaso, toksig, sig_declaracion);
-			DECLARACION(setpaso);
+			DECLARACION(setpaso, &idat);
 			//se copia los tokens siguientes de instruccion
 			//copia_set(setpaso,sig_auxllavec); //token siguiente de bloque
 			union_set(setpaso, toksig, sig_instruccion); //token siguiente de instruccion
@@ -1338,6 +1362,7 @@ void INSTRUCCION(int toksig[]) {
 	//TODO: Evaluar instrucciones ASIGNACION(), INS_IF(), INS_WHILE(), INS_FOR(), INS_SWITCH(), INS_DO(), INS_CONSOLEWRITE(), INS_CONSOLEREAD(), ABRIR_ARCHIVO(), tok_id
 	int setpaso[NOTOKENS]; //conjunto de paso por valor
 	init_set(vacio);
+	int ic1, ic2;          //variables para backpatching del código-p
 
 	if (token == tok_id) {
 		int r = posicion();
@@ -1346,6 +1371,30 @@ void INSTRUCCION(int toksig[]) {
 			if (regEncontrado->tipoDato != TIPO_VOID) {
 				union_set(setpaso, toksig, sig_auxpuntoycoma);
 				ASIGNACION(setpaso);
+				valorPorTipo auxVPT;
+				switch (regEncontrado->tipoDato) {
+				case TIPO_ENTERO:
+					auxVPT.entero = regEncontrado->variante.val.entero;
+					gen(ALM, niv - regEncontrado->variante.nivdir.nivel, TIPO_ENTERO, auxVPT);
+					break;
+				case TIPO_FLOAT:
+					auxVPT.flotante = regEncontrado->variante.val.flotante;
+					gen(ALM, niv - regEncontrado->variante.nivdir.nivel, TIPO_FLOAT, auxVPT);
+					break;
+				case TIPO_CADENA:
+					strcpy(auxVPT.cadena, regEncontrado->variante.val.cadena);
+					gen(ALM, niv - regEncontrado->variante.nivdir.nivel, TIPO_CADENA, auxVPT);
+					break;
+				case TIPO_CARACTER:
+					auxVPT.caracter = regEncontrado->variante.val.caracter;
+					gen(ALM, niv - regEncontrado->variante.nivdir.nivel, TIPO_CARACTER, auxVPT);
+					break;
+				case TIPO_BOOLEAN:
+					auxVPT.booleano = regEncontrado->variante.val.booleano;
+					gen(ALM, niv - regEncontrado->variante.nivdir.nivel, TIPO_BOOLEAN, auxVPT);
+					break;
+				}
+
 				if (token == tok_finlinea) {
 					//Se completo
 					obtoken();
@@ -1373,14 +1422,33 @@ void INSTRUCCION(int toksig[]) {
 	} else if (token == tok_if) {
 		union_set(setpaso, toksig, sig_auxinstr);
 		INS_IF(setpaso);
+
+		ic1 = ic;
+		valorPorTipo auxVPT;
+		auxVPT.entero = 0;
+		gen(SAC, 0, TIPO_ENTERO, auxVPT);
+
 		copia_set(setpaso, toksig);
 		INSTRUCCION(setpaso);
+		codigo[ic1].Dato.entero = ic;
 
 	} else if (token == tok_while) {
+		ic1 = ic;
+
 		union_set(setpaso, toksig, sig_auxinstr);
 		INS_WHILE(setpaso);
+
+		ic2 =ic;
+		valorPorTipo auxVPT;
+		auxVPT.entero = 0;
+		gen(SAC, 0, TIPO_ENTERO, auxVPT);
+
 		copia_set(setpaso, toksig);
 		INSTRUCCION(setpaso);
+		
+		auxVPT.entero = ic1;
+		gen(SAL, 0, TIPO_ENTERO, auxVPT);
+		codigo[ic2].Dato.entero = ic;
 
 	} else if (token == tok_for) {
 		union_set(setpaso, toksig, sig_auxinstr);

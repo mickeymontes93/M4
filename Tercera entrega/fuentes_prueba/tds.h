@@ -6,18 +6,28 @@
 
 //tipos de objetos de pl0
 enum objeto {TIPO_VARIABLE, TIPO_ARREGLO, TIPO_FUNCION}; //definidos aquí en el encabezado
-enum tipo_dato {TIPO_ENTERO, TIPO_FLOAT, TIPO_CADENA, TIPO_CARACTER, TIPO_BOOLEAN, TIPO_VOID}; //definidos aquí en el encabezado
+
+typedef struct {
+	int nivel;
+	int dir;
+} nivel_y_direccion;
 
 typedef struct struct_reg {
 	int cab;
 	char nombre[50 + 1];
-	enum objeto tipo;
-	int tipoDato; 
+	enum objeto tipoObjeto;
+	int tipoDato;
 	struct struct_reg* sig;
 	struct struct_reg* ant;
 	union {
-		int val;
-		int dir;
+		union {
+			int entero;
+			float flotante;
+			int booleano;
+			char caracter;
+			char cadena[MAXSTRING];
+		} val;
+		nivel_y_direccion nivdir;
 	} variante;
 } registro;
 
@@ -29,7 +39,7 @@ extern int tipoDato;
 extern registro *regEncontrado;
 extern registro *regUltimo;
 
-void poner(enum objeto k);
+void poner(enum objeto k, int *idat);
 int posicion();
 registro* getElemento(int indice);
 
