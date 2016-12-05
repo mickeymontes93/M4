@@ -560,7 +560,11 @@ void DATA_CAD(int toksig[]) {
 	if (IS_IDENTIFICADOR()) {
 		union_set(setpaso, toksig, sig_identificador);
 		IDENTIFICADOR(setpaso);
-	} else if (token == tok_cadena || token == tok_caracter) {
+	} else if (token == tok_cadena) {
+		gen(LIT, 0, TIPO_CADENA, valor);
+		obtoken();
+	} else if ( token == tok_caracter){
+		gen(LIT, 0, TIPO_CARACTER, valor);
 		obtoken();
 	} else {
 		// err: se esperaba una cadena, un caracter o un identificador.
@@ -589,9 +593,12 @@ void DATA_NUM(int toksig[]) {
 			union_set(setpaso, toksig, sig_exprnum);
 			EXPRESION_NUM(setpaso);
 		}
-	} else if (token == tok_numero || token == tok_flotante) {
-		//Se completo exitosamente esta parte.
-		obtoken();
+	} else if (token == tok_numero) {
+			gen(LIT, 0, TIPO_ENTERO, valor);
+			obtoken();
+	}else if (token == tok_flotante) {
+			gen(LIT, 0, TIPO_FLOAT, valor);
+			obtoken();
 	} else {
 		// err: se esperaba una numero entero, numero flotante o un identificador.
 		//error(38);
