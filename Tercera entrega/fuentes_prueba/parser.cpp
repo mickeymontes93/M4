@@ -238,19 +238,15 @@ void BLOQUE(int toksig[], int *idat) {
 				}
 			}
 		}
-		printf("*****************BLOQUE despues de funcion()\n");
-
 
 	} while (tokinidecl[token] == 1);
 
-	printf("*****************BLOQUE antes de codigo intermedio\n");
 	//parchamos a la TDS y el código intermedio
 	//backpatching sobre TDS y código
 	registro* elto = getElemento(it0);
 	codigo[elto->nivdir.dir].Dato.entero = ic;
 	elto->nivdir.dir = ic; //aquí en ic es donde comienza el código para este procedure
 
-	printf("*****************BLOQUE despues de codigo intermedio\n");
 	//se abre espacio en la memoria para un mínimo de 3 direcciones
 	valorPorTipo val;
 	val.entero = *idat;

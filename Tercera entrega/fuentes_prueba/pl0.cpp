@@ -59,17 +59,21 @@ int main (int argc, char *argv[]) {
 			niv = 0; //inicializamos el nivel de anidamiento (niv en pl0.h)
 			ic = 0; //inicializamos el índice sobre el codigo-p (ic en codigo_p.h)
 
+			printf("*****************Programa\n");
 			//activación del parser (en parser.h)
 			PROGRAMA();//(set_arranque);
 
+			printf("*****************Estadisticas\n");
 			//si llegamos a este punto, no se han detectado errores sintácticos en el programa fuente (estadisticas en auxiliares.cpp)
 			estadisticas();
 
 			//cerrar el programa fuente
 			fclose(fp);
 
+			printf("*****************Validando numero de errores\n");
 			//listar y escribir en disco el código-p resultado de la compilación (en codigo_p.cpp)
 			if (no_de_errores == 0) {
+				printf("*****************Listar P\n");
 				listar_p();
 				escribe_codigop(argv[1]);
 			}

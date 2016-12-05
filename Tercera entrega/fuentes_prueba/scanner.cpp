@@ -336,9 +336,10 @@ int obtch()
 {
 
 	if (fin_de_archivo == 1) {
-		fclose(fp);//cerrar el programa fuente
+		//fclose(fp);//cerrar el programa fuente
 		printf("\n\nFin del analisis sintactico, Sintaxis correcta.\n");
-		exit(1); //salir...
+		//exit(1); //salir...
+		return 0;
 	}
 
 	if (offset == ll - 1) {
