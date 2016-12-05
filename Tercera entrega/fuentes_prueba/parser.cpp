@@ -493,6 +493,7 @@ void COMPANUM() {
 void CONDICION(int toksig[]) {
 	int setpaso[NOTOKENS]; //conjunto de paso por valor
 	init_set(vacio);
+	simbolo token_auxiliar;
 	printf("*****************CONDICION\n");
 	if (IS_EXPRESION_BOOL()) {
 		union_set(setpaso, toksig, sig_exprbool);
@@ -511,8 +512,16 @@ void CONDICION(int toksig[]) {
 		union_set(setpaso, toksig, sig_exprnum);
 		EXPRESION_NUM(setpaso);
 		if (token == tok_or || token == tok_and) {
+			token_auxiliar=token;
 			obtoken();
 			CONDICION(toksig);
+			if(token_auxiliar==tok_or){
+				operador.entero = 42; // OPR #42 --- OR
+				gen(OPR, 0, TIPO_ENTERO, operador);
+			}else{
+				operador.entero = 43; // OPR #43 --- AND
+				gen(OPR, 0, TIPO_ENTERO, operador);
+			}
 		}
 	} else if (IS_EXPRESION_CAD()) {
 		COMPAGENERAL();
@@ -520,8 +529,16 @@ void CONDICION(int toksig[]) {
 		EXPRESION_CAD(setpaso);
 
 		if (token == tok_or || token == tok_and) {
+			token_auxiliar=token;
 			obtoken();
 			CONDICION(toksig);
+			if(token_auxiliar==tok_or){
+				operador.entero = 42; // OPR #42 --- OR
+				gen(OPR, 0, TIPO_ENTERO, operador);
+			}else{
+				operador.entero = 43; // OPR #43 --- AND
+				gen(OPR, 0, TIPO_ENTERO, operador);
+			}
 		}
 	} else {
 		//err: Se esperaba un expresion que genere un valor booleano
@@ -801,6 +818,8 @@ void EXPRESION_CAD(int toksig[]) {
 					if (token == tok_id) {
 						obtoken();
 						if (token == tok_parenc) {
+							operador.entero = 35; // OPR #35 --- FSCANF
+							gen(OPR, 0, TIPO_ENTERO, operador);
 							obtoken();
 						} else {
 							//err: Se esperaba parentesis de cierre
@@ -822,6 +841,8 @@ void EXPRESION_CAD(int toksig[]) {
 						if (token == tok_id) {
 							obtoken();
 							if (token == tok_parenc) {
+								operador.entero = 36; // OPR #36 --- FSCANF
+								gen(OPR, 0, TIPO_ENTERO, operador);
 								obtoken();
 							} else {
 								//err: Se esperaba parentesis de cierre
@@ -939,7 +960,7 @@ void EXPRESION_NUM(int toksig[]) {
 							operador.entero = 21;
 						if (tokenAux == tok_log)
 							operador.entero = 25;
-						gen(OPR, 0, TIPO_ENTERO, operador);
+							gen(OPR, 0, TIPO_ENTERO, operador);
 						if (token == tok_parenc) {
 							obtoken();
 						} else {
@@ -1244,12 +1265,26 @@ void INS_CONSOLEREAD() {
 			CAD_VAR();
 			if (token == tok_coma) {
 				obtoken();
-
 				if (token == tok_amp) {
 					obtoken();
 					if (token == tok_id) {
 						obtoken();
 						if (token == tok_parenc) {
+							operador.entero = 32; // OPR #41 --- SUBSTRING
+							switch(tipo_scanf){
+								case 1: //entero
+									gen(OPR, 0, TIPO_ENTERO, operador);
+									break;
+								case 2://float
+									gen(OPR, 0, TIPO_FLOAT, operador);
+									break;
+								case 3: //cadena
+									gen(OPR, 0, TIPO_CADENA, operador);
+									break;
+								case 4: //caracter
+									gen(OPR, 0, TIPO_CARACTER, operador);
+									break;
+							}
 							obtoken();
 						} else {
 							// Se esperaba parentesis de cierre
@@ -1608,11 +1643,19 @@ void OPERACION_NUM(int toksig[]) {
 	printf("*****************OPERACION_NUM\n");
 	int setpaso[NOTOKENS]; //conjunto de paso por valor
 	init_set(vacio);
+	simbolo tok_auxiliar= token;
 	if (token != tok_sum && token != tok_resta)
 	{
 		error(55);
 		union_set(setpaso, toksig, sig_termino);
 		TERMINO(setpaso);
+		if(tok_auxiliar == tok_sum){
+			operador.entero = 2; //OPR #2 --- Suma
+			gen(OPR, 0, TIPO_ENTERO, operador);
+		}else if(tok_auxiliar==tok_resta){
+			operador.entero = 2; //OPR #3 --- Resta
+			gen(OPR, 0, TIPO_ENTERO, operador);
+		}
 	}
 
 	int i = 0;
@@ -1621,7 +1664,13 @@ void OPERACION_NUM(int toksig[]) {
 		obtoken();
 		union_set(setpaso, toksig, sig_termino);
 		TERMINO(setpaso);
-		
+		if(tok_auxiliar == tok_sum){
+			operador.entero = 2; //OPR #2 --- Suma
+			gen(OPR, 0, TIPO_ENTERO, operador);
+		}else if(tok_auxiliar==tok_resta){
+			operador.entero = 2; //OPR #3 --- Resta
+			gen(OPR, 0, TIPO_ENTERO, operador);
+		}
 	}
 
 	test(toksig, vacio, 55); //se esperaba un simbolo de operacion numerica

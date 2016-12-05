@@ -17,6 +17,7 @@ typedef union {
 } valorPorTipo;
 
 extern valorPorTipo valor;
+extern int tipo_scanf;
 
 extern int ln;
 

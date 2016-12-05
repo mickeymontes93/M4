@@ -15,7 +15,6 @@ MAIN{
 
 #FUNCION
     func.void funcPrueba();
-    func.int ;
    
 
 #INSTRUCCION

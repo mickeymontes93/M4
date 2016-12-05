@@ -10,16 +10,13 @@ MAIN{
 
 	if(test < opcion)
 	{
-		for(contador := 0; contador < 10; contador++)
+		for(contador := 0; contador < 10; +contador+=1)
 		{
 			if (opcion > 5)
 			{
-				opcion := opcion + 1;			
+				opcion := +opcion + 1;			
 			}
-			else
-			{
-				opcion := opcion + 1;
-			}
+			
 		}
 		test := opcion;
 	}
@@ -29,12 +26,9 @@ MAIN{
 		{
 			if (opcion > 5)
 			{
-				opcion := opcion - 1;			
+				opcion := +opcion - 1;			
 			}
-			else
-			{
-				opcion := opcion - 1;
-			}
+			
 		}
 		test := opcion;
 	}

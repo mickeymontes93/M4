@@ -16,6 +16,7 @@ int ch;                   //último caracter leído
 
 //union valor de una lexeme correspondiene a un tipo de dato
 valorPorTipo valor;
+int tipo_scanf;
 
 int ln = 0;				  //contador de lineas;
 
@@ -49,6 +50,20 @@ void obtokenHelper()
 				ch = obtch();
 				if (ch == 'd' || ch == 'f' || ch == 's' || ch == 'c') {
 					charTemp[1] = ch;
+					switch(ch){
+						case 'd': //entero
+							tipo_scanf=1;
+							break;
+						case 'f'://float
+							tipo_scanf=2;
+							break;
+						case 's': //cadena
+							tipo_scanf=3;
+							break;
+						case 'c': //caracter
+							tipo_scanf=4;
+							break;
+					}
 					lexid[i] = charTemp[0];
 					i++;
 					lexid[i] = charTemp[1];
