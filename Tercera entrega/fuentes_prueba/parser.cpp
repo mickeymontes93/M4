@@ -14,7 +14,8 @@
 int temp;
 int vacio[NOTOKENS];   //conjunto vacío
 //int setpaso[NOTOKENS]; //conjunto de paso por valor
-valorPorTipo operador,auxiliar;
+valorPorTipo operador, auxiliar;
+int ultimoTipo;
 
 void ABRIR_ARCHIVO(int toksig[]) {
 	int setpaso[NOTOKENS];
@@ -618,9 +619,11 @@ void DATA_NUM(int toksig[]) {
 		}
 	} else if (token == tok_numero) {
 		gen(LIT, 0, TIPO_ENTERO, valor);
+		ultimoTipo = TIPO_ENTERO;
 		obtoken();
 	} else if (token == tok_flotante) {
 		gen(LIT, 0, TIPO_FLOAT, valor);
+		ultimoTipo = TIPO_FLOAT;
 		obtoken();
 	} else {
 		// err: se esperaba una numero entero, numero flotante o un identificador.
@@ -707,15 +710,15 @@ void EXPRESION_BOOL(int toksig[]) {
 	printf("*****************EXPRESION_BOOL\n");
 	int setpaso[NOTOKENS]; //conjunto de paso por valor
 	init_set(vacio);
-	if (token == tok_true){
+	if (token == tok_true) {
 		auxiliar.entero = 1;
 		gen(LIT, 0, TIPO_BOOLEAN, auxiliar);
 		obtoken();
-	}else if(token == tok_false){
+	} else if (token == tok_false) {
 		auxiliar.entero = 0;
 		gen(LIT, 0, TIPO_BOOLEAN, auxiliar);
 		obtoken();
-	}else if (token == tok_id) {
+	} else if (token == tok_id) {
 		//MIGUEL D: !!!
 		obtoken();
 	} else {
@@ -856,9 +859,39 @@ void EXPRESION_NUM(int toksig[]) {
 	        token == tok_tan ||
 	        token == tok_arctan ||
 	        token == tok_sqrt) {
+		enum simbolo tokenAux = token;
 		obtoken();
 		if (token == tok_parena) {
 			EXPRESION_NUM(toksig);
+
+			valorPorTipo operador;
+			switch (tokenAux) {
+			case tok_round:
+				operador.entero = 29;
+				break;
+			case tok_sin:
+				operador.entero = 22;
+				break;
+			case tok_cos:
+				operador.entero = 23;
+				break;
+			case tok_arcsin:
+				operador.entero = 26;
+				break;
+			case tok_arccos:
+				operador.entero = 27;
+				break;
+			case tok_tan:
+				operador.entero = 24;
+				break;
+			case tok_arctan:
+				operador.entero = 28;
+				break;
+			case tok_sqrt:
+				operador.entero = 20;
+				break;
+			}
+			gen(OPR, 0, TIPO_ENTERO, operador);
 
 			if (token == tok_parenc) {
 				obtoken();
@@ -877,6 +910,9 @@ void EXPRESION_NUM(int toksig[]) {
 				obtoken();
 				union_set(setpaso, toksig, sig_auxfunc);
 				EXPRESION_CAD(setpaso);
+				valorPorTipo operador;
+				operador.entero = 37;
+				gen(OPR, 0, TIPO_ENTERO, operador);
 				if (token == tok_parenc) {
 					obtoken();
 				} else {
@@ -889,6 +925,7 @@ void EXPRESION_NUM(int toksig[]) {
 			}
 		} else {
 			if (token == tok_pow || token == tok_log ) {
+				enum simbolo tokenAux = token;
 				obtoken();
 				if (token == tok_parena) {
 					obtoken();
@@ -896,6 +933,13 @@ void EXPRESION_NUM(int toksig[]) {
 					if (token == tok_coma) {
 						obtoken();
 						EXPRESION_NUM(toksig);
+
+						valorPorTipo operador;
+						if (tokenAux == tok_pow)
+							operador.entero = 21;
+						if (tokenAux == tok_log)
+							operador.entero = 25;
+						gen(OPR, 0, TIPO_ENTERO, operador);
 						if (token == tok_parenc) {
 							obtoken();
 						} else {
@@ -1165,6 +1209,7 @@ void IDENTIFICADOR(int toksig[]) {
 	if (token == tok_id) {
 		int pos = posicion();
 		registro* elto = getElemento(pos);
+		ultimoTipo = tipoDato;
 
 		valorPorTipo val;
 		val.entero =  elto->nivdir.dir;
@@ -1570,10 +1615,13 @@ void OPERACION_NUM(int toksig[]) {
 		TERMINO(setpaso);
 	}
 
+	int i = 0;
 	while (token == tok_sum || token == tok_resta) {
+		++i;
 		obtoken();
 		union_set(setpaso, toksig, sig_termino);
 		TERMINO(setpaso);
+		
 	}
 
 	test(toksig, vacio, 55); //se esperaba un simbolo de operacion numerica
@@ -1663,9 +1711,16 @@ void TERMINO(int toksig[]) {
 	union_set(setpaso, toksig, sig_exprnum);
 	EXPRESION_NUM(setpaso);
 	while (token == tok_multi || token == tok_divi) {
+		enum simbolo tokenAux = token;
 		obtoken();
 		EXPRESION_NUM(setpaso);
-		
+
+		valorPorTipo operador;
+		if (tokenAux == tok_multi)
+			operador.entero = 4 ;
+		if (tokenAux == tok_divi)
+			operador.entero = 5 ;
+		gen(OPR, 0, TIPO_ENTERO, operador);
 	}
 }
 
