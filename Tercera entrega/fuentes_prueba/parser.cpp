@@ -14,7 +14,7 @@
 int temp;
 int vacio[NOTOKENS];   //conjunto vacío
 //int setpaso[NOTOKENS]; //conjunto de paso por valor
-valorPorTipo operador;
+valorPorTipo operador,auxiliar;
 
 void ABRIR_ARCHIVO(int toksig[]) {
 	int setpaso[NOTOKENS];
@@ -706,8 +706,16 @@ void EXPRESION_BOOL(int toksig[]) {
 	printf("*****************EXPRESION_BOOL\n");
 	int setpaso[NOTOKENS]; //conjunto de paso por valor
 	init_set(vacio);
-	if (token == tok_true || token == tok_false ||
-	        token == tok_id) {
+	if (token == tok_true){
+		auxiliar.entero = 1;
+		gen(LIT, 0, TIPO_BOOLEAN, auxiliar);
+		obtoken();
+	}else if(token == tok_false){
+		auxiliar.entero = 0;
+		gen(LIT, 0, TIPO_BOOLEAN, auxiliar);
+		obtoken();
+	}else if (token == tok_id) {
+		//MIGUEL D: !!!
 		obtoken();
 	} else {
 		if (token == tok_equal) {
@@ -721,6 +729,8 @@ void EXPRESION_BOOL(int toksig[]) {
 					union_set(setpaso, toksig, sig_auxfunc);
 					EXPRESION_CAD(setpaso);
 					if (token == tok_parenc) {
+						operador.entero = 40; // OPR #40 --- EQUAL
+						gen(OPR, 0, TIPO_ENTERO, operador);
 						obtoken();
 					} else {
 						//err: Se esperaba parentesis de cierre
@@ -1038,6 +1048,8 @@ void FUN_CONCAT(int toksig[]) {
 				union_set(setpaso, toksig, sig_auxfunc);
 				EXPRESION_CAD(setpaso);
 				if (token == tok_parenc) {
+					operador.entero = 38; // OPR #38 --- CONCAT
+					gen(OPR, 0, TIPO_ENTERO, operador);
 					obtoken();
 				} else {
 					// Se esperaba parentesis de cierre
@@ -1071,6 +1083,8 @@ void FUN_REPLACE(int toksig[]) {
 					obtoken();
 					EXPRESION_CAD(toksig);
 					if (token == tok_parenc) {
+						operador.entero = 39; // OPR #39 --- REPLACE
+						gen(OPR, 0, TIPO_ENTERO, operador);
 						obtoken();
 					} else {
 						// Se esperaba parentesis de cierre
@@ -1113,6 +1127,8 @@ void FUN_SUBSTRING(int toksig[]) {
 					union_set(setpaso, toksig, sig_exprnum);
 					EXPRESION_NUM(setpaso);
 					if (token == tok_parenc) {
+						operador.entero = 41; // OPR #41 --- SUBSTRING
+						gen(OPR, 0, TIPO_ENTERO, operador);
 						obtoken();
 					} else {
 						// Se esperaba parentesis de cierre
