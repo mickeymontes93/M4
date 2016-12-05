@@ -17,7 +17,7 @@ int vacio[NOTOKENS];   //conjunto vacío
 
 void ABRIR_ARCHIVO(int toksig[]) {
 	int setpaso[NOTOKENS];
-	//printf("*****************ABRIR_ARCHIVO\n");
+	printf("*****************ABRIR_ARCHIVO\n");
 	if (token == tok_fileopen) {
 		obtoken();
 		if (token == tok_parena) {
@@ -77,7 +77,7 @@ void ABRIR_ARCHIVO(int toksig[]) {
 
 void ARREGLO() {
 
-	//printf("*****************ARREGLO\n");
+	printf("*****************ARREGLO\n");
 	if (token == tok_corcha) {
 		obtoken();
 		if (token == tok_flotante || token == tok_numero || token == tok_cadena || token == tok_boolean || token == tok_caracter) {
@@ -158,7 +158,7 @@ void ARREGLO() {
 void ASIGNACION(int toksig[]) {
 	int setpaso[NOTOKENS];
 
-	//printf("*****************ASIGNACION\n");
+	printf("*****************ASIGNACION\n");
 	if (token == tok_id) {
 		obtoken();
 		// Se perdona que se use "==" o ":="
@@ -193,36 +193,25 @@ void ASIGNACION(int toksig[]) {
 	}
 }
 
-void BLOQUE(int toksig[]) {
-	int temp, tempniv;
-	int idat; //índice de asignación de memoria, comienza con 3 por ED, DR y EE
+void BLOQUE(int toksig[], int *idat) {
 	int it0 ; //índice que "recuerda" en donde comienzan las instrucciones de este bloque
-	idat = 3;
 	it0 = it; //recordamos en donde comienzan en la TDS las declaraciones de este bloque
 
-	//detalle técnico
-	//registro* elto = getElemento(it);
-	//elto->tipoDato = TIPO_FUNCION;
-	//elto->variante.dir = ic;
-	valorPorTipo val;
-	val.entero = 1;
-	gen(SAL, 0, TIPO_ENTERO, val); //un procedimiento significa un salto en el código. luego cambiaremos nivel y direccion,
-	//los mostrados arriba (0 y 0) son 'paja', lo que pasa es que todavia no sabemos
-	//todavía hacia donde saltar
 
-	//printf("*****************BLOQUE\n");
+	printf("*****************BLOQUE\n");
 	int setpaso[NOTOKENS]; //conjunto de paso por valor
 	init_set(setpaso);
 	init_set(vacio);
 	do {
 		if (IS_DECLARACION()) {
 			union_set(setpaso, toksig, sig_declaracion);
-			DECLARACION(setpaso, &idat);
+			DECLARACION(setpaso, &(*idat));
 		}
+		printf("*****************BLOQUE despues de declaracion()\n");
 		while (IS_FUNCION()) {
 			FUNCION();
 			if (token == tok_id) {
-				poner(TIPO_FUNCION, &idat);
+				poner(TIPO_FUNCION, &(*idat));
 				obtoken();
 				union_set(setpaso, toksig, sig_conjunvar);
 				CONJUNVAR(setpaso, 0);
@@ -249,18 +238,22 @@ void BLOQUE(int toksig[]) {
 				}
 			}
 		}
+		printf("*****************BLOQUE despues de funcion()\n");
 
 
 	} while (tokinidecl[token] == 1);
 
+	printf("*****************BLOQUE antes de codigo intermedio\n");
 	//parchamos a la TDS y el código intermedio
 	//backpatching sobre TDS y código
 	registro* elto = getElemento(it0);
-	codigo[elto->variante.nivdir.dir].Dato.entero = ic;
-	elto->variante.nivdir.dir = ic; //aquí en ic es donde comienza el código para este procedure
+	codigo[elto->nivdir.dir].Dato.entero = ic;
+	elto->nivdir.dir = ic; //aquí en ic es donde comienza el código para este procedure
 
+	printf("*****************BLOQUE despues de codigo intermedio\n");
 	//se abre espacio en la memoria para un mínimo de 3 direcciones
-	val.entero = idat;
+	valorPorTipo val;
+	val.entero = *idat;
 	gen(INS, 0, TIPO_ENTERO, val);
 
 	//se copia los tokens siguientes de instruccion
@@ -268,9 +261,7 @@ void BLOQUE(int toksig[]) {
 	union_set(setpaso, setpaso, sig_instruccion); //token siguiente de instruccion
 	INSTRUCCION(setpaso);
 
-	valorPorTipo retorno;
-	retorno.entero = 0;
-	gen(OPR, 0, TIPO_ENTERO, retorno); //retorno
+
 	//Este do-while garantiza que lea el bloque de declaración-función-instrucción sin importar el orden.
 	//aquí viene el chequeo explícito de que el token que viene a continuación
 	//está en el conjunto de sucesores correctos (los sucesores de bloque)
@@ -287,7 +278,7 @@ void CAD_VAR() {
 }
 
 void CASE(int toksig[]) {
-	//printf("*****************CASE\n");
+	printf("*****************CASE\n");
 	int setpaso[NOTOKENS];
 
 	if ( token == tok_case) {
@@ -455,7 +446,7 @@ void CASE(int toksig[]) {
 }
 
 void COMPAGENERAL() {
-	//printf("*****************COMPAGENERAL\n");
+	printf("*****************COMPAGENERAL\n");
 	if (token == tok_igual || token == tok_negacion) {
 		obtoken();
 	} else {
@@ -465,7 +456,7 @@ void COMPAGENERAL() {
 }
 
 void COMPANUM() {
-	//printf("*****************COMPANUM\n");
+	printf("*****************COMPANUM\n");
 	if (token == tok_menor || token == tok_menorigual ||
 	        token == tok_mayor || token == tok_mayorigual) {
 		obtoken();
@@ -517,7 +508,7 @@ void CONDICION(int toksig[]) {
 }
 
 void CONJUNVAR(int toksig[], int declaracion) {
-	//printf("*****************CONJUNVAR\n");
+	printf("*****************CONJUNVAR\n");
 	int prim_conjunvar[NOTOKENS]; //para hacer un analisis previo
 	init_set(prim_conjunvar);
 	prim_conjunvar[tok_parena];
@@ -557,7 +548,7 @@ void CONJUNVAR(int toksig[], int declaracion) {
 }
 
 void DATA_CAD(int toksig[]) {
-	//printf("*****************DATA_CAD\n");
+	printf("*****************DATA_CAD\n");
 	int setpaso[NOTOKENS]; //conjunto de paso por valor
 	init_set(vacio);
 
@@ -579,7 +570,7 @@ void DATA_CAD(int toksig[]) {
 }
 
 void DATA_NUM(int toksig[]) {
-	//printf("*****************DATA_NUM\n");
+	printf("*****************DATA_NUM\n");
 	int setpaso[NOTOKENS];
 	init_set(vacio);
 
@@ -609,7 +600,7 @@ void DATA_NUM(int toksig[]) {
 }
 
 void DECLARACION(int toksig[], int *idat) {
-	//printf("*****************DECLARACION\n");
+	printf("*****************DECLARACION\n");
 	int setpaso[NOTOKENS];
 	init_set(setpaso);
 	while (IS_VARIABLE()) {
@@ -649,7 +640,7 @@ void DECLARACION(int toksig[], int *idat) {
 
 void EXPRESION_ARR(int toksig[]) {
 	int setpaso[NOTOKENS];
-	//printf("*****************EXPRESION_ARR\n");
+	printf("*****************EXPRESION_ARR\n");
 	if (token == tok_split) {
 		obtoken();
 		if (token == tok_parena) {
@@ -683,7 +674,7 @@ void EXPRESION_ARR(int toksig[]) {
 }
 
 void EXPRESION_BOOL(int toksig[]) {
-	//printf("*****************EXPRESION_BOOL\n");
+	printf("*****************EXPRESION_BOOL\n");
 	int setpaso[NOTOKENS]; //conjunto de paso por valor
 	init_set(vacio);
 	if (token == tok_true || token == tok_false ||
@@ -724,7 +715,7 @@ void EXPRESION_BOOL(int toksig[]) {
 }
 
 void EXPRESION_CAD(int toksig[]) {
-	//printf("*****************EXPRESION_CAD\n");
+	printf("*****************EXPRESION_CAD\n");
 	int setpaso[NOTOKENS]; //conjunto de paso por valor
 	init_set(vacio);
 
@@ -815,7 +806,7 @@ void EXPRESION_CAD(int toksig[]) {
 
 void EXPRESION_NUM(int toksig[]) {
 	int setpaso[NOTOKENS]; //conjunto de paso por valor
-	//printf("*****************EXPRESION_NUM\n");
+	printf("*****************EXPRESION_NUM\n");
 	init_set(vacio);
 	if (token == tok_round ||
 	        token == tok_sin ||
@@ -917,7 +908,7 @@ void EXPRESION_NUM(int toksig[]) {
 }
 
 void FUNCION() {
-	//printf("*****************FUNCION\n");
+	printf("*****************FUNCION\n");
 	if ( token == tok_funcint || token == tok_funcfloat
 	        || token ==  tok_funcchar || token ==  tok_funcstr
 	        || token == tok_funcvoid || token == tok_bool) {
@@ -948,7 +939,7 @@ void FUNCION_INSTRUCCION(int toksig[]) {
 
 
 	int setpaso[NOTOKENS];
-	//printf("*****************FUNCION_INSTRUCCION\n");
+	printf("*****************FUNCION_INSTRUCCION\n");
 	init_set(vacio);
 	FUNCION();
 	if (token == tok_id) {
@@ -1004,7 +995,7 @@ void FUNCION_INSTRUCCION(int toksig[]) {
 }
 
 void FUN_CONCAT(int toksig[]) {
-	//printf("*****************FUN_CONCAT\n");
+	printf("*****************FUN_CONCAT\n");
 	int setpaso[NOTOKENS];
 
 	if (token == tok_concat) {
@@ -1038,7 +1029,7 @@ void FUN_CONCAT(int toksig[]) {
 }
 
 void FUN_REPLACE(int toksig[]) {
-	//printf("*****************FUN_REPLACE\n");
+	printf("*****************FUN_REPLACE\n");
 	if (token == tok_replace) {
 		obtoken();
 		if (token == tok_parena) {
@@ -1077,7 +1068,7 @@ void FUN_REPLACE(int toksig[]) {
 void FUN_SUBSTRING(int toksig[]) {
 	int setpaso[NOTOKENS];
 
-	//printf("*****************FUN_SUBSTRING\n");
+	printf("*****************FUN_SUBSTRING\n");
 	if (token == tok_substring) {
 		obtoken();
 		if (token == tok_parena) {
@@ -1117,7 +1108,7 @@ void FUN_SUBSTRING(int toksig[]) {
 }
 
 void IDENTIFICADOR(int toksig[]) {
-	//printf("*****************IDENTIFICADOR\n");
+	printf("*****************IDENTIFICADOR\n");
 	int setpaso[NOTOKENS]; //conjunto de paso por valor
 	int prim_identificador[NOTOKENS];
 	init_set(prim_identificador);
@@ -1189,7 +1180,7 @@ void INS_CONSOLEREAD() {
 
 void INS_CONSOLEWRITE(int toksig[]) {
 	int setpaso[NOTOKENS];
-	//printf("*****************INS_CONSOLEWRITE\n");
+	printf("*****************INS_CONSOLEWRITE\n");
 	if (token == tok_write) {
 		obtoken();
 		if (token == tok_parena) {
@@ -1232,7 +1223,7 @@ void INS_CONSOLEWRITE(int toksig[]) {
 
 void INS_DO(int toksig[]) {
 	int setpaso[NOTOKENS];
-	//printf("*****************INS_DO\n");
+	printf("*****************INS_DO\n");
 	if (token == tok_do) {
 		obtoken();
 		union_set(setpaso, toksig, sig_llaveinstr);
@@ -1253,7 +1244,7 @@ void INS_DO(int toksig[]) {
 
 void INS_FOR(int toksig[]) {
 	int setpaso[NOTOKENS];
-	//printf("*****************INS_FOR\n");
+	printf("*****************INS_FOR\n");
 	if (token == tok_for) {
 		obtoken();
 		if (token == tok_parena) {
@@ -1298,7 +1289,7 @@ void INS_FOR(int toksig[]) {
 
 void INS_IF(int toksig[]) {
 	int setpaso[NOTOKENS]; //conjunto de paso por valor
-	//printf("*****************INS_IF\n");
+	printf("*****************INS_IF\n");
 	if (token == tok_if) {
 		obtoken();
 		union_set(setpaso, toksig, sig_parencondicion);
@@ -1313,7 +1304,7 @@ void INS_IF(int toksig[]) {
 
 void INS_SWITCH(int toksig[]) {
 	int setpaso[NOTOKENS];
-	//printf("*****************INS_SWITCH\n");
+	printf("*****************INS_SWITCH\n");
 	if (token == tok_switch) {
 		obtoken();
 		if (token == tok_id) {
@@ -1344,7 +1335,7 @@ void INS_SWITCH(int toksig[]) {
 
 void INS_WHILE(int toksig[]) {
 	int setpaso[NOTOKENS];
-	//printf("*****************INS_WHILE\n");
+	printf("*****************INS_WHILE\n");
 	if (token == tok_while) {
 		obtoken();
 		union_set(setpaso, toksig, sig_parencondicion);
@@ -1358,7 +1349,7 @@ void INS_WHILE(int toksig[]) {
 }
 
 void INSTRUCCION(int toksig[]) {
-	//printf("*****************INSTRUCCION\n");
+	printf("*****************INSTRUCCION\n");
 	//TODO: Evaluar instrucciones ASIGNACION(), INS_IF(), INS_WHILE(), INS_FOR(), INS_SWITCH(), INS_DO(), INS_CONSOLEWRITE(), INS_CONSOLEREAD(), ABRIR_ARCHIVO(), tok_id
 	int setpaso[NOTOKENS]; //conjunto de paso por valor
 	init_set(vacio);
@@ -1366,7 +1357,7 @@ void INSTRUCCION(int toksig[]) {
 
 	if (token == tok_id) {
 		int r = posicion();
-		//printf("***************** POSICION %d \n", r);
+		printf("***************** POSICION %d \n", r);
 		if (r > 0) {
 			if (regEncontrado->tipoDato != TIPO_VOID) {
 				union_set(setpaso, toksig, sig_auxpuntoycoma);
@@ -1374,24 +1365,24 @@ void INSTRUCCION(int toksig[]) {
 				valorPorTipo auxVPT;
 				switch (regEncontrado->tipoDato) {
 				case TIPO_ENTERO:
-					auxVPT.entero = regEncontrado->variante.val.entero;
-					gen(ALM, niv - regEncontrado->variante.nivdir.nivel, TIPO_ENTERO, auxVPT);
+					auxVPT.entero = valor.entero;
+					gen(ALM, niv - regEncontrado->nivdir.nivel, TIPO_ENTERO, auxVPT);
 					break;
 				case TIPO_FLOAT:
-					auxVPT.flotante = regEncontrado->variante.val.flotante;
-					gen(ALM, niv - regEncontrado->variante.nivdir.nivel, TIPO_FLOAT, auxVPT);
+					auxVPT.flotante = valor.flotante;
+					gen(ALM, niv - regEncontrado->nivdir.nivel, TIPO_FLOAT, auxVPT);
 					break;
 				case TIPO_CADENA:
-					strcpy(auxVPT.cadena, regEncontrado->variante.val.cadena);
-					gen(ALM, niv - regEncontrado->variante.nivdir.nivel, TIPO_CADENA, auxVPT);
+					strcpy(auxVPT.cadena, valor.cadena);
+					gen(ALM, niv - regEncontrado->nivdir.nivel, TIPO_CADENA, auxVPT);
 					break;
 				case TIPO_CARACTER:
-					auxVPT.caracter = regEncontrado->variante.val.caracter;
-					gen(ALM, niv - regEncontrado->variante.nivdir.nivel, TIPO_CARACTER, auxVPT);
+					auxVPT.caracter = valor.caracter;
+					gen(ALM, niv - regEncontrado->nivdir.nivel, TIPO_CARACTER, auxVPT);
 					break;
 				case TIPO_BOOLEAN:
-					auxVPT.booleano = regEncontrado->variante.val.booleano;
-					gen(ALM, niv - regEncontrado->variante.nivdir.nivel, TIPO_BOOLEAN, auxVPT);
+					auxVPT.booleano = valor.booleano;
+					gen(ALM, niv - regEncontrado->nivdir.nivel, TIPO_BOOLEAN, auxVPT);
 					break;
 				}
 
@@ -1438,14 +1429,14 @@ void INSTRUCCION(int toksig[]) {
 		union_set(setpaso, toksig, sig_auxinstr);
 		INS_WHILE(setpaso);
 
-		ic2 =ic;
+		ic2 = ic;
 		valorPorTipo auxVPT;
 		auxVPT.entero = 0;
 		gen(SAC, 0, TIPO_ENTERO, auxVPT);
 
 		copia_set(setpaso, toksig);
 		INSTRUCCION(setpaso);
-		
+
 		auxVPT.entero = ic1;
 		gen(SAL, 0, TIPO_ENTERO, auxVPT);
 		codigo[ic2].Dato.entero = ic;
@@ -1512,7 +1503,7 @@ void INSTRUCCION(int toksig[]) {
 }
 
 void LLAVE_INSTRUCCION(int toksig[]) {
-	//printf("*****************LLAVE_INSTRUCCION\n");
+	printf("*****************LLAVE_INSTRUCCION\n");
 	int setpaso[NOTOKENS];
 
 	if (token == tok_llavea) {
@@ -1533,7 +1524,7 @@ void LLAVE_INSTRUCCION(int toksig[]) {
 }
 
 void OPERACION_NUM(int toksig[]) {
-	//printf("*****************OPERACION_NUM\n");
+	printf("*****************OPERACION_NUM\n");
 	int setpaso[NOTOKENS]; //conjunto de paso por valor
 	init_set(vacio);
 	if (token != tok_sum && token != tok_resta)
@@ -1554,7 +1545,7 @@ void OPERACION_NUM(int toksig[]) {
 
 void PAREN_CONDICION(int toksig[]) {
 	int setpaso[NOTOKENS]; //conjunto de paso por valor
-	//printf("*****************PAREN_CONDICION\n");
+	printf("*****************PAREN_CONDICION\n");
 	if (token == tok_parena) {
 		obtoken();
 		union_set(setpaso, toksig, sig_condicion);
@@ -1573,12 +1564,28 @@ void PAREN_CONDICION(int toksig[]) {
 }
 
 void PROGRAMA() {
-	//printf("*****************PROGRAMA\n");
+	printf("*****************PROGRAMA\n");
+
+	int temp, tempniv;
+	int idat; //índice de asignación de memoria, comienza con 3 por ED, DR y EE
+	idat = 3;
+
+	//detalle técnico
+	//registro* elto = getElemento(it);
+	//elto->tipoDato = TIPO_FUNCION;
+	//elto->variante.dir = ic;
+	valorPorTipo val;
+	val.entero = 1;
+	gen(SAL, 0, TIPO_ENTERO, val); //un procedimiento significa un salto en el código. luego cambiaremos nivel y direccion,
+	//los mostrados arriba (0 y 0) son 'paja', lo que pasa es que todavia no sabemos
+	//todavía hacia donde saltar
+
 	if (token == tok_main) {
+		poner(TIPO_FUNCION, &idat);
 		obtoken();
 		if (token == tok_llavea) {
 			obtoken();
-			BLOQUE(sig_auxllavec);
+			BLOQUE(sig_auxllavec, &idat);
 			if (token == tok_llavec) {
 				obtoken();
 				while (IS_FUNCION_INSTRUCCION()) {
@@ -1596,12 +1603,16 @@ void PROGRAMA() {
 		//err: Se esperaba funcion main
 		error(17);
 	}
+
+	valorPorTipo retorno;
+	retorno.entero = 0;
+	gen(OPR, 0, TIPO_ENTERO, retorno); //retorno
 }
 
 void TERMINO(int toksig[]) {
 	int setpaso[NOTOKENS];
 	init_set(vacio);
-	//printf("*****************TERMINO\n");
+	printf("*****************TERMINO\n");
 	//={ round, sin, cos, arcsin, arccos, arctan, tan, sqrt, length, pow, log, tok_id, entero, flotante, +, - , (,  }
 	int prim_termino[NOTOKENS];
 	init_set(prim_termino);
@@ -1622,7 +1633,7 @@ void TERMINO(int toksig[]) {
 }
 
 void TIPO_FILE() {
-	//printf("*****************TIPO_FILE\n");
+	printf("*****************TIPO_FILE\n");
 	if ( token == tok_cadena) {
 		obtoken();
 	} else {
@@ -1633,7 +1644,7 @@ void TIPO_FILE() {
 }
 
 void VARIABLE() {
-	//printf("*****************VARIABLE\n");
+	printf("*****************VARIABLE\n");
 	tipoDato = GET_TIPO_DATO();
 	if ( token == tok_arrEntero || token == tok_arrFlotante
 	        || token ==  tok_arrCaracter || token ==  tok_arrBooleano

@@ -69,37 +69,19 @@ void poner(enum objeto k, int *idat) {
 
 	switch (k) {
 	case TIPO_ARREGLO:
-		tabla[it].variante.nivdir.nivel = niv;
-		tabla[it].variante.nivdir.dir  = *idat;
+		tabla[it].nivdir.nivel = niv;
+		tabla[it].nivdir.dir  = *idat;
 		++(*idat);
 		break;
 	case TIPO_VARIABLE:
-		tabla[it].variante.nivdir.nivel = niv;
-		tabla[it].variante.nivdir.dir  = *idat;
+		tabla[it].nivdir.nivel = niv;
+		tabla[it].nivdir.dir  = *idat;
 		++(*idat);
 		break;
 	case TIPO_FUNCION:
-		tabla[it].variante.nivdir.nivel = niv; //a "dir" la parchamos en bloque
+		tabla[it].nivdir.nivel = niv; //a "dir" la parchamos en bloque
 		break;
 	};
-
-	switch (tipoDato) {
-	case TIPO_ENTERO:
-		tabla->variante.val.entero = valor.entero;
-		break;
-	case TIPO_FLOAT:
-		tabla->variante.val.flotante = valor.flotante;
-		break;
-	case TIPO_CADENA:
-		strcpy(tabla->variante.val.cadena, valor.cadena);
-		break;
-	case TIPO_CARACTER:
-		tabla->variante.val.caracter = valor.caracter;
-		break;
-	case TIPO_BOOLEAN:
-		tabla->variante.val.booleano = valor.booleano;
-		break;
-	}
 
 	imprimirTDS();
 }

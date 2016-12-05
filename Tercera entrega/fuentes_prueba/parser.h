@@ -9,7 +9,7 @@ void FUNCION_INSTRUCCION(int toksig[]), CONJUNVAR(int toksig[], int declaracion)
      TIPO_FILE();
 
 //Para tratamiento de errores.
-void BLOQUE(int toksig[]), PAREN_CONDICION(int toksig[]);
+void BLOQUE(int toksig[], int *idat), PAREN_CONDICION(int toksig[]);
 void INSTRUCCION(int toksig[]), INS_IF(int toksig[]), CONDICION(int toksig[]);
 
 //funciones auxiliares del parser

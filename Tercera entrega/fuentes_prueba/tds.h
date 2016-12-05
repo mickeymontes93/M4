@@ -19,16 +19,7 @@ typedef struct struct_reg {
 	int tipoDato;
 	struct struct_reg* sig;
 	struct struct_reg* ant;
-	union {
-		union {
-			int entero;
-			float flotante;
-			int booleano;
-			char caracter;
-			char cadena[MAXSTRING];
-		} val;
-		nivel_y_direccion nivdir;
-	} variante;
+	nivel_y_direccion nivdir;
 } registro;
 
 
