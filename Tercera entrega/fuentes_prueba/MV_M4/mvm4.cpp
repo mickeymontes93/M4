@@ -900,6 +900,10 @@ void interpretar(void) {
                     	}
                     	p[s].t=ENTERO;
                         break;
+                    case 41: // ------------> SUBSTRING
+                    	s=s-2;
+                    	substring_cad(s);
+                    	break;
 
 				}
 			break; // FIN DE SWITCH DE OPR
@@ -948,7 +952,6 @@ void interpretar(void) {
 	               p[base(i.ni,b)+i.Dato.entero].t=p[s].t;
 	               --s;
 	               break;
-
 	        case LLA:
 	               //generar un nuevo bloque
 	               p[s+1].Dato.entero=base(i.ni,b);
@@ -1003,4 +1006,28 @@ void replace_cad(int s){
         }
     }
     strcpy(p[s].Dato.cadena,string);
+}
+
+
+void substring_cad(int s){
+	//p[s] ---> cadena
+	//p[s+1]----> inicio
+	//p[s+2] ---> fin
+	s=s-2;
+	char string[MAX],respuesta[MAX];
+	int inicio, fin;
+
+	strcpy(string,p[s].Dato.cadena);
+	inicio=p[s+1].Dato.entero;
+	fin=p[s+2].Dato.entero;
+    int i,j=0;
+    for(i=0;i<strlen(string);i++){
+    	if(i<=fin && i>=inicio){
+ 			respuesta[j]=string[i];
+ 			j++;   		
+    	}
+    }
+    respuesta[j]='\0';
+    strcpy(p[s].Dato.cadena,respuesta);
+    p[s].t=CADENA;
 }
