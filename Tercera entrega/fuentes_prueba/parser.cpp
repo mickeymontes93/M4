@@ -14,6 +14,7 @@
 int temp;
 int vacio[NOTOKENS];   //conjunto vacío
 //int setpaso[NOTOKENS]; //conjunto de paso por valor
+valorPorTipo operador;
 
 void ABRIR_ARCHIVO(int toksig[]) {
 	int setpaso[NOTOKENS];
@@ -24,6 +25,9 @@ void ABRIR_ARCHIVO(int toksig[]) {
 			obtoken();
 			union_set(setpaso, toksig, sig_data_cad);
 			DATA_CAD(setpaso);
+
+			operador.entero = 34; // OPR #34 --- FOPEN
+			gen(OPR, 0, TIPO_ENTERO, operador);
 			if (token == tok_coma) {
 				obtoken();
 				TIPO_FILE();
@@ -32,6 +36,9 @@ void ABRIR_ARCHIVO(int toksig[]) {
 					union_set(setpaso, toksig, sig_instruccion);
 					INSTRUCCION(setpaso);
 					if (token == tok_fclose) {
+
+						operador.entero = 33; // OPR #33 --- FCLOSE 
+						gen(OPR, 0, TIPO_ENTERO, operador);
 						obtoken();
 						if (token == tok_parena) {
 							obtoken();
@@ -443,7 +450,13 @@ void CASE(int toksig[]) {
 
 void COMPAGENERAL() {
 	printf("*****************COMPAGENERAL\n");
-	if (token == tok_igual || token == tok_negacion) {
+	if (token == tok_igual){
+		operador.entero = 8; // OPR #8 --- IGUAL
+		gen(OPR, 0, TIPO_ENTERO, operador);
+		obtoken();
+	}else if(token == tok_negacion) {
+		operador.entero = 9; // OPR #9 --- DIFERENTE
+		gen(OPR, 0, TIPO_ENTERO, operador);
 		obtoken();
 	} else {
 		//err: Se esperaba un comparador == o !=
@@ -453,9 +466,22 @@ void COMPAGENERAL() {
 
 void COMPANUM() {
 	printf("*****************COMPANUM\n");
-	if (token == tok_menor || token == tok_menorigual ||
-	        token == tok_mayor || token == tok_mayorigual) {
+	if (token == tok_menor){
+		operador.entero = 10; // OPR #10 --- MENOR QUE
+		gen(OPR, 0, TIPO_ENTERO, operador);
 		obtoken();
+	}else if (token == tok_menorigual) {
+		operador.entero = 13; // OPR #13 --- MENOR O IGUAL QUE 
+		gen(OPR, 0, TIPO_ENTERO, operador);
+		obtoken();
+	}else if (token == tok_mayor) {
+		operador.entero = 12; // OPR #12 --- MAYOR QUE
+		gen(OPR, 0, TIPO_ENTERO, operador);
+		obtoken();
+	}else if (token == tok_mayorigual) {
+		operador.entero = 11; // OPR #11 --- MAYOR O IGUAL QUE
+		gen(OPR, 0, TIPO_ENTERO, operador);
+		obtoken();	
 	} else {
 		//err: Se esperaba un comparador numerico >, >=, < o <=
 		error(12);
@@ -1119,6 +1145,7 @@ void IDENTIFICADOR(int toksig[]) {
 
 	test(prim_identificador, toksig, 5);
 	if (token == tok_id) {
+
 		obtoken();
 		if (token == tok_corcha) {
 			obtoken();
