@@ -69,17 +69,18 @@ void poner(enum objeto k, int *idat) {
 
 	switch (k) {
 	case TIPO_ARREGLO:
-		tabla[it].nivdir.nivel = niv;
-		tabla[it].nivdir.dir  = *idat;
+		regUltimo->nivdir.nivel = niv;
+		regUltimo->nivdir.dir  = *idat;
 		++(*idat);
 		break;
 	case TIPO_VARIABLE:
-		tabla[it].nivdir.nivel = niv;
-		tabla[it].nivdir.dir  = *idat;
+		printf("\n**************** idat: %d \n\n" , *idat);
+		regUltimo->nivdir.nivel = niv;
+		regUltimo->nivdir.dir  = *idat;
 		++(*idat);
 		break;
 	case TIPO_FUNCION:
-		tabla[it].nivdir.nivel = niv; //a "dir" la parchamos en bloque
+		regUltimo->nivdir.nivel = niv; //a "dir" la parchamos en bloque
 		break;
 	};
 

@@ -37,7 +37,7 @@ void ABRIR_ARCHIVO(int toksig[]) {
 					INSTRUCCION(setpaso);
 					if (token == tok_fclose) {
 
-						operador.entero = 33; // OPR #33 --- FCLOSE 
+						operador.entero = 33; // OPR #33 --- FCLOSE
 						gen(OPR, 0, TIPO_ENTERO, operador);
 						obtoken();
 						if (token == tok_parena) {
@@ -450,11 +450,11 @@ void CASE(int toksig[]) {
 
 void COMPAGENERAL() {
 	printf("*****************COMPAGENERAL\n");
-	if (token == tok_igual){
+	if (token == tok_igual) {
 		operador.entero = 8; // OPR #8 --- IGUAL
 		gen(OPR, 0, TIPO_ENTERO, operador);
 		obtoken();
-	}else if(token == tok_negacion) {
+	} else if (token == tok_negacion) {
 		operador.entero = 9; // OPR #9 --- DIFERENTE
 		gen(OPR, 0, TIPO_ENTERO, operador);
 		obtoken();
@@ -466,22 +466,22 @@ void COMPAGENERAL() {
 
 void COMPANUM() {
 	printf("*****************COMPANUM\n");
-	if (token == tok_menor){
+	if (token == tok_menor) {
 		operador.entero = 10; // OPR #10 --- MENOR QUE
 		gen(OPR, 0, TIPO_ENTERO, operador);
 		obtoken();
-	}else if (token == tok_menorigual) {
-		operador.entero = 13; // OPR #13 --- MENOR O IGUAL QUE 
+	} else if (token == tok_menorigual) {
+		operador.entero = 13; // OPR #13 --- MENOR O IGUAL QUE
 		gen(OPR, 0, TIPO_ENTERO, operador);
 		obtoken();
-	}else if (token == tok_mayor) {
+	} else if (token == tok_mayor) {
 		operador.entero = 12; // OPR #12 --- MAYOR QUE
 		gen(OPR, 0, TIPO_ENTERO, operador);
 		obtoken();
-	}else if (token == tok_mayorigual) {
+	} else if (token == tok_mayorigual) {
 		operador.entero = 11; // OPR #11 --- MAYOR O IGUAL QUE
 		gen(OPR, 0, TIPO_ENTERO, operador);
-		obtoken();	
+		obtoken();
 	} else {
 		//err: Se esperaba un comparador numerico >, >=, < o <=
 		error(12);
@@ -585,7 +585,7 @@ void DATA_CAD(int toksig[]) {
 	} else if (token == tok_cadena) {
 		gen(LIT, 0, TIPO_CADENA, valor);
 		obtoken();
-	} else if ( token == tok_caracter){
+	} else if ( token == tok_caracter) {
 		gen(LIT, 0, TIPO_CARACTER, valor);
 		obtoken();
 	} else {
@@ -610,17 +610,18 @@ void DATA_NUM(int toksig[]) {
 	if (IS_IDENTIFICADOR()) {
 		union_set(setpaso, toksig, sig_identificador);
 		IDENTIFICADOR(setpaso);
+
 		if (token == tok_sumasign) {
 			obtoken();
 			union_set(setpaso, toksig, sig_exprnum);
 			EXPRESION_NUM(setpaso);
 		}
 	} else if (token == tok_numero) {
-			gen(LIT, 0, TIPO_ENTERO, valor);
-			obtoken();
-	}else if (token == tok_flotante) {
-			gen(LIT, 0, TIPO_FLOAT, valor);
-			obtoken();
+		gen(LIT, 0, TIPO_ENTERO, valor);
+		obtoken();
+	} else if (token == tok_flotante) {
+		gen(LIT, 0, TIPO_FLOAT, valor);
+		obtoken();
 	} else {
 		// err: se esperaba una numero entero, numero flotante o un identificador.
 		//error(38);
@@ -908,6 +909,7 @@ void EXPRESION_NUM(int toksig[]) {
 				} else if (IS_DATA_NUM()) {
 					union_set(setpaso, toksig, sig_data_num);
 					DATA_NUM(setpaso);
+
 				} else {
 					if (token == tok_parena) {
 						obtoken();
@@ -1145,6 +1147,12 @@ void IDENTIFICADOR(int toksig[]) {
 
 	test(prim_identificador, toksig, 5);
 	if (token == tok_id) {
+		int pos = posicion();
+		registro* elto = getElemento(pos);
+
+		valorPorTipo val;
+		val.entero =  elto->nivdir.dir;
+		gen(CAR, niv - elto->nivdir.nivel, TIPO_ENTERO, val);
 
 		obtoken();
 		if (token == tok_corcha) {
@@ -1387,34 +1395,16 @@ void INSTRUCCION(int toksig[]) {
 
 	if (token == tok_id) {
 		int r = posicion();
+		registro* reg = regEncontrado;
 		printf("***************** POSICION %d \n", r);
 		if (r > 0) {
-			if (regEncontrado->tipoDato != TIPO_VOID) {
+			if (reg->tipoDato != TIPO_VOID) {
 				union_set(setpaso, toksig, sig_auxpuntoycoma);
 				ASIGNACION(setpaso);
-				valorPorTipo auxVPT;
-				switch (regEncontrado->tipoDato) {
-				case TIPO_ENTERO:
-					auxVPT.entero = valor.entero;
-					gen(ALM, niv - regEncontrado->nivdir.nivel, TIPO_ENTERO, auxVPT);
-					break;
-				case TIPO_FLOAT:
-					auxVPT.flotante = valor.flotante;
-					gen(ALM, niv - regEncontrado->nivdir.nivel, TIPO_FLOAT, auxVPT);
-					break;
-				case TIPO_CADENA:
-					strcpy(auxVPT.cadena, valor.cadena);
-					gen(ALM, niv - regEncontrado->nivdir.nivel, TIPO_CADENA, auxVPT);
-					break;
-				case TIPO_CARACTER:
-					auxVPT.caracter = valor.caracter;
-					gen(ALM, niv - regEncontrado->nivdir.nivel, TIPO_CARACTER, auxVPT);
-					break;
-				case TIPO_BOOLEAN:
-					auxVPT.booleano = valor.booleano;
-					gen(ALM, niv - regEncontrado->nivdir.nivel, TIPO_BOOLEAN, auxVPT);
-					break;
-				}
+
+				valorPorTipo val;
+				val.entero = reg->nivdir.dir;
+				gen(ALM, niv - reg->nivdir.nivel, TIPO_ENTERO, val);
 
 				if (token == tok_finlinea) {
 					//Se completo
@@ -1659,6 +1649,7 @@ void TERMINO(int toksig[]) {
 	while (token == tok_multi || token == tok_divi) {
 		obtoken();
 		EXPRESION_NUM(setpaso);
+		
 	}
 }
 
